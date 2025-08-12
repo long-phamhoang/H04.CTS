@@ -1,0 +1,17 @@
+{
+  "Culture": "vi",
+  "Texts": {
+    "AppName": "Cts",
+    "Actions": "Hành động",
+    "Close": "Đóng",
+    "Delete": "Xoá",
+    "Edit": "Sửa",
+    "CreationTime": "Ngày tạo",
+    "AreYouSure": "Bạn có chắc chắn không?",
+    "AreYouSureToDelete": "Bạn có chắc chắn muốn xoá bản ghi này không?",
+    "SuccessfullyDeleted": "Xoá thành công!",
+    "Menu:Home": "Trang chủ",
+    "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
+    "Welcome": "Xin chào"
+  }
+}

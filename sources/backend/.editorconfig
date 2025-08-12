@@ -1,0 +1,28 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+
+# default:
+indent_style = space
+indent_size = 4
+
+# override:
+[*.csproj]
+indent_size = 2
+
+[*.html]
+indent_size = 2
+
+[*.css]
+indent_size = 2
+
+[*.js]
+indent_size = 2
+
+[*.ts]
+indent_size = 2
+
+[*.cshtml]
+indent_size = 2

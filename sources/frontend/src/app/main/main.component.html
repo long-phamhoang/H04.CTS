@@ -1,0 +1,28 @@
+<div class="d-flex" style="height: 100vh">
+  <div id="left-panel">
+    <a id="cts-banner" href="/">
+      <img id="cts-logo" src="assets/logo/bca-logo.png" />
+      <div id="cts-title-wrapper">
+        <div id="cts-title">Bộ công an</div>
+        <div id="cts-subtitle">Cục viễn thông và cơ yếu</div>
+        <div id="cts-app-name">Cổng dịch vụ công trực tuyến</div>
+      </div>
+    </a>
+    <div class="nav-menu">
+      <p-panelmenu [model]="navMenu" />
+    </div>
+  </div>
+  <div id="right-panel">
+    <div id="right-panel-header">
+      <div id="current-time">Thứ năm, 20/02/2025 - 15:00</div>
+      <p-menu #menu [model]="userMenu" [popup]="true" />
+      <button id="user-menu" class="btn btn-light" (click)="menu.toggle($event)">
+        <div id="user-account-name">Administrator</div>
+        <img id="user-avatar" src="assets/images/anonymous-user.jpg" width="40" height="40" />
+      </button>
+    </div>
+    <div id="right-panel-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
