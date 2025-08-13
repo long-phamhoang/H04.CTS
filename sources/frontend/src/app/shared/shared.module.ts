@@ -4,19 +4,19 @@ import { ThemeSharedModule } from '@abp/ng.theme.shared';
 //#endregion
 //#region Angular Core Modules
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //#endregion
 //#region Bootstrap Modules
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { PopoverModule } from 'ngx-bootstrap/popover';
-import { TabsModule } from 'ngx-bootstrap/tabs';
+import {
+  NgbDropdownModule,
+  NgbToastModule,
+} from '@ng-bootstrap/ng-bootstrap';
 //#endregion
 //#region PrimeNg Modules
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule as PrimeNGFileUploadModule } from 'primeng/fileupload';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -27,8 +27,7 @@ import { MenuModule } from 'primeng/menu';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PaginatorModule } from 'primeng/paginator';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { PanelModule } from 'primeng/panel';  
-import { DialogModule } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SliderModule } from 'primeng/slider';
@@ -38,8 +37,11 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 //#endregion
 //#region Extension Modules
-import { NgbDropdownModule, NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
+//#endregion
+
+//#region Components
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 //#endregion
 
 const modules = [
@@ -47,13 +49,19 @@ const modules = [
   CoreModule,
   ThemeSharedModule,
 
-  // Angular Forms
+  // Angular Core Modules
+  FormsModule,
   ReactiveFormsModule,
+
+  // Ng Bootstrap
+  NgbDropdownModule,
+  NgbToastModule,
 
   // PrimeNg Modules
   AutoCompleteModule,
   CalendarModule,
   CheckboxModule,
+  DialogModule,
   FieldsetModule,
   PrimeNGFileUploadModule,
   InputGroupAddonModule,
@@ -75,21 +83,23 @@ const modules = [
   TooltipModule,
 
   // Extension Modules
-  NgbDropdownModule,
-  NgbModalModule,
-  NgbModule,
-  NgxValidateCoreModule
+  NgxValidateCoreModule,
+];
+
+const components = [
+  PageHeaderComponent,
 ];
 
 @NgModule({
   declarations: [
-
+    ...components,
   ],
   imports: [
     ...modules,
   ],
   exports: [
     ...modules,
+    ...components,
   ],
   providers: []
 })

@@ -1,5 +1,5 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
-import type { TrangThai } from './utilities/trang-thai.enum';
+import type { TrangThai } from './enums';
 
 export interface CreateUpdateToChucDto {
   toChucCapTrenId?: number;

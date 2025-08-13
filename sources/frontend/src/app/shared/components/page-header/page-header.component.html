@@ -1,0 +1,14 @@
+<div id="page-header">
+  <div id="page-title">{{ title }}</div>
+  <div *ngIf="description" id="page-description">{{ description }}</div>
+  <ul *ngIf="breadcrumbs?.length" id="page-breadcrumb">
+    <li *ngFor="let breadcrumbItem of breadcrumbs" class="breadcrumb-item">
+      <a *ngIf="breadcrumbItem.isLink(); else text" href="javascript:;" (click)="goToBreadcrumb(breadcrumbItem)">
+        {{ breadcrumbItem.text }}
+      </a>
+      <ng-template #text>
+        <span>{{ breadcrumbItem.text }}</span>
+      </ng-template>
+    </li>
+  </ul>
+</div>
