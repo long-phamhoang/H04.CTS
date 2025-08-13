@@ -10,5 +10,8 @@ public class CtsApplicationAutoMapperProfile : Profile
     {
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
+
+        CreateMap<CapCoQuan, CapCoQuanDto>().ReverseMap();
+        CreateMap<CreateUpdateCapCoQuanDto, CapCoQuan>().ReverseMap();
     }
 }

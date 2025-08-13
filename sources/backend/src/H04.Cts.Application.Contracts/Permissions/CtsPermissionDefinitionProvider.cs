@@ -17,6 +17,13 @@ public class CtsPermissionDefinitionProvider : PermissionDefinitionProvider
         toChucs.AddChild(CtsPermissions.DanhMucs.ToChucCreate, L("Permission:DanhMucs.ToChuc.Create"));
         toChucs.AddChild(CtsPermissions.DanhMucs.ToChucEdit, L("Permission:DanhMucs.ToChuc.Edit"));
         toChucs.AddChild(CtsPermissions.DanhMucs.ToChucDelete, L("Permission:DanhMucs.ToChuc.Delete"));
+
+        #region CapCoQuans
+        var capCoQuans = danhMucs.AddChild(CtsPermissions.DanhMucs.CapCoQuan, L("Permission:DanhMucs.CapCoQuan"));
+        capCoQuans.AddChild(CtsPermissions.DanhMucs.CapCoQuanCreate, L("Permission:DanhMucs.CapCoQuan.Create"));
+        capCoQuans.AddChild(CtsPermissions.DanhMucs.CapCoQuanEdit, L("Permission:DanhMucs.CapCoQuan.Edit"));
+        capCoQuans.AddChild(CtsPermissions.DanhMucs.CapCoQuanDelete, L("Permission:DanhMucs.CapCoQuan.Delete"));
+        #endregion
         #endregion
     }
 
