@@ -1,16 +1,21 @@
-import { Component } from '@angular/core';
+import { AuthService } from '@abp/ng.core';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   standalone: false,
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.less'],
+  providers: [DatePipe]
 })
-export class MainComponent {
+export class MainComponent implements OnInit, OnDestroy {
+  //#region Variables
   navMenu: MenuItem[] = [
     {
-      label: 'Bảng thống kê', url: '/dashboard',
+      label: 'Bảng thống kê', routerLink: '/dashboard',
     },
     {
       label: 'Văn thư', items: [
@@ -24,27 +29,27 @@ export class MainComponent {
     },
     {
       label: 'Danh mục', items: [
-        { label: 'Tỉnh, thành phố', url: '/main/danh-muc/tinh-thanh-pho', },
-        { label: 'Xã, phường', url: '/main/danh-muc/xa-phuong', },
-        { label: 'Cấp cơ quan', url: '/main/danh-muc/cap-co-quan', },
-        { label: 'Tổ chức', url: '/main/danh-muc/to-chuc', },
-        { label: 'Loại thiết bị, dịch vụ', url: '/main/danh-muc/loai-thiet-bi-dich-vu', },
-        { label: 'Thiết bị dịch vụ, phần mềm', url: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', },
-        { label: 'Chức vụ', url: '/main/danh-muc/chuc-vu', },
-        { label: 'Thuê bao cá nhân', url: '/main/danh-muc/thue-bao-ca-nhan', },
-        { label: 'Nơi cấp CCCD', url: '/main/danh-muc/noi-cap-cccd', },
-        { label: 'Người tiếp nhận', url: '/main/danh-muc/nguoi-tiep-nhan', },
-        { label: 'Loại hồ sơ', url: '/main/danh-muc/loai-ho-so', },
-        { label: 'Loại chứng thư số', url: '/main/danh-muc/loai-chung-thu-so', },
-        { label: 'Trích yếu', url: '/main/danh-muc/trich-yeu', },
-        { label: 'Chứng thư số và thiết bị', url: '/main/danh-muc/chung-thu-so-va-thiet-bi', },
+        { label: 'Tỉnh, thành phố', routerLink: '/main/danh-muc/tinh-thanh-pho', }, // DCIM Lê Thế Kỳ
+        { label: 'Xã, phường', routerLink: '/main/danh-muc/xa-phuong', }, // DCIM Lê Thế Kỳ
+        { label: 'Cấp cơ quan', routerLink: '/main/danh-muc/cap-co-quan', }, // ToaAn Nguyễn Quang Phước
+        { label: 'Tổ chức', routerLink: '/main/danh-muc/to-chuc', },
+        { label: 'Loại thiết bị, dịch vụ', routerLink: '/main/danh-muc/loai-thiet-bi-dich-vu', }, // ToaAn Dương Xuân Lộc
+        { label: 'Thiết bị dịch vụ, phần mềm', routerLink: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', }, // ToaAn Dương Xuân Lộc
+        { label: 'Chức vụ', routerLink: '/main/danh-muc/chuc-vu', }, // CheAp Phạm Ngọc Thuỷ
+        { label: 'Thuê bao cá nhân', routerLink: '/main/danh-muc/thue-bao-ca-nhan', }, // CheAp Phạm Ngọc Thuỷ
+        { label: 'Nơi cấp CCCD', routerLink: '/main/danh-muc/noi-cap-cccd', }, // DCIM Trịnh Đức Thành
+        { label: 'Người tiếp nhận', routerLink: '/main/danh-muc/nguoi-tiep-nhan', }, // DCIM Trịnh Đức Thành
+        { label: 'Loại hồ sơ', routerLink: '/main/danh-muc/loai-ho-so', }, // ToaAn Tạ Đức Hoàn
+        { label: 'Loại chứng thư số', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // ToaAn Tạ Đức Hoàn
+        { label: 'Mạng, hệ thống cấp CTS', routerLink: '/main/danh-muc/mang-he-thong-cap-cts', }, // ToaAn Trần Đức Minh
+        { label: 'Trích yếu', routerLink: '/main/danh-muc/trich-yeu', }, // ToaAn Trần Đức Minh
       ]
     },
     {
       label: 'Quản trị hệ thống', items: [
-        { label: 'Người dùng', url: '/accounts', },
-        { label: 'Vai trò', url: '/roles', },
-        { label: 'Thiết lập', url: '/settings', },
+        { label: 'Người dùng', routerLink: '/identity/users', },
+        { label: 'Vai trò', routerLink: '/identity/roles', },
+        { label: 'Cài đặt', routerLink: '/setting-management', },
       ]
     },
   ];
@@ -55,9 +60,33 @@ export class MainComponent {
     { label: 'Đăng xuất', icon: 'pi pi-sign-out', command: () => this.logout() }
   ];
 
-  constructor() { }
+  currentTime: string;
+  currentTimeSubscription: Subscription | undefined;
+  //#endregion
 
-  logout() {
+  //#region Constructor and Lifecycle
+  constructor(
+    private datePipe: DatePipe,
+    private authService: AuthService,
+  ) { }
 
+  ngOnInit(): void {
+    this.currentTimeSubscription = interval(1000).subscribe(() => {
+      const now = new Date();
+      this.currentTime = this.datePipe.transform(now, 'EEEE, dd/MM/yyyy - HH:mm');
+    });
   }
+
+  ngOnDestroy(): void {
+    if (this.currentTimeSubscription) {
+      this.currentTimeSubscription.unsubscribe();
+    }
+  }
+  //#endregion
+
+  //#region Main methods
+  logout() {
+    this.authService.logout().subscribe();
+  }
+  //#endregion
 }
