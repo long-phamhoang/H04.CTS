@@ -61,6 +61,12 @@
         <div class="mb-3">
           <label class="form-label">Mã lực lượng<span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="maLucLuong" />
+          <div
+            class="text-danger mt-1"
+            *ngIf="form?.get('maLucLuong')?.dirty && form?.get('maLucLuong')?.errors?.['maLucLuongDuplicated']"
+          >
+            Mã lực lượng đã tồn tại
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Tên lực lượng<span class="text-danger">*</span></label>

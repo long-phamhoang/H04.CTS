@@ -5,6 +5,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, TrangThai, DieuKienCapCTSTheoLLDto } from '@app/proxy';
 import { DieuKienCapCTSTheoLLService } from '@app/proxy';
+import { debounceTime,distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
     standalone: false,
@@ -28,6 +30,8 @@ export class DKCtsLucLuongComponent implements OnInit {
     lucLuongOptions: LucLuongDto[] = [];
 
 	isModalOpen = false;
+
+	private maChangeSub: Subscription | null = null;
 
 	constructor(
         public readonly list: ListService,
@@ -91,6 +95,35 @@ export class DKCtsLucLuongComponent implements OnInit {
             trangThai: [this.selected.trangThai || null, Validators.required],
             ghiChu: [this.selected.ghiChu || ''],
         });
+
+
+
+        
+		//check debounce mã 
+		const maCtrl = this.form.get('maDieuKien');
+		if (this.maChangeSub) {
+			this.maChangeSub.unsubscribe();
+		}
+		this.maChangeSub = maCtrl.valueChanges
+			.pipe(debounceTime(300), distinctUntilChanged())
+			.subscribe((value) => {
+				const ma = (value || '').trim();
+				const currentId = this.selected?.id;
+				let errors = maCtrl.errors || {};
+
+				if (!ma) {
+					delete errors['maDieuKienDuplicated']; 
+					maCtrl.setErrors(Object.keys(errors).length ? errors : null);
+					return;
+				}
+				const isDup = (this.dkCtsLucLuong.items || []).some((x: DieuKienCapCTSTheoLLDto) => x.maDieuKien === ma && x.id !== currentId);
+				if (isDup) {
+					errors['maDieuKienDuplicated'] = true;
+				} else {
+					delete errors['maDieuKienDuplicated'];
+				}
+				maCtrl.setErrors(Object.keys(errors).length ? errors : null);
+			});
     }
 
 	save() {	

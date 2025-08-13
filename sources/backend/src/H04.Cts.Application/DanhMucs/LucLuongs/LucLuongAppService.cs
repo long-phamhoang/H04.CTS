@@ -47,7 +47,7 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
 
     [Authorize(CtsPermissions.DanhMucs.LucLuongCreate)]
     public async Task<LucLuongDto> CreateAsync(CreateUpdateLucLuongDto input)
-    {   
+    {
         //check mã tồn tại
         var exists = await _repository.AnyAsync(x => x.MaLucLuong == input.MaLucLuong);
         if (exists)

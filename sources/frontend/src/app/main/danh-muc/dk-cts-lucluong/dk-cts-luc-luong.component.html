@@ -63,6 +63,12 @@
         <div class="mb-3">
           <label class="form-label">Mã điều kiện<span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="maDieuKien" />
+          <div
+            class="text-danger mt-1"
+            *ngIf="form?.get('maDieuKien')?.dirty && form?.get('maDieuKien')?.errors?.['maDieuKienDuplicated']"
+          >
+            Mã điều kiện đã tồn tại
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Tên điều kiện<span class="text-danger">*</span></label>

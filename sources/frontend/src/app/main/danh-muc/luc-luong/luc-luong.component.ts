@@ -1,7 +1,9 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ConfirmationService, Confirmation, ToasterService } from '@abp/ng.theme.shared';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, TrangThai } from '@app/proxy';
 
@@ -15,7 +17,7 @@ import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, Tran
 		{ provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }
 	],
 })
-export class LucLuongComponent implements OnInit {
+export class LucLuongComponent implements OnInit, OnDestroy {
 	lucLuong = { items: [], totalCount: 0 } as PagedResultDto<LucLuongDto>;
 
 	selectedLucLuong = {} as LucLuongDto;
@@ -25,6 +27,8 @@ export class LucLuongComponent implements OnInit {
 	trangThaiOptions = trangThaiOptions;
 
 	isModalOpen = false;
+
+	private maChangeSub: Subscription | null = null;
 
 	constructor(
 		public readonly list: ListService,
@@ -80,6 +84,39 @@ export class LucLuongComponent implements OnInit {
 			trangThai: [this.selectedLucLuong.trangThai || null, Validators.required],
 			ghiChu: [this.selectedLucLuong.ghiChu || ''],
 		});
+
+
+		//check debounce mã 
+		const maCtrl = this.form.get('maLucLuong');
+		if (this.maChangeSub) {
+			this.maChangeSub.unsubscribe();
+		}
+		this.maChangeSub = maCtrl.valueChanges
+			.pipe(debounceTime(300), distinctUntilChanged())
+			.subscribe((value) => {
+				const ma = (value || '').trim();
+				const currentId = this.selectedLucLuong?.id;
+				let errors = maCtrl.errors || {};
+
+				if (!ma) {
+					delete errors['maLucLuongDuplicated'];
+					maCtrl.setErrors(Object.keys(errors).length ? errors : null);
+					return;
+				}
+				const isDup = (this.lucLuong.items || []).some((x: LucLuongDto) => x.maLucLuong === ma && x.id !== currentId);
+				if (isDup) {
+					errors['maLucLuongDuplicated'] = true;
+				} else {
+					delete errors['maLucLuongDuplicated'];
+				}
+				maCtrl.setErrors(Object.keys(errors).length ? errors : null);
+			});
+	}
+
+	ngOnDestroy(): void {
+		if (this.maChangeSub) {
+			this.maChangeSub.unsubscribe();
+		}
 	}
 
 	save() {	
