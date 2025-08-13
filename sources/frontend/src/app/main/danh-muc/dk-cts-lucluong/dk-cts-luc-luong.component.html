@@ -1,0 +1,103 @@
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Danh mục Điều kiện CTS - Lực lượng</h5>
+      <button class="btn btn-primary" (click)="create()">Thêm</button>
+    </div>
+    <div class="card-body">
+      <table class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Mã điều kiện</th>
+            <th>Tên điều kiện</th>
+            <th>Lực lượng</th>
+            <th>Trạng thái</th>
+            <th>Ghi chú</th>
+            <th style="width: 120px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of dkCtsLucLuong.items; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.maDieuKien }}</td>
+            <td>{{ item.tenDieuKien }}</td>
+            <td>{{ getLucLuongNameById(item.lucLuongId) }}</td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': getTrangThaiSeverity(item.trangThai) === 'success',
+                  'bg-danger': getTrangThaiSeverity(item.trangThai) === 'danger',
+                  'bg-info': getTrangThaiSeverity(item.trangThai) === 'info'
+                }"
+                >{{ getTrangThai(item.trangThai) }}</span
+              >
+            </td>
+            <td>{{ item.ghiChu }}</td>
+            <td class="text-end">
+              <button class="btn btn-link btn-sm" (click)="edit(item.id)">Sửa</button>
+              <button class="btn btn-link btn-sm text-danger" (click)="delete(item.id)">Xóa</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p-dialog
+    [(visible)]="isModalOpen"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '480px' }"
+    [baseZIndex]="1055"
+    [dismissableMask]="true"
+  >
+    <ng-template pTemplate="header">
+      <span *ngIf="!selected?.id" class="fw-bold">Thêm điều kiện</span>
+      <span *ngIf="selected?.id" class="fw-bold">Sửa điều kiện</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="mb-3">
+          <label class="form-label">Mã điều kiện<span class="text-danger">*</span></label>
+          <input type="text" class="form-control" formControlName="maDieuKien" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Tên điều kiện<span class="text-danger">*</span></label>
+          <input type="text" class="form-control" formControlName="tenDieuKien" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Lực lượng <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="lucLuongId">
+            <option [ngValue]="null">-- Chọn lực lượng --</option>
+            <option *ngFor="let opt of lucLuongOptions" [ngValue]="opt.id">
+              {{ opt.tenLucLuong }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="trangThai">
+            <option *ngFor="let opt of trangThaiOptions" [ngValue]="opt.value">
+              {{ opt.key }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Ghi chú</label>
+          <textarea class="form-control" formControlName="ghiChu"></textarea>
+        </div>
+      </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="isModalOpen = false">
+        Đóng
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="save()" [disabled]="form?.invalid">
+        Lưu
+      </button>
+    </ng-template>
+  </p-dialog>
+</div>

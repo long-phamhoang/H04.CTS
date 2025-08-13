@@ -30,5 +30,12 @@ function configureRoutes() {
       iconClass: 'fas fa-book',
       layout: eLayoutType.empty,
     },
+    {
+      path: '/main/danh-muc/luc-luong',
+      name: '::Menu:DanhMucs:LucLuong',
+      parentName: '::Menu:DanhMucs',
+      iconClass: 'fas fa-book',
+      layout: eLayoutType.empty,
+    },
   ]);
 }

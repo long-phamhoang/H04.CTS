@@ -34,3 +34,33 @@ export interface ToChucDto extends AuditedEntityDto<number> {
   trangThai?: TrangThai;
   ghiChu?: string;
 }
+
+export interface CreateUpdateLucLuongDto {
+  tenLucLuong?: string;
+  maLucLuong?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface LucLuongDto extends AuditedEntityDto<number> {
+  tenLucLuong?: string;
+  maLucLuong?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface DieuKienCapCTSTheoLL_CreateUpdateDto {
+  tenDieuKien?: string;
+  maDieuKien?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+  lucLuongId?: number;
+}
+
+export interface DieuKienCapCTSTheoLLDto extends AuditedEntityDto<number> {
+  tenDieuKien?: string;
+  maDieuKien?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+  lucLuongId?: number;
+}

@@ -3,6 +3,7 @@ using System;
 using H04.Cts.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace H04.Cts.Migrations
 {
     [DbContext(typeof(CtsDbContext))]
-    partial class CtsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250813075711_Add_DK_CTS_LucLuong")]
+    partial class Add_DK_CTS_LucLuong
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +27,7 @@ namespace H04.Cts.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("H04.Cts.Entities.DanhMucs.DieuKienCapCTSTheoLL", b =>
+            modelBuilder.Entity("H04.Cts.Entities.DanhMucs.DK_CTS_LucLuong", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,7 +105,7 @@ namespace H04.Cts.Migrations
 
                     b.HasIndex("TrangThai");
 
-                    b.ToTable("AppDieuKienCapCTSTheoLLs", (string)null);
+                    b.ToTable("AppDK_CTS_LucLuongs", (string)null);
                 });
 
             modelBuilder.Entity("H04.Cts.Entities.DanhMucs.LucLuong", b =>
@@ -2044,7 +2047,7 @@ namespace H04.Cts.Migrations
                     b.ToTable("AbpSettingDefinitions", (string)null);
                 });
 
-            modelBuilder.Entity("H04.Cts.Entities.DanhMucs.DieuKienCapCTSTheoLL", b =>
+            modelBuilder.Entity("H04.Cts.Entities.DanhMucs.DK_CTS_LucLuong", b =>
                 {
                     b.HasOne("H04.Cts.Entities.DanhMucs.LucLuong", "LucLuong")
                         .WithMany()

@@ -1,4 +1,5 @@
 using AutoMapper;
+using H04.Cts.DanhMucs.DieuKienCapCTSTheoLL.Dto;
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 
@@ -10,5 +11,11 @@ public class CtsApplicationAutoMapperProfile : Profile
     {
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
+
+        CreateMap<LucLuong, LucLuongDto>();
+        CreateMap<CreateUpdateLucLuongDto, LucLuong>();
+
+        CreateMap<DieuKienCapCTSTheoLL, DieuKienCapCTSTheoLLDto>();
+        CreateMap<DieuKienCapCTSTheoLL_CreateUpdateDto, DieuKienCapCTSTheoLL>();
     }
 }

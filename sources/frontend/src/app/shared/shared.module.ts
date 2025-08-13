@@ -4,6 +4,7 @@ import { ThemeSharedModule } from '@abp/ng.theme.shared';
 //#endregion
 //#region Angular Core Modules
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 //#endregion
 //#region Bootstrap Modules
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -26,7 +27,8 @@ import { MenuModule } from 'primeng/menu';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PaginatorModule } from 'primeng/paginator';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { PanelModule } from 'primeng/panel';
+import { PanelModule } from 'primeng/panel';  
+import { DialogModule } from 'primeng/dialog';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SliderModule } from 'primeng/slider';
@@ -36,7 +38,7 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 //#endregion
 //#region Extension Modules
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 //#endregion
 
@@ -44,6 +46,9 @@ const modules = [
   // Abp Modules
   CoreModule,
   ThemeSharedModule,
+
+  // Angular Forms
+  ReactiveFormsModule,
 
   // PrimeNg Modules
   AutoCompleteModule,
@@ -60,6 +65,7 @@ const modules = [
   PaginatorModule,
   PanelMenuModule,
   PanelModule,
+  DialogModule,
   ProgressBarModule,
   RadioButtonModule,
   SliderModule,
@@ -70,6 +76,8 @@ const modules = [
 
   // Extension Modules
   NgbDropdownModule,
+  NgbModalModule,
+  NgbModule,
   NgxValidateCoreModule
 ];
 
