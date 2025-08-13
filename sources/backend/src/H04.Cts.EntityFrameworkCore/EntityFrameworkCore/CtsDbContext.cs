@@ -1,5 +1,6 @@
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.EntityFrameworkCore.EntityConfigurations.DanhMucs;
+using H04.Cts.EntityFrameworkCore.EntityTypeConfigurations.DanhMucs;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -44,6 +45,8 @@ public class CtsDbContext :
 
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
+    public DbSet<TrichYeu> TrichYeus { get; set; }
+    public DbSet<MangCTS> MangCTSs { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -69,6 +72,8 @@ public class CtsDbContext :
 
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
+        builder.ApplyConfiguration(new TrichYeuConfiguration());
+        builder.ApplyConfiguration(new MangCTSConfiguration());
         #endregion
     }
 }

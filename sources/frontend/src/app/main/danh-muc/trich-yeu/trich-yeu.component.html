@@ -1,0 +1,139 @@
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.TrichYeu' | abpLocalization">
+    <div>
+        <button id="export" type="button" class="btn btn-info btn-xs">
+            <i class="pi pi-download"></i>
+            <span class="ms-2">Xuất dữ liệu</span>
+        </button>
+        <button *abpPermission="'Cts.DanhMucs.TrichYeu.Create'" id="upload" type="button"
+            class="btn btn-warning btn-xs">
+            <i class="pi pi-upload"></i>
+            <span class="ms-2">Upload tài liệu</span>
+        </button>
+        <button *abpPermission="'Cts.DanhMucs.TrichYeu.Create'" id="create" type="button" class="btn btn-success btn-xs"
+            (click)="createTrichYeu()">
+            <i class="pi pi-plus"></i>
+            <span class="ms-2">{{ '::CreateNew' | abpLocalization }}</span>
+        </button>
+    </div>
+</page-header>
+
+<div class="card">
+    <div class="search-container">
+        <label for="searchInput" class="visually-hidden">{{ '::Search' | abpLocalization }}</label>
+        <input 
+            id="searchInput" 
+            type="text" 
+            class="form-control search-input" 
+            placeholder="Tìm kiếm..."
+            (keyup.enter)="onSearch($event.target.value)" 
+            (blur)="onSearch($event.target.value)"
+            #searchInput />
+    </div>
+
+    <p-table #dataTable [value]="trinhYeu.items" class="p-datatable-sm p-datatable-gridlines" [lazy]="true" (onLazyLoad)="onPageChange($event)" [loading]="true">
+        <ng-template #header>
+            <tr>
+                <th style="width: 50px;">#</th>
+                <th pSortableColumn="MaTrichYeu">{{ '::MaTrichYeu' | abpLocalization }}</th>
+                <th pSortableColumn="TenTrichYeu">{{ '::TenTrichYeu' | abpLocalization }}</th>
+                <th>{{ '::Enum:TrangThai' | abpLocalization }}</th>
+                <th>{{ '::MoTa' | abpLocalization }}</th>
+                <th>{{ '::GhiChu' | abpLocalization }}</th>
+                <th style="width: 120px; text-align: right">Hành động</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-item let-i="rowIndex">
+            <tr>
+                <td>{{ i + 1 + currentPage * pageSize }}</td>
+                <td>{{ item.maTrichYeu }}</td>
+                <td>{{ item.tenTrichYeu }}</td>
+                <td>
+                    <span class="badge" [ngClass]="{
+                        'bg-success': getTrangThaiSeverity(item.trangThai) === 'success',
+                        'bg-danger': getTrangThaiSeverity(item.trangThai) === 'danger',
+                        'bg-info': getTrangThaiSeverity(item.trangThai) === 'info'
+                        }">{{ getTrangThai(item.trangThai) }}</span>
+                </td>
+                <td>{{ item.moTa }}</td>
+                <td>{{ item.ghiChu }}</td>
+                <td class="text-end">
+                    <div ngbDropdown class="d-inline-block">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" ngbDropdownToggle>
+                            <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
+                        </button>
+                        <div ngbDropdownMenu>
+                            <button ngbDropdownItem (click)="editTrichYeu(item.id)">Sửa</button>
+                            <button ngbDropdownItem class="text-danger" (click)="deleteTrichYeu(item.id)">Xóa</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="d-flex justify-content-end align-items-center gap-2">
+        <span>
+            <span class="total-text" style="opacity: 0.7">Tổng cộng: {{ trinhYeu.totalCount }}</span>
+        </span>
+        <p-paginator [rows]="pageSize" [first]="currentPage * pageSize" [totalRecords]="trinhYeu.totalCount || 0"
+            [rowsPerPageOptions]="[5, 10, 20, 50]" (onPageChange)="onPageChange($event)">
+        </p-paginator>
+    </div>
+</div>
+
+<abp-modal [(visible)]="isModalOpen">
+    <ng-template #abpHeader>
+        <h3>{{ (selectedTrichYeu.id ? '::EditTrichYeu' : '::NewTrichYeu' ) | abpLocalization }}</h3>
+    </ng-template>
+
+    <ng-template #abpBody>
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <div class="mb-3">
+                <label for="trichYeu-maTrichYeu">{{ '::MaTrichYeu' | abpLocalization }}</label><span> * </span>
+                <input type="text" id="trichYeu-maTrichYeu" class="form-control" formControlName="maTrichYeu"
+                    (blur)="onCheckMaDuplicate($event.target.value)" autofocus />
+                <span class="text-danger mt-1" *ngIf="form.get('maTrichYeu')?.errors?.['duplicate']">
+                    Mã trích yếu đã tồn tại
+                </span>
+            </div>
+
+            <div class="mb-3">
+                <label for="trichYeu-tenTrichYeu">{{ '::TenTrichYeu' | abpLocalization }}</label><span> * </span>
+                <input type="text" id="trichYeu-tenTrichYeu" class="form-control" formControlName="tenTrichYeu" />
+            </div>
+
+            <div class="mb-3">
+                <label for="trichYeu-trangThai">{{ '::Enum:TrangThai' | abpLocalization }}</label><span> * </span>
+                <select id="trichYeu-trangThai" class="form-select" formControlName="trangThai">
+                    <option *ngFor="let opt of trangThaiOptions" [ngValue]="opt.value">
+                        {{ getTrangThai(opt.value) }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="trichYeu-moTa">{{ '::MoTa' | abpLocalization }}</label>
+                <textarea id="trichYeu-moTa" class="form-control" formControlName="moTa"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="trichYeu-ghiChu">{{ '::GhiChu' | abpLocalization }}</label>
+                <textarea id="trichYeu-ghiChu" class="form-control" formControlName="ghiChu"></textarea>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template #abpFooter>
+        <button type="button" class="btn btn-secondary" abpClose>
+            {{ '::Close' | abpLocalization }}
+        </button>
+
+        <!--added save button-->
+        <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+            <i class="fa fa-check mr-1"></i>
+            {{ '::Save' | abpLocalization }}
+        </button>
+    </ng-template>
+
+</abp-modal>

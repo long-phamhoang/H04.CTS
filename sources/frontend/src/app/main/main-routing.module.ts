@@ -11,6 +11,14 @@ const routes: Routes = [
         path: 'danh-muc/to-chuc',
         loadChildren: () => import('./danh-muc/to-chuc/to-chuc.module').then(m => m.ToChucModule),
       },
+      {
+        path: 'danh-muc/trich-yeu',
+        loadChildren: () => import('./danh-muc/trich-yeu/trich-yeu.module').then(m => m.TrichYeuModule),
+      },
+      {
+        path: 'danh-muc/mang-he-thong-cap-cts',
+        loadChildren: () => import('./danh-muc/mang-he-thong-cap-cts/mang-he-thong-cap-cts.module').then(m => m.MangHeThongCapCTSModule)
+      }
     ],
   },
 ];
