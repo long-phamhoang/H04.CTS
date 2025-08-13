@@ -23,5 +23,19 @@ function configureRoutes() {
       iconClass: 'fas fa-book',
       order: 2,
     },
+    {
+      path: '/main/danh-muc/mang-he-thong-cap-cts',
+      name: '::Menu:MangHeThongCapCts',
+      iconClass: 'fas fa-book',
+      order: 9,
+      layout: eLayoutType.empty
+    },
+    {
+      path: '/main/danh-muc/trich-yeu',
+      name: '::Menu:TrichYeu',
+      iconClass: 'fas fa-book',
+      order: 16,
+      layout: eLayoutType.empty
+    },
   ]);
 }

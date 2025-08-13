@@ -10,5 +10,11 @@ public class CtsApplicationAutoMapperProfile : Profile
     {
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
+
+        CreateMap<TrichYeu, TrichYeuDto>();
+        CreateMap<CreateUpdateTrichYeuDto, TrichYeu>();
+
+        CreateMap<MangHeThongCapCTS, MangHeThongCapCTSDto>();
+        CreateMap<CreateUpdateMangHeThongCapCTSDto, MangHeThongCapCTS>();
     }
 }

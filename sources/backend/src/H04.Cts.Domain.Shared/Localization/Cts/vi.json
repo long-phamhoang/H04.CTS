@@ -239,7 +239,7 @@
     "ThuocCapCoQuan": "Thuộc cấp cơ quan",
     "ThongTinDiaChi": "Thông tin địa chỉ",
     "SoNha": "Số nhà, tên đường",
-    "CoQuanPhuTrach": "Cơ quan phụ trách"
+    "CoQuanPhuTrach": "Cơ quan phụ trách",
     //#endregion
 
     //#region 1.6. Danh mục Loại dịch vụ, thiết bị phần mềm
@@ -252,6 +252,12 @@
     //#endregion
 
     //#region 1.9. Danh mục Mạng/ hệ thống cấp CTS
+    "DanhMucs.MangHeThongCapCts": "Mạng/ hệ thống cấp CTS",
+    "Menu:MangHeThongCapCts": "Mạng/ hệ thống cấp CTS",
+    "MaMangCTS": "Mã mạng, hệ thống cấp CTS",
+    "TenMangCTS": "Tên mạng, hệ thống cấp CTS",
+    "NewMangCTS": "Thêm mới thông tin mang/ hệ thống cấp CTS",
+    "EditMangCTS": "Chỉnh sửa thông tin mang/ hệ thống cấp CTS",
     //#endregion
 
     //#region 1.10. Danh mục Thuê bao cá nhân
@@ -273,6 +279,12 @@
     //#endregion
 
     //#region 1.16. Danh mục Trích yếu
+    "DanhMucs.TrichYeu": "Trích yếu",
+    "Menu:TrichYeu": "Trích yếu",
+    "MaTrichYeu": "Mã Trích yếu",
+    "TenTrichYeu": "Tên Trích yếu",
+    "NewTrichYeu": "Thêm mới thông tin trích yếu",
+    "EditTrichYeu": "Chỉnh sửa thông tin trích yếu"
     //#endregion
 
     //#region 1.17. Danh mục Lực lượng
