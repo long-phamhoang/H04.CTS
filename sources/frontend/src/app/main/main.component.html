@@ -8,13 +8,13 @@
         <div id="cts-app-name">Cổng dịch vụ công trực tuyến</div>
       </div>
     </a>
-    <div class="nav-menu">
-      <p-panelmenu [model]="navMenu" />
+    <div id="nav-menu">
+      <p-panelmenu [model]="navMenu" [multiple]="true" />
     </div>
   </div>
   <div id="right-panel">
     <div id="right-panel-header">
-      <div id="current-time">Thứ năm, 20/02/2025 - 15:00</div>
+      <div id="current-time">{{ currentTime }}</div>
       <p-menu #menu [model]="userMenu" [popup]="true" />
       <button id="user-menu" class="btn btn-light" (click)="menu.toggle($event)">
         <div id="user-account-name">Administrator</div>
