@@ -34,3 +34,19 @@ export interface ToChucDto extends AuditedEntityDto<number> {
   trangThai?: TrangThai;
   ghiChu?: string;
 }
+
+//#region CapCoQuan
+export interface CreateUpdateCapCoQuanDto {
+  maCapCoQuan?: string;
+  tenCapCoQuan: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface CapCoQuanDto extends AuditedEntityDto<number> {
+  maCapCoQuan?: string;
+  tenCapCoQuan: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+//#endregion
