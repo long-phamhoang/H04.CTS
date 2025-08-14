@@ -44,6 +44,8 @@ public class CtsDbContext :
 
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
+    public DbSet<NoiCapCCCD> NoiCapCCCDs { get; set; }
+    public DbSet<NguoiTiepNhan> NguoiTiepNhans { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -69,6 +71,8 @@ public class CtsDbContext :
 
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
+        builder.ApplyConfiguration(new NoiCapCCCDConfiguration());
+        builder.ApplyConfiguration(new NguoiTiepNhanConfiguration());
         #endregion
     }
 }

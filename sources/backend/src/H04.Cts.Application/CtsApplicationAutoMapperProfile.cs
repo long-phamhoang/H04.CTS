@@ -10,5 +10,13 @@ public class CtsApplicationAutoMapperProfile : Profile
     {
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
+
+        // IssuingAuthority
+        CreateMap<NoiCapCCCD, NoiCapCCCDDto>();
+        CreateMap<CreateUpdateNoiCapCCCDDto, NoiCapCCCD>();
+
+        // Receiver
+        CreateMap<NguoiTiepNhan, NguoiTiepNhanDto>();
+        CreateMap<CreateUpdateNguoiTiepNhanDto, NguoiTiepNhan>();
     }
 }

@@ -13,7 +13,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace H04.Cts.Application.DanhMucs;
 
-[Authorize(CtsPermissions.DanhMucs.ToChuc)]
+// [Authorize(CtsPermissions.DanhMucs.ToChuc)]
 public class ToChucAppService : ApplicationService, IToChucAppService
 {
     private readonly IRepository<ToChuc, long> _repository;
@@ -46,7 +46,7 @@ public class ToChucAppService : ApplicationService, IToChucAppService
         );
     }
 
-    [Authorize(CtsPermissions.DanhMucs.ToChucCreate)]
+    // [Authorize(CtsPermissions.DanhMucs.ToChucCreate)]
     public async Task<ToChucDto> CreateAsync(CreateUpdateToChucDto input)
     {
         var book = ObjectMapper.Map<CreateUpdateToChucDto, ToChuc>(input);
