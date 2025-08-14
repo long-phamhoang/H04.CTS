@@ -18,17 +18,10 @@ function configureRoutes() {
       layout: eLayoutType.application,
     },
     {
-      path: '/main/danh-muc',
+      path: '/main/danh-muc/to-chuc',
       name: '::Menu:DanhMucs',
       iconClass: 'fas fa-book',
       order: 2,
-    },
-    {
-      path: '/main/danh-muc/to-chuc',
-      name: '::Menu:DanhMucs:ToChuc',
-      parentName: '::Menu:DanhMucs',
-      iconClass: 'fas fa-book',
-      layout: eLayoutType.empty,
     },
   ]);
 }
