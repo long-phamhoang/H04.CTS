@@ -1,10 +1,10 @@
-<page-header title="::Cts.DanhMucs" description="::Cts.DanhMucs.ToChuc"></page-header>
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.ToChuc' | abpLocalization"></page-header>
 <div class="card">
   <div class="card-header">
     <div class="row">
       <div class="col col-md-6">
         <h5 class="card-title">
-          {{ '::Menu:ToChucs' | abpLocalization }}
+          {{ '::Menu:ToChuc' | abpLocalization }}
         </h5>
       </div>
       <div class="text-end col col-md-6">
@@ -12,7 +12,7 @@
         <div class="text-lg-end pt-2">
           <button *abpPermission="'Cts.DanhMucs.ToChuc.Create'" id="create" class="btn btn-primary" type="button" (click)="createToChuc()">
             <i class="fa fa-plus me-1"></i>
-            <span>{{ '::NewToChuc' | abpLocalization }}</span>
+            <span>{{ '::CreateNew' | abpLocalization }}</span>
           </button>
         </div>
       </div>
