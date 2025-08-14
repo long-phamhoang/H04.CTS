@@ -11,6 +11,10 @@ const routes: Routes = [
         path: 'danh-muc/to-chuc',
         loadChildren: () => import('./danh-muc/to-chuc/to-chuc.module').then(m => m.ToChucModule),
       },
+      {
+        path: 'danh-muc/cap-co-quan',
+        loadChildren: () => import('./danh-muc/cap-co-quan/cap-co-quan.module').then(m => m.CapCoQuanModule),
+      },
     ],
   },
 ];
