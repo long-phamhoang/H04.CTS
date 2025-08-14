@@ -1,4 +1,4 @@
-import type { AuditedEntityDto } from '@abp/ng.core';
+import type { AuditedEntityDto, PagedAndSortedResultRequestDto } from '@abp/ng.core';
 import type { TrangThai } from './enums';
 
 export interface CreateUpdateToChucDto {
@@ -48,5 +48,9 @@ export interface CapCoQuanDto extends AuditedEntityDto<number> {
   tenCapCoQuan: string;
   trangThai?: TrangThai;
   ghiChu?: string;
+}
+
+export interface ListCapCoQuanRequestDto extends PagedAndSortedResultRequestDto {
+  filterString?: string;
 }
 //#endregion

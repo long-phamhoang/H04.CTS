@@ -17,15 +17,12 @@ import { ColumnMode } from '@swimlane/ngx-datatable';
 })
 export class CapCoQuanComponent implements OnInit {
   CapCoQuan = { items: [], totalCount: 0 } as PagedResultDto<CapCoQuanDto>;
-
   selectedCapCoQuan = {} as CapCoQuanDto; // declare selectedCapCoQuan
-
   form: FormGroup;
-
+  filterString = '';
   trangThaiOptions = trangThaiOptions;
   filteredRows = [];
   isModalOpen = false;
-  totalCount = 0;
   currentPage = 0;
   pageSize = 10;
   ColumnMode = ColumnMode;
@@ -38,35 +35,34 @@ export class CapCoQuanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadData(0);
+    this.loadData(0, this.filterString);
   }
 
-  loadData(page: number ) { 
+  loadData(page: number, filterString: string ) { 
     const capCoQuanStreamCreator = (query) => {
       query.skipCount = page * this.pageSize;
       query.maxResultCount = this.pageSize;
+      query.filterString = filterString;
       return this.CapCoQuanService.getList(query);
     };
     this.list.hookToQuery(capCoQuanStreamCreator).subscribe((response) => {
       this.CapCoQuan = response;
+      console.log('CapCoQuan', this.CapCoQuan);
       this.currentPage = page;
       this.filteredRows = this.CapCoQuan.items;
     });
   }
 
-  onPageChange(event: any) {
-    this.pageSize = event.rows;
-    this.loadData(event.page);
+  onSearch(value: string) {
+    this.filterString = value;
+    this.loadData(0, this.filterString);
   }
 
-  updateFilter(event) {
-    const val = event.target.value.toLowerCase();
-    this.filteredRows = this.CapCoQuan.items.filter(d =>
-      d.tenCapCoQuan?.toLowerCase().includes(val) ||
-      d.maCapCoQuan?.toLowerCase().includes(val) ||
-      !val
-    );
+  onPageChange(event: any) {
+    this.pageSize = event.rows;
+    this.loadData(event.page, this.filterString);
   }
+  
   createCapCoQuan() {
     this.selectedCapCoQuan = {} as CapCoQuanDto; // reset the selected CapCoQuan
     this.buildForm();
@@ -118,7 +114,7 @@ export class CapCoQuanComponent implements OnInit {
     request.subscribe(() => {
       this.isModalOpen = false;
       this.form.reset();
-      this.list.get();
+      this.loadData(0, this.filterString);
     });
   }
 

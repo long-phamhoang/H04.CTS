@@ -34,6 +34,7 @@
 // #endregion
 .card {
   margin: 15px 15px;
+  box-shadow: 1px -1px 1px 0px rgba(0, 0, 0, 0.1) inset;
 }
 
 .card-body {
@@ -59,15 +60,14 @@
 }
 
 ::ng-deep .p-paginator {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   justify-content: right !important;
   background: #fff !important;
   border-radius: 8px;
   box-shadow: none !important;
-  padding: 8px 16px;
-  margin-top: 16px;
   font-size: 15px;
+  padding: 8px 0 !important;
 }
 
 ::ng-deep .p-paginator-rpp-dropdown,
@@ -88,3 +88,18 @@
 ::ng-deep .p-ripple {
   color: #000 !important;
 }
+
+::ng-deep .datatable-footer-inner {
+  display: none !important;
+}
+
+::ng-deep .visible{
+  
+  border-radius: 4px !important;
+  border: #e5e7eb 0.5px solid !important;
+}
+
+::ng-deep .datatable-header-cell{
+  background-color: #f9fafb !important;
+}
+

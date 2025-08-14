@@ -1,3 +1,4 @@
+using H04.Cts.DanhMucs.CapCoQuans.Dtos;
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.Permissions;
@@ -31,10 +32,15 @@ public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
     #endregion
 
     #region List
-    public async Task<PagedResultDto<CapCoQuanDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<CapCoQuanDto>> GetListAsync(ListCapCoQuanRequestDto input)
     {
         var queryable = await _repository.GetQueryableAsync();
 
+        if (!input.FilterString.IsNullOrWhiteSpace())
+        {
+            queryable = queryable.Where(x => (x.TenCapCoQuan != null && x.TenCapCoQuan.Contains(input.FilterString))
+                                          || (x.MaCapCoQuan != null && x.MaCapCoQuan.Contains(input.FilterString)));
+        }
         if (!input.Sorting.IsNullOrWhiteSpace())
             queryable = queryable.OrderBy(input.Sorting)
                                  .ThenByDescending(x => x.LastModificationTime != null ? x.LastModificationTime : x.CreationTime);
