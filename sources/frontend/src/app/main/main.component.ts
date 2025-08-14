@@ -1,16 +1,21 @@
-import { Component } from '@angular/core';
+import { AuthService, LocalizationService } from '@abp/ng.core';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   standalone: false,
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.less'],
+  providers: [DatePipe]
 })
-export class MainComponent {
+export class MainComponent implements OnInit, OnDestroy {
+  //#region Variables
   navMenu: MenuItem[] = [
     {
-      label: 'Bảng thống kê', url: '/dashboard',
+      label: 'Bảng thống kê', routerLink: '/dashboard',
     },
     {
       label: 'Văn thư', items: [
@@ -23,28 +28,30 @@ export class MainComponent {
       ]
     },
     {
-      label: 'Danh mục', items: [
-        { label: 'Tỉnh, thành phố', url: '/main/danh-muc/tinh-thanh-pho', },
-        { label: 'Xã, phường', url: '/main/danh-muc/xa-phuong', },
-        { label: 'Cấp cơ quan', url: '/main/danh-muc/cap-co-quan', },
-        { label: 'Tổ chức', url: '/main/danh-muc/to-chuc', },
-        { label: 'Loại thiết bị, dịch vụ', url: '/main/danh-muc/loai-thiet-bi-dich-vu', },
-        { label: 'Thiết bị dịch vụ, phần mềm', url: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', },
-        { label: 'Chức vụ', url: '/main/danh-muc/chuc-vu', },
-        { label: 'Thuê bao cá nhân', url: '/main/danh-muc/thue-bao-ca-nhan', },
-        { label: 'Nơi cấp CCCD', url: '/main/danh-muc/noi-cap-cccd', },
-        { label: 'Người tiếp nhận', url: '/main/danh-muc/nguoi-tiep-nhan', },
-        { label: 'Loại hồ sơ', url: '/main/danh-muc/loai-ho-so', },
-        { label: 'Loại chứng thư số', url: '/main/danh-muc/loai-chung-thu-so', },
-        { label: 'Trích yếu', url: '/main/danh-muc/trich-yeu', },
-        { label: 'Chứng thư số và thiết bị', url: '/main/danh-muc/chung-thu-so-va-thiet-bi', },
+      label: '::Menu:DanhMucs', items: [
+        { label: '::Menu:TinhThanhPho', routerLink: '/main/danh-muc/tinh-thanh-pho', }, // DCIM Lê Thế Kỳ
+        { label: '::Menu:XaPhuong', routerLink: '/main/danh-muc/xa-phuong', }, // DCIM Lê Thế Kỳ
+        { label: '::Menu:CapCoQuan', routerLink: '/main/danh-muc/cap-co-quan', }, // TA Nguyễn Quang Phước
+        { label: '::Menu:ToChuc', routerLink: '/main/danh-muc/to-chuc', },
+        { label: '::Menu:LoaiThietBiDichVuPhanMem', routerLink: '/main/danh-muc/loai-thiet-bi-dich-vu', }, // TA Dương Xuân Lộc
+        { label: '::Menu:ThietBiDichVuPhanMem', routerLink: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', }, // TA Dương Xuân Lộc
+        { label: '::Menu:ChucVu', routerLink: '/main/danh-muc/chuc-vu', }, // CA Phạm Ngọc Thuỷ
+        { label: '::Menu:ThueBaoCaNhan', routerLink: '/main/danh-muc/thue-bao-ca-nhan', }, // CA Phạm Ngọc Thuỷ
+        { label: '::Menu:NoiCapCCCD', routerLink: '/main/danh-muc/noi-cap-cccd', }, // DCIM Trịnh Đức Thành
+        { label: '::Menu:NguoiTiepNhan', routerLink: '/main/danh-muc/nguoi-tiep-nhan', }, // DCIM Trịnh Đức Thành
+        { label: '::Menu:LoaiHoSo', routerLink: '/main/danh-muc/loai-ho-so', }, // TA Tạ Đức Hoàn
+        { label: '::Menu:LoaiChungThuSo', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // TA Tạ Đức Hoàn
+        { label: '::Menu:MangHeThongCapCts', routerLink: '/main/danh-muc/mang-he-thong-cap-cts', }, // TA Trần Đức Minh
+        { label: '::Menu:TrichYeu', routerLink: '/main/danh-muc/trich-yeu', }, // TA Trần Đức Minh,
+        { label: '::Menu:LucLuong', routerLink: '/main/danh-muc/trich-yeu', }, // CA Nguyễn Công Tâm,
+        { label: '::Menu:DieuKienCapCTSTheoLL', routerLink: '/main/danh-muc/dieu-kien-cap-cts-theo-luc-luong', }, // CA Nguyễn Công Tâm,
       ]
     },
     {
-      label: 'Quản trị hệ thống', items: [
-        { label: 'Người dùng', url: '/accounts', },
-        { label: 'Vai trò', url: '/roles', },
-        { label: 'Thiết lập', url: '/settings', },
+      label: '::Menu:SystemAdministration', items: [
+        { label: '::Menu:NguoiDung', routerLink: '/identity/users', },
+        { label: '::Menu:VaiTro', routerLink: '/identity/roles', },
+        { label: '::Menu:CaiDat', routerLink: '/setting-management', },
       ]
     },
   ];
@@ -52,12 +59,43 @@ export class MainComponent {
   userMenu: MenuItem[] = [
     { label: 'Thông tin cá nhân', icon: 'pi pi-user', routerLink: '/profile' },
     { label: 'Đổi mật khẩu', icon: 'pi pi-key', routerLink: '/change-password' },
-    { label: 'Đăng xuất', icon: 'pi pi-sign-out', command: () => this.logout() }
+    { label: '::Menu:Logout', icon: 'pi pi-sign-out', command: () => this.logout() }
   ];
 
-  constructor() { }
+  currentTime: string;
+  currentTimeSubscription: Subscription | undefined;
+  //#endregion
 
-  logout() {
+  //#region Constructor and Lifecycle
+  constructor(
+    private datePipe: DatePipe,
+    private authService: AuthService,
+    private localizationService: LocalizationService,
+  ) { }
 
+  ngOnInit(): void {
+    this.navMenu.forEach((menu) => {
+      menu.label = this.localizationService.instant(menu.label);
+      menu.items?.forEach((submenu) => {
+        submenu.label = this.localizationService.instant(submenu.label);
+      });
+    });
+    this.currentTimeSubscription = interval(1000).subscribe(() => {
+      const now = new Date();
+      this.currentTime = this.datePipe.transform(now, 'EEEE, dd/MM/yyyy - HH:mm');
+    });
   }
+
+  ngOnDestroy(): void {
+    if (this.currentTimeSubscription) {
+      this.currentTimeSubscription.unsubscribe();
+    }
+  }
+  //#endregion
+
+  //#region Main methods
+  logout() {
+    this.authService.logout().subscribe();
+  }
+  //#endregion
 }

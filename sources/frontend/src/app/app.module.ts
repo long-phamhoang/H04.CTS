@@ -7,6 +7,8 @@ import { provideIdentityConfig } from '@abp/ng.identity/config';
 import { provideAccountConfig } from '@abp/ng.account/config';
 import { registerLocale } from '@abp/ng.core/locale';
 import { ThemeBasicModule, provideThemeBasicConfig } from '@abp/ng.theme.basic';
+import { registerLocaleData } from '@angular/common';
+import localeVi from '@angular/common/locales/vi';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,6 +19,8 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { APP_ROUTE_PROVIDER } from './route.provider';
+
+registerLocaleData(localeVi, 'vi');
 
 @NgModule({
   declarations: [AppComponent],
@@ -48,7 +52,7 @@ import { APP_ROUTE_PROVIDER } from './route.provider';
       theme: {
         preset: Aura,
       },
-    })
+    }),
   ],
   bootstrap: [AppComponent],
 })
