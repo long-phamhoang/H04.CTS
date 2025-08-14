@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace H04.Cts.Application.DanhMucs;
 
-public interface ILucLuongAppService : ICrudAppService<LucLuongDto, long, PagedAndSortedResultRequestDto, CreateUpdateLucLuongDto>
+public interface ILucLuongAppService : ICrudAppService<LucLuongDto, long, GetLucLuongListDto, CreateUpdateLucLuongDto>
 {
-  Task SoftDeleteAsync(long id);
+    Task SoftDeleteAsync(long id);
 }

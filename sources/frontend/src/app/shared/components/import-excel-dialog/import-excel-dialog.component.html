@@ -1,0 +1,105 @@
+<!-- sources/frontend/src/app/shared/components/import-excel-dialog/import-excel-dialog.component.html -->
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="close()"
+  [modal]="true"
+  header="Import Excel"
+  [style]="{ width: '640px' }"
+  [baseZIndex]="1055"
+  [dismissableMask]="true"
+>
+  <div class="space-y-4">
+    <div class="p-3 rounded border bg-blue-50 text-blue-700 text-sm">
+      Vui lòng tải file mẫu, điền dữ liệu theo đúng cấu trúc cột, sau đó chọn file để import.
+    </div>
+
+    <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 8px">
+      <p-button
+        type="button"
+        label="Tải file mẫu"
+        icon="pi pi-download"
+        severity="info"
+        (onClick)="downloadTemplate()"
+      ></p-button>
+      <span class="text-xs text-gray-500">Tên sheet: {{ sheetName }}</span>
+    </div>
+
+    <div>
+      <input
+        #fileInput
+        type="file"
+        accept=".xlsx,.xls"
+        (change)="onFileChange($event)"
+        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white"
+        style="display: block; width: 100%"
+      />
+    </div>
+
+    <div *ngIf="rows.length" class="space-y-2">
+      <div class="border rounded max-h-64 overflow-auto" style="max-height: 256px; overflow: auto">
+        <table class="w-full text-sm" style="width: 100%">
+          <thead
+            class="bg-gray-50 sticky top-0"
+            style="position: sticky; top: 0; background: #f9fafb"
+          >
+            <tr>
+              <th
+                *ngFor="let col of columns"
+                class="text-left p-2 border-b"
+                style="text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb"
+              >
+                {{ col.header || col.field }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rows; let i = index" class="odd:bg-white even:bg-gray-50">
+              <td
+                *ngFor="let col of columns"
+                class="p-2 border-b"
+                style="padding: 8px; border-bottom: 1px solid #e5e7eb"
+              >
+                {{ r[col.field] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="flex items-center justify-between text-sm"
+        style="display: flex; justify-content: space-between"
+      >
+        <div>
+          <span class="text-green-700">Hợp lệ: {{ validCount }}</span>
+          <span class="mx-2">|</span>
+          <span class="text-red-700">Lỗi: {{ invalidCount }}</span>
+        </div>
+      </div>
+
+      <div
+        *ngIf="invalidCount"
+        class="border rounded p-2 bg-red-50 text-red-700 text-sm max-h-40 overflow-auto"
+        style="max-height: 160px; overflow: auto"
+      >
+        <div class="font-medium mb-1">Dòng lỗi:</div>
+        <ul class="list-disc pl-5 space-y-1" style="padding-left: 20px">
+          <li *ngFor="let issues of rowIssues; let idx = index" [hidden]="!issues.length">
+            Dòng {{ idx + 2 }}: {{ issues.join('; ') }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2" style="display: flex; justify-content: flex-end; gap: 8px">
+      <p-button label="Huỷ" severity="secondary" (onClick)="close()"></p-button>
+      <p-button
+        label="Import"
+        icon="pi pi-upload"
+        severity="success"
+        [disabled]="!rows.length || isSubmitting || invalidCount > 0"
+        (onClick)="confirmImport()"
+      ></p-button>
+    </div>
+  </div>
+</p-dialog>

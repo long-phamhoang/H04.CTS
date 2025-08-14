@@ -1,8 +1,32 @@
+<page-header title="::Cts.DanhMucs" description="::Cts.DanhMucs.LucLuong"></page-header>
 <div class="container-fluid">
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Danh mục Lực lượng</h5>
-      <button class="btn btn-primary" (click)="create()">Thêm</button>
+      <div class="d-flex align-items-center" style="gap: 8px">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <p-autoComplete
+            #autoCompleteInput
+            [(ngModel)]="searchValue"
+            [suggestions]="searchSuggestions"
+            (completeMethod)="onSearch($event)"
+            (onSelect)="onSelect($event)"
+            (onClear)="clearSearch()"
+            [forceSelection]="false"
+            [showClear]="true"
+            placeholder="Tìm kiếm"
+            field="tenLucLuong"
+            [minLength]="0"
+            style="height: 38px; width: 100%"
+          >
+          </p-autoComplete>
+        </span>
+      </div>
+      <div class="d-flex align-items-center" style="gap: 8px">
+        <button class="btn btn-success" (click)="openExportDialog()">Xuất Excel</button>
+        <button class="btn btn-info" (click)="openImportDialog()">Nhập Excel</button>
+        <button class="btn btn-primary" (click)="create()">Thêm mới</button>
+      </div>
     </div>
     <div class="card-body">
       <table class="table table-sm table-hover">
@@ -13,12 +37,12 @@
             <th>Tên lực lượng</th>
             <th>Trạng thái</th>
             <th>Ghi chú</th>
-            <th style="width: 120px"></th>
+            <th style="width: 120px; text-align: right">Hành động</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of lucLuong.items; let i = index">
-            <td>{{ i + 1 }}</td>
+          <tr *ngFor="let item of displayItems; let i = index">
+            <td>{{ pageIndex * pageSize + i + 1 }}</td>
             <td>{{ item.maLucLuong }}</td>
             <td>{{ item.tenLucLuong }}</td>
             <td>
@@ -34,12 +58,37 @@
             </td>
             <td>{{ item.ghiChu }}</td>
             <td class="text-end">
-              <button class="btn btn-link btn-sm" (click)="edit(item.id)">Sửa</button>
-              <button class="btn btn-link btn-sm text-danger" (click)="delete(item.id)">Xóa</button>
+              <div ngbDropdown class="d-inline-block">
+                <button
+                  class="btn btn-primary btn-sm"
+                  style="background-color: #009ef7"
+                  ngbDropdownToggle
+                >
+                  <i class="pi pi-cog" style="margin-right: 20px"></i>
+                </button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="edit(item.id)">Sửa</button>
+                  <button ngbDropdownItem class="text-danger" (click)="delete(item.id)">Xóa</button>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
+      <div class="d-flex justify-content-end align-items-center">
+        <span>
+          <span class="total-text" style="opacity: 0.7">Tổng cộng: {{ lucLuong.totalCount }}</span>
+        </span>
+        <p-paginator
+          [rows]="pageSize"
+          [first]="pageIndex * pageSize"
+          [totalRecords]="lucLuong?.totalCount || 0"
+          [rowsPerPageOptions]="[5, 10, 20, 50]"
+          (onPageChange)="onPageChange($event)"
+          styleClass="ml-2 custom-paginator"
+        >
+        </p-paginator>
+      </div>
     </div>
   </div>
 
@@ -95,4 +144,24 @@
       </button>
     </ng-template>
   </p-dialog>
+
+  <app-export-excel-dialog
+    [(visible)]="exportVisible"
+    [data]="exportData"
+    [columns]="exportColumns"
+    [defaultFileName]="'LucLuong.xlsx'"
+    [defaultSheetName]="'LucLuong'"
+    (exported)="onExported()"
+  ></app-export-excel-dialog>
+
+  <app-import-excel-dialog
+    [(visible)]="showImport"
+    [columns]="importColumns"
+    [templateFileName]="'import_luc_luong.xlsx'"
+    [templateSheetName]="'Sheet1'"
+    [requiredFields]="['maLucLuong', 'tenLucLuong']"
+    [uniqueByField]="'maLucLuong'"
+    [existingValues]="existingMaLucLuongValues"
+    (imported)="onImported($event)"
+  ></app-import-excel-dialog>
 </div>

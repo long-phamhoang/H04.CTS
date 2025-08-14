@@ -31,13 +31,13 @@ export class LucLuongService {
 		},
 		{ apiName: this.apiName,...config });
 
-	getList = (input: PagedAndSortedResultRequestDto, config?: Partial<Rest.Config>) =>
-		this.restService.request<any, PagedResultDto<LucLuongDto>>({
-			method: 'GET',
-			url: '/api/app/luc-luong',
-			params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
-		},
-		{ apiName: this.apiName,...config });
+		getList = (input: PagedAndSortedResultRequestDto & { filter?: string }, config?: Partial<Rest.Config>) =>
+			this.restService.request<any, PagedResultDto<LucLuongDto>>({
+				method: 'GET',
+				url: '/api/app/luc-luong',
+				params: { filter: input.filter, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+			},
+			{ apiName: this.apiName,...config });
 
 	update = (id: number, input: CreateUpdateLucLuongDto, config?: Partial<Rest.Config>) =>
 		this.restService.request<any, LucLuongDto>({

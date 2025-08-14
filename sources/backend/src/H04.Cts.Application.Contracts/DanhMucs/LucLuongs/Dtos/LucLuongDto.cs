@@ -12,3 +12,7 @@ public class LucLuongDto : AuditedEntityDto<long>
     public TrangThai TrangThai { get; set; }
     public string? GhiChu { get; set; }
 }
+public class GetLucLuongListDto : PagedAndSortedResultRequestDto
+{
+    public string? Filter { get; set; }
+}

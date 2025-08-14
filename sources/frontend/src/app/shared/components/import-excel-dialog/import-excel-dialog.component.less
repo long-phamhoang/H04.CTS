@@ -1,0 +1,83 @@
+
+:host {
+  display: block;
+}
+
+/* spacing */
+.space-y-4 > * + * { margin-top: 16px; }
+.space-y-2 > * + * { margin-top: 8px; }
+.space-y-1 > * + * { margin-top: 4px; }
+.mb-1 { margin-bottom: 4px; }
+.mx-2 { margin-left: 8px; margin-right: 8px; }
+
+/* layout */
+.block { display: block; }
+.w-full { width: 100%; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-2 { gap: 8px; }
+
+/* table container */
+.max-h-64 { max-height: 256px; }
+.max-h-40 { max-height: 160px; }
+.overflow-auto { overflow: auto; }
+
+/* borders & radius */
+.border { border: 1px solid #e5e7eb; }
+.border-b { border-bottom: 1px solid #e5e7eb; }
+.rounded { border-radius: 6px; }
+.rounded-lg { border-radius: 8px; }
+
+/* colors */
+.bg-white { background-color: #ffffff; }
+.bg-gray-50 { background-color: #f9fafb; }
+.bg-blue-50 { background-color: #eff6ff; }
+.bg-red-50 { background-color: #fef2f2; }
+.text-gray-900 { color: #111827; }
+.text-blue-700 { color: #1d4ed8; }
+.text-red-700 { color: #b91c1c; }
+.text-green-700 { color: #15803d; }
+
+/* text */
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 14px; }
+.font-medium { font-weight: 500; }
+
+/* sticky header helpers */
+.sticky { position: sticky; }
+.top-0 { top: 0; }
+
+/* zebra rows via class names with escaped colon */
+.odd\:bg-white:nth-child(odd) { background-color: #ffffff; }
+.even\:bg-gray-50:nth-child(even) { background-color: #f9fafb; }
+
+/* file input styling */
+.cursor-pointer { cursor: pointer; }
+.focus\:outline-none:focus { outline: none; }
+.focus\:ring-2:focus { box-shadow: 0 0 0 2px #3b82f6; }
+
+input[type="file"] {
+  font-size: 14px;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 1rem;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #1d4ed8;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #dbeafe;
+}

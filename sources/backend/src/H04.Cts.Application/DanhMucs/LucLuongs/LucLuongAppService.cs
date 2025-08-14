@@ -28,16 +28,27 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
         return ObjectMapper.Map<LucLuong, LucLuongDto>(entity);
     }
 
-    public async Task<PagedResultDto<LucLuongDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+    public async Task<PagedResultDto<LucLuongDto>> GetListAsync(GetLucLuongListDto input)
     {
         var queryable = await _repository.GetQueryableAsync();
+
+        if (!string.IsNullOrWhiteSpace(input.Filter))
+        {
+            var f = input.Filter.ToLower();
+            queryable = queryable.Where(x =>
+                ((x.TenLucLuong ?? "").ToLower().Contains(f)) ||
+                ((x.MaLucLuong ?? "").ToLower().Contains(f))
+            );
+        }
+
+        var totalCount = await AsyncExecuter.CountAsync(queryable);
+
         var query = queryable
             .OrderBy(string.IsNullOrWhiteSpace(input.Sorting) ? "TenLucLuong" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
         var items = await AsyncExecuter.ToListAsync(query);
-        var totalCount = await AsyncExecuter.CountAsync(queryable);
 
         return new PagedResultDto<LucLuongDto>(
             totalCount,
@@ -89,4 +100,7 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
         var entity = await _repository.GetAsync(id);
         await _repository.HardDeleteAsync(entity);
     }
+
+
+
 }

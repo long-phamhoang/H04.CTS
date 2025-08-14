@@ -4,6 +4,7 @@ import { ThemeSharedModule } from '@abp/ng.theme.shared';
 //#endregion
 //#region Angular Core Modules
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //#endregion
 //#region Bootstrap Modules
@@ -35,6 +36,7 @@ import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from 'primeng/button';
 //#endregion
 //#region Extension Modules
 import { NgxValidateCoreModule } from '@ngx-validate/core';
@@ -42,6 +44,8 @@ import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 //#region Components
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { ExportExcelDialogComponent } from './components/export-excel-dialog/export-excel-dialog.component';
+import { ImportExcelDialogComponent } from './components/import-excel-dialog/import-excel-dialog.component';
 //#endregion
 
 const modules = [
@@ -50,6 +54,7 @@ const modules = [
   ThemeSharedModule,
 
   // Angular Core Modules
+  CommonModule,
   FormsModule,
   ReactiveFormsModule,
 
@@ -81,6 +86,7 @@ const modules = [
   TabViewModule,
   TagModule,
   TooltipModule,
+  ButtonModule,
 
   // Extension Modules
   NgxValidateCoreModule,
@@ -88,6 +94,8 @@ const modules = [
 
 const components = [
   PageHeaderComponent,
+  ExportExcelDialogComponent,
+  ImportExcelDialogComponent,
 ];
 
 @NgModule({
