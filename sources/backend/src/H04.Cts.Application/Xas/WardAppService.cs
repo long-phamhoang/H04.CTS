@@ -4,36 +4,36 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using H04.Cts.Provinces;
+using H04.Cts.Tinhs;
 
-namespace H04.Cts.Wards;
+namespace H04.Cts.Xas;
 public class WardAppService : ApplicationService
 {
-    private readonly IRepository<Province, Guid> _provinceRepository;
-    private readonly IRepository<Ward, Guid> _wardRepository;
+    private readonly IRepository<Tinh, Guid> _provinceRepository;
+    private readonly IRepository<Xa, Guid> _wardRepository;
 
-    public WardAppService(IRepository<Province, Guid> provinceRepository, IRepository<Ward, Guid> wardRepository)
+    public WardAppService(IRepository<Tinh, Guid> provinceRepository, IRepository<Xa, Guid> wardRepository)
     {
         _provinceRepository = provinceRepository;
         _wardRepository = wardRepository;
     }
 
     // Get all wards by province ID
-    public async Task<List<Ward>> GetWardsByProvinceIdAsync(Guid provinceId)
+    public async Task<List<Xa>> GetWardsByProvinceIdAsync(Guid tinhId)
     {
         try
         {
-            var wards = await _wardRepository.GetListAsync(x => x.ProvinceId == provinceId);
+            var wards = await _wardRepository.GetListAsync(x => x.TinhId == tinhId);
             return wards;
         }
         catch (Exception ex)
         {
-            throw new Exception($"An error occurred while retrieving wards for province ID {provinceId}.", ex);
+            throw new Exception($"An error occurred while retrieving wards for province ID {tinhId}.", ex);
         }
     }
 
     // Get a ward by ID
-    public async Task<Ward> GetWardByIdAsync(Guid id)
+    public async Task<Xa> GetWardByIdAsync(Guid id)
     {
         try
         {
@@ -55,18 +55,18 @@ public class WardAppService : ApplicationService
                 throw new ArgumentNullException(nameof(wardDto), "Ward data cannot be null.");
             }
             // Check if the province exists
-            var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.ProvinceId);
+            var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.TinhId);
             if (!provinceExists)
             {
-                throw new Exception($"Province with ID {wardDto.ProvinceId} does not exist.");
+                throw new Exception($"Province with ID {wardDto.TinhId} does not exist.");
             }
             // Check if the ward code already exists
-            var isExistCode = await _wardRepository.AnyAsync(x => x.Code == wardDto.Code);
+            var isExistCode = await _wardRepository.AnyAsync(x => x.MaXa == wardDto.MaXa);
             if (isExistCode)
             {
-                throw new Exception($"Ward with code {wardDto.Code} already exists.");
+                throw new Exception($"Ward with code {wardDto.MaXa} already exists.");
             }
-            var ward = ObjectMapper.Map<WardDto, Ward>(wardDto);
+            var ward = ObjectMapper.Map<WardDto, Xa>(wardDto);
             await _wardRepository.InsertAsync(ward);
             return "OK";
         }
@@ -87,7 +87,7 @@ public class WardAppService : ApplicationService
             }
             // Check for duplicate codes and names
             var duplicateCodes = wardDtos
-                .GroupBy(w => w.Code?.Trim(), StringComparer.OrdinalIgnoreCase)
+                .GroupBy(w => w.MaXa?.Trim(), StringComparer.OrdinalIgnoreCase)
                 .Where(g => g.Count() > 1)
                 .Select(g => g.Key)
                 .ToList();
@@ -95,39 +95,39 @@ public class WardAppService : ApplicationService
             {
                 throw new Exception($"Duplicate codes found in input list: {string.Join(", ", duplicateCodes)}");
             }
-            var duplicateNames = wardDtos
-                .GroupBy(w => w.Name?.Trim(), StringComparer.OrdinalIgnoreCase)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key)
-                .ToList();
+            //var duplicateNames = wardDtos
+            //    .GroupBy(w => w.Name?.Trim(), StringComparer.OrdinalIgnoreCase)
+            //    .Where(g => g.Count() > 1)
+            //    .Select(g => g.Key)
+            //    .ToList();
 
-            if (duplicateNames.Any())
-            {
-                throw new Exception($"Duplicate names found in input list: {string.Join(", ", duplicateNames)}");
-            }
+            //if (duplicateNames.Any())
+            //{
+            //    throw new Exception($"Duplicate names found in input list: {string.Join(", ", duplicateNames)}");
+            //}
 
             foreach (var wardDto in wardDtos)
             {
                 // Check if the province exists
-                var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.ProvinceId);
+                var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.TinhId);
                 if (!provinceExists)
                 {
-                    throw new Exception($"Province with ID {wardDto.ProvinceId} does not exist.");
+                    throw new Exception($"Province with ID {wardDto.TinhId} does not exist.");
                 }
                 // Check if the ward code already exists
-                var isExistCode = await _wardRepository.AnyAsync(x => x.Code == wardDto.Code);
+                var isExistCode = await _wardRepository.AnyAsync(x => x.MaXa == wardDto.MaXa);
                 if (isExistCode)
                 {
-                    throw new Exception($"Ward with code {wardDto.Code} already exists.");
+                    throw new Exception($"Ward with code {wardDto.MaXa} already exists.");
                 }
                 // Check if the ward name already exists
-                var isExistName = await _wardRepository.AnyAsync(x => x.Name == wardDto.Name);
-                if (isExistName)
-                {
-                    throw new Exception($"Ward with name {wardDto.Name} already exists.");
-                }
+                //var isExistName = await _wardRepository.AnyAsync(x => x.TenXa == wardDto.TenXa);
+                //if (isExistName)
+                //{
+                //    throw new Exception($"Ward with name {wardDto.TenXa} already exists.");
+                //}
             }
-            var wards = ObjectMapper.Map<List<WardDto>, List<Ward>>(wardDtos);
+            var wards = ObjectMapper.Map<List<WardDto>, List<Xa>>(wardDtos);
             await _wardRepository.InsertManyAsync(wards);
             return "OK";
         }
@@ -152,23 +152,23 @@ public class WardAppService : ApplicationService
                 throw new Exception($"Ward with ID {id} does not exist.");
             }
             // Check if the province exists
-            var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.ProvinceId);
+            var provinceExists = await _provinceRepository.AnyAsync(x => x.Id == wardDto.TinhId);
             if (!provinceExists)
             {
-                throw new Exception($"Province with ID {wardDto.ProvinceId} does not exist.");
+                throw new Exception($"Province with ID {wardDto.TinhId} does not exist.");
             }
             // Check if the ward code already exists
-            var isExistCode = await _wardRepository.AnyAsync(x => x.Code == wardDto.Code && x.Id != id);
+            var isExistCode = await _wardRepository.AnyAsync(x => x.MaXa == wardDto.MaXa && x.Id != id);
             if (isExistCode)
             {
-                throw new Exception($"Ward with code {wardDto.Code} already exists.");
+                throw new Exception($"Ward with code {wardDto.MaXa} already exists.");
             }
             // Check if the ward name already exists
-            var isExistName = await _wardRepository.AnyAsync(x => x.Name == wardDto.Name && x.Id != id);
-            if (isExistName) 
-            {
-                throw new Exception($"Ward with name {wardDto.Name} already exists.");
-            }
+            //var isExistName = await _wardRepository.AnyAsync(x => x.TenXa == wardDto.TenXa && x.Id != id);
+            //if (isExistName) 
+            //{
+            //    throw new Exception($"Ward with name {wardDto.TenXa} already exists.");
+            //}
             ObjectMapper.Map(wardDto, existingWard);
             await _wardRepository.UpdateAsync(existingWard);
             return "OK";

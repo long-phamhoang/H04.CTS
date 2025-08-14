@@ -2,25 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using System.Linq.Dynamic.Core;
 
-namespace H04.Cts.Provinces;
+namespace H04.Cts.Tinhs;
 public class ProvinceAppService : ApplicationService
 {
-    private readonly IRepository<Province, Guid> _repository;
+    private readonly IRepository<Tinh, Guid> _repository;
 
-    public ProvinceAppService(IRepository<Province, Guid> repository)
+    public ProvinceAppService(IRepository<Tinh, Guid> repository)
     {
         _repository = repository;
     }
 
     // get all provinces
-    public async Task<List<Province>> GetAllAsync()
+    public async Task<PagedResultDto<Tinh>> GetAllAsync(PagedAndSortedResultRequestDto input)
     {
         try
         {
-            return await _repository.GetListAsync();
+            var queryable = await _repository.GetQueryableAsync();
+            var totalCount = await _repository.GetCountAsync();
+            var query = queryable
+                .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "TenTinh" : input.Sorting)
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount);
+            var tinhs = await AsyncExecuter.ToListAsync(query);
+
+            return new PagedResultDto<Tinh>(totalCount, tinhs);
         }
         catch(Exception ex)
         {
@@ -30,7 +40,7 @@ public class ProvinceAppService : ApplicationService
     }
 
     // get province by id
-    public async Task<Province> GetAsync(Guid id)
+    public async Task<Tinh> GetAsync(Guid id)
     {
         try
         {
@@ -51,18 +61,18 @@ public class ProvinceAppService : ApplicationService
             {
                 throw new ArgumentNullException(nameof(province), "Province data cannot be null.");
             }
-            var is_exist_code = await _repository.AnyAsync(x => x.Code == province.Code);
+            var is_exist_code = await _repository.AnyAsync(x => x.MaTinh == province.MaTinh);
             if (is_exist_code)
             {
-                throw new Exception($"Province with code {province.Code} already exists.");
+                throw new Exception($"Province with code {province.MaTinh} already exists.");
             }
-            var is_exist_name = await _repository.AnyAsync(x => x.Name == province.Name);
-            if (is_exist_name)
-            {
-                throw new Exception($"Province with name {province.Name} already exists.");
-            }
+            //var is_exist_name = await _repository.AnyAsync(x => x.TenTinh == province.TenTinh);
+            //if (is_exist_name)
+            //{
+            //    throw new Exception($"Province with name {province.TenTinh} already exists.");
+            //}
 
-            var newProvince = ObjectMapper.Map<CreateProvinceDto, Province>(province);
+            var newProvince = ObjectMapper.Map<CreateProvinceDto, Tinh>(province);
             await _repository.InsertAsync(newProvince);
             return "OK";
         }
@@ -82,7 +92,7 @@ public class ProvinceAppService : ApplicationService
                 throw new ArgumentNullException(nameof(provinces), "Province data cannot be null or empty.");
             }
             var duplicateCodes = provinces
-            .GroupBy(p => p.Code?.Trim(), StringComparer.OrdinalIgnoreCase)
+            .GroupBy(p => p.MaTinh?.Trim(), StringComparer.OrdinalIgnoreCase)
             .Where(g => g.Count() > 1)
             .Select(g => g.Key)
             .ToList();
@@ -91,29 +101,29 @@ public class ProvinceAppService : ApplicationService
                 throw new Exception($"Duplicate codes found in input list: {string.Join(", ", duplicateCodes)}");
             }
 
-            var duplicateNames = provinces
-                .GroupBy(p => p.Name?.Trim(), StringComparer.OrdinalIgnoreCase)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key)
-                .ToList();
-            if (duplicateNames.Any())
-            {
-                throw new Exception($"Duplicate names found in input list: {string.Join(", ", duplicateNames)}");
-            }
+            //var duplicateNames = provinces
+            //    .GroupBy(p => p.TenTinh?.Trim(), StringComparer.OrdinalIgnoreCase)
+            //    .Where(g => g.Count() > 1)
+            //    .Select(g => g.Key)
+            //    .ToList();
+            //if (duplicateNames.Any())
+            //{
+            //    throw new Exception($"Duplicate names found in input list: {string.Join(", ", duplicateNames)}");
+            //}
             foreach (var province in provinces)
             {
-                var is_exist_code = await _repository.AnyAsync(x => x.Code == province.Code);
+                var is_exist_code = await _repository.AnyAsync(x => x.MaTinh == province.MaTinh);
                 if (is_exist_code)
                 {
-                    throw new Exception($"Province with code {province.Code} already exists.");
+                    throw new Exception($"Province with code {province.MaTinh} already exists.");
                 }
-                var is_exist_name = await _repository.AnyAsync(x => x.Name == province.Name);
-                if (is_exist_name)
-                {
-                    throw new Exception($"Province with name {province.Name} already exists.");
-                }
+                //var is_exist_name = await _repository.AnyAsync(x => x.TenTinh == province.TenTinh);
+                //if (is_exist_name)
+                //{
+                //    throw new Exception($"Province with name {province.TenTinh} already exists.");
+                //}
             }
-            var newProvinces = ObjectMapper.Map<List<CreateProvinceDto>, List<Province>>(provinces);
+            var newProvinces = ObjectMapper.Map<List<CreateProvinceDto>, List<Tinh>>(provinces);
             await _repository.InsertManyAsync(newProvinces);
             return "OK";
         }

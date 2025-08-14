@@ -1,6 +1,6 @@
 using H04.Cts.Entities.DanhMucs;
-using H04.Cts.Provinces;
-using H04.Cts.Wards;
+using H04.Cts.Tinhs;
+using H04.Cts.Xas;
 using H04.Cts.EntityFrameworkCore.EntityConfigurations.DanhMucs;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -46,8 +46,8 @@ public class CtsDbContext :
 
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
-    public DbSet<Province> Provinces { get; set; }
-    public DbSet<Ward> Wards { get; set; }
+    public DbSet<Tinh> Tinhs { get; set; }
+    public DbSet<Xa> Xas { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -74,9 +74,9 @@ public class CtsDbContext :
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
 
-        builder.Entity<Ward>(b =>
+        builder.Entity<Xa>(b =>
         {
-            b.HasOne(e => e.Province).WithMany(e => e.Wards).HasForeignKey(e => e.ProvinceId);
+            b.HasOne(e => e.Tinh).WithMany(e => e.Xas).HasForeignKey(e => e.TinhId);
         });
         #endregion
     }
