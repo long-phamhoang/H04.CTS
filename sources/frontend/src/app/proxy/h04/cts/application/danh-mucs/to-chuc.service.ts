@@ -1,13 +1,14 @@
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
-import type { CreateUpdateToChucDto, ToChucDto } from '../models';
+import type { CreateUpdateToChucDto, ToChucDto } from '../../dtos/danh-mucs/models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToChucService {
   apiName = 'Default';
+  
 
   create = (input: CreateUpdateToChucDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, ToChucDto>({
@@ -16,6 +17,7 @@ export class ToChucService {
       body: input,
     },
     { apiName: this.apiName,...config });
+  
 
   delete = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
@@ -23,6 +25,7 @@ export class ToChucService {
       url: `/api/app/to-chuc/${id}`,
     },
     { apiName: this.apiName,...config });
+  
 
   get = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, ToChucDto>({
@@ -30,6 +33,7 @@ export class ToChucService {
       url: `/api/app/to-chuc/${id}`,
     },
     { apiName: this.apiName,...config });
+  
 
   getList = (input: PagedAndSortedResultRequestDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<ToChucDto>>({
@@ -38,6 +42,7 @@ export class ToChucService {
       params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
+  
 
   softDelete = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
@@ -45,6 +50,7 @@ export class ToChucService {
       url: `/api/app/to-chuc/${id}/soft-delete`,
     },
     { apiName: this.apiName,...config });
+  
 
   update = (id: number, input: CreateUpdateToChucDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, ToChucDto>({

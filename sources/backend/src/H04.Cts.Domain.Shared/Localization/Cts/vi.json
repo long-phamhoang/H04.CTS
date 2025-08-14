@@ -233,7 +233,7 @@
     "ThuocCapCoQuan": "Thuộc cấp cơ quan",
     "ThongTinDiaChi": "Thông tin địa chỉ",
     "SoNha": "Số nhà, tên đường",
-    "CoQuanPhuTrach": "Cơ quan phụ trách"
+    "CoQuanPhuTrach": "Cơ quan phụ trách",
     //#endregion
 
     //#region 1.6. Danh mục Loại dịch vụ, thiết bị phần mềm
@@ -255,6 +255,12 @@
     //#endregion
 
     //#region 1.12. Danh mục Người tiếp nhận
+    "DanhMucs.NguoiTiepNhan": "Người tiếp nhận",
+    "Menu:NguoiTiepNhan": "Người tiếp nhận",
+    "Permission:DanhMucs.NguoiTiepNhan": "Danh mục Người tiếp nhận",
+    "Permission:DanhMucs.NguoiTiepNhan.Create": "Thêm người tiếp nhận",
+    "Permission:DanhMucs.NguoiTiepNhan.Edit": "Sửa người tiếp nhận",
+    "Permission:DanhMucs.NguoiTiepNhan.Delete": "Xoá người tiếp nhận",
     //#endregion
 
     //#region 1.13. Danh mục Người được cấp CTS

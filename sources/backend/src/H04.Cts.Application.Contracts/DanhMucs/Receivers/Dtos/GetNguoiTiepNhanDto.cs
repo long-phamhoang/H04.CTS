@@ -5,6 +5,8 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class GetNguoiTiepNhanListDto : PagedAndSortedResultRequestDto
 {   
+    public string? Keyword { get; set; }
+
     public long? OrganizationId { get; set; }
 
     public string? FullName { get; set; }

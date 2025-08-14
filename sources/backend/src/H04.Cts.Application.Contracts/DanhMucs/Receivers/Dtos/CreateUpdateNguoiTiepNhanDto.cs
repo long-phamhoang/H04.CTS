@@ -5,7 +5,6 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class CreateUpdateNguoiTiepNhanDto
 {
-    [Required]
     public long? OrganizationId { get; set; }
 
     public string FullName { get; set; } = string.Empty;
@@ -17,8 +16,7 @@ public class CreateUpdateNguoiTiepNhanDto
     [Required]
     public DateTime DateOfIssue { get; set; }
 
-    [Required]
-    public long NoiCapCCCDId { get; set; }
+    public long? NoiCapCCCDId { get; set; }
 
     public string Position { get; set; } = string.Empty;
 

@@ -1,0 +1,223 @@
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.NguoiTiepNhan' | abpLocalization"></page-header>
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:NguoiTiepNhan' | abpLocalization }}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+
+        <div class="text-lg-end pt-2">
+          <!-- <button *abpPermission="'Cts.DanhMucs.NguoiTiepNhan.Create'" id="create" class="btn btn-primary" type="button" (click)="createNguoiTiepNhan()"> -->
+          <button id="create" class="btn btn-primary" type="button" (click)="createNguoiTiepNhan()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::CreateNew' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Tìm kiếm..." [(ngModel)]="keyword" (keyup.enter)="onSearch()" />
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-primary w-100" (click)="onSearch()">
+          <i class="fa fa-search me-1"></i> Tìm kiếm
+        </button>
+      </div>
+    </div>
+    <p-table
+      [value]="nguoiTiepNhan.items"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="nguoiTiepNhan.totalCount"
+      [lazy]="true"
+      (onLazyLoad)="loadNguoiTiepNhan($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 150px">{{ '::Actions' | abpLocalization }}</th>
+          <th>{{ '::TenNguoiTiepNhan' | abpLocalization }}</th>
+          <th>{{ '::MaNguoiTiepNhan' | abpLocalization }}</th>
+          <th>{{ '::TenCoQuan' | abpLocalization }}</th>
+          <th>{{ '::MaSoThue' | abpLocalization }}</th>
+          <th>{{ '::CapCoQuanId' | abpLocalization }}</th>
+          <th>{{ '::NoiCapCCCDId' | abpLocalization }}</th>
+          <th>{{ '::MaSoThue' | abpLocalization }}</th>
+          <th>{{ '::CapCoQuanId' | abpLocalization }}</th>
+          <th>{{ '::NoiCapCCCDId' | abpLocalization }}</th>
+          <th>{{ '::NgayCapCCCD' | abpLocalization }}</th>
+          <th>{{ '::NgayHetHanCCCD' | abpLocalization }}</th>
+          <th>{{ '::NgaySinh' | abpLocalization }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="btn-group">
+              <button class="btn btn-primary btn-sm" (click)="editNguoiTiepNhan(row.id)">{{ '::Edit' | abpLocalization }}</button>
+              <button class="btn btn-danger btn-sm" (click)="delete(row.id)">{{ '::Delete' | abpLocalization }}</button>
+            </div>
+          </td>
+          <td>{{ row.fullName }}</td>
+          <td>{{ row.cccd }}</td>
+          <td>{{ row.organizationId }}</td>
+          <td>{{ row.dateOfIssue }}</td>
+          <td>{{ row.noiCapCCCDId }}</td>
+          <td>{{ row.position }}</td>
+          <td>{{ row.phone }}</td>
+          <td>{{ row.email }}</td>
+          <td>{{ row.submissionAddress }}</td>
+          <td>{{ row.province }}</td>
+          <td>{{ row.ward }}</td>
+          <td>{{ row.isDefault }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add the modal here -->
+<abp-modal [(visible)]="isModalOpen">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedNguoiTiepNhan.id ? '::Edit' : '::NewNguoiTiepNhan' ) | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-fullName">Tên người tiếp nhận</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-fullName" class="form-control" formControlName="fullName" autofocus />
+        <div *ngIf="isFieldInvalid('fullName')" class="text-danger small mt-1">
+          Tên người tiếp nhận là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-organizationId">Tên cơ quan</label>
+        <input type="text" id="nguoiTiepNhan-organizationId" class="form-control" formControlName="organizationId" />
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-cccd">CCCD</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-cccd" class="form-control" formControlName="cccd" />
+        <div *ngIf="isFieldInvalid('cccd')" class="text-danger small mt-1">
+          CCCD là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-dateOfIssue">Ngày cấp</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-dateOfIssue" class="form-control" formControlName="dateOfIssue" />
+        <div *ngIf="isFieldInvalid('dateOfIssue')" class="text-danger small mt-1">
+          Ngày cấp là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-position">Chức vụ</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-position" class="form-control" formControlName="position" />
+        <div *ngIf="isFieldInvalid('position')" class="text-danger small mt-1">
+          Chức vụ là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-phone">Số điện thoại</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-phone" class="form-control" formControlName="phone" />
+        <div *ngIf="isFieldInvalid('phone')" class="text-danger small mt-1">
+          Số điện thoại là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-email">Email</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-email" class="form-control" formControlName="email" />
+        <div *ngIf="isFieldInvalid('email')" class="text-danger small mt-1">
+          Email là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-submissionAddress">Địa chỉ nơi nhận</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-submissionAddress" class="form-control" formControlName="submissionAddress" />
+        <div *ngIf="isFieldInvalid('submissionAddress')" class="text-danger small mt-1">
+          Địa chỉ nơi nhận là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-noiCapCCCDId">Nơi cấp CCCD</label>
+        <select id="nguoiTiepNhan-noiCapCCCDId" class="form-control" formControlName="noiCapCCCDId">
+          <option [ngValue]="null">-- Chọn nơi cấp --</option>
+          <option *ngFor="let item of noiCapCCCDs" [ngValue]="item.id">{{ item.name }}</option>
+        </select>
+        <!-- <div *ngIf="isFieldInvalid('noiCapCCCDId')" class="text-danger small mt-1">
+          Nơi cấp CCCD là bắt buộc
+        </div> -->
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-province">Tỉnh</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-province" class="form-control" formControlName="province" />
+        <div *ngIf="isFieldInvalid('province')" class="text-danger small mt-1">
+          Tỉnh là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-ward">Phường/Xã</label><span> * </span>
+        <input type="text" id="nguoiTiepNhan-ward" class="form-control" formControlName="ward" />
+        <div *ngIf="isFieldInvalid('ward')" class="text-danger small mt-1">
+          Phường/Xã là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="nguoiTiepNhan-isDefault">Mặc định</label><span> * </span>
+        <select id="nguoiTiepNhan-isDefault" class="form-control" formControlName="isDefault">
+          <option [ngValue]="null">-- Chọn --</option>
+          <option [ngValue]="true">Có</option>
+          <option [ngValue]="false">Không</option>
+        </select>
+        <div *ngIf="isFieldInvalid('isDefault')" class="text-danger small mt-1">
+          Trường mặc định là bắt buộc
+        </div>
+      </div>
+
+      <!-- Debug Panel - Có thể ẩn đi khi production -->
+      <div class="mt-3 p-3 bg-light border rounded" *ngIf="form.invalid">
+        <h6 class="text-muted">Debug Info:</h6>
+        <div class="small">
+          <strong>Form Status:</strong> {{ form.status }}<br>
+          <strong>Form Valid:</strong> {{ form.valid }}<br>
+          <strong>Form Invalid:</strong> {{ form.invalid }}<br>
+          <strong>Form Pristine:</strong> {{ form.pristine }}<br>
+          <strong>Form Dirty:</strong> {{ form.dirty }}<br>
+          <strong>Form Touched:</strong> {{ form.touched }}
+        </div>
+        <div class="mt-2" *ngIf="form.errors">
+          <strong>Form Errors:</strong>
+          <pre class="small">{{ form.errors | json }}</pre>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Close' | abpLocalization }}
+    </button>
+
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </button>
+  </ng-template>
+
+</abp-modal>

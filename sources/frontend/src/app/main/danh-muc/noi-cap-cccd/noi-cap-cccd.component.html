@@ -1,0 +1,173 @@
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.NoiCapCCCD' | abpLocalization"></page-header>
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:NoiCapCCCD' | abpLocalization }}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+
+        <div class="text-lg-end pt-2">
+          <!-- <button *abpPermission="'Cts.DanhMucs.NguoiTiepNhan.Create'" id="create" class="btn btn-primary" type="button" (click)="createNguoiTiepNhan()"> -->
+          <button id="create" class="btn btn-primary" type="button" (click)="createNoiCapCCCD()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::CreateNew' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Tìm kiếm..." [(ngModel)]="keyword" (keyup.enter)="onSearch()" />
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-primary w-100" (click)="onSearch()">
+          <i class="fa fa-search me-1"></i> Tìm kiếm
+        </button>
+      </div>
+    </div>
+    <p-table
+      [value]="noiCapCCCD.items"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="noiCapCCCD.totalCount"
+      [lazy]="true"
+      (onLazyLoad)="loadNoiCapCCCD($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 150px">{{ '::Actions' | abpLocalization }}</th>
+          <th>{{ '::TenNoiCapCCCD' | abpLocalization }}</th>
+          <th>{{ '::MaNoiCapCCCD' | abpLocalization }}</th>
+          <th>{{ '::TenVietTat' | abpLocalization }}</th>
+          <th>{{ '::DiaChi' | abpLocalization }}</th>
+          <th>{{ '::Province' | abpLocalization }}</th>
+          <th>{{ '::GhiChu' | abpLocalization }}</th>
+          <th>{{ '::TrangThai' | abpLocalization }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="btn-group">
+              <button class="btn btn-primary btn-sm" (click)="editNoiCapCCCD(row.id)">{{ '::Edit' | abpLocalization }}</button>
+              <button class="btn btn-danger btn-sm" (click)="delete(row.id)">{{ '::Delete' | abpLocalization }}</button>
+            </div>
+          </td>
+          <td>{{ row.name }}</td>
+          <td>{{ row.code }}</td>
+          <td>{{ row.abbreviation }}</td>
+          <td>{{ row.address }}</td>
+          <td>{{ row.province }}</td>
+          <td>{{ row.note }}</td>
+          <td>{{ row.isActive }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add the modal here -->
+<abp-modal [(visible)]="isModalOpen">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedNoiCapCCCD.id ? '::Edit' : '::NewNoiCapCCCD' ) | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mt-2">
+        <label for="noiCapCCCD-name">Tên nơi cấp CCCD</label><span> * </span>
+        <input type="text" id="noiCapCCCD-name" class="form-control" formControlName="name" autofocus />
+        <div *ngIf="isFieldInvalid('name')" class="text-danger small mt-1">
+          Tên nơi cấp CCCD là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-code">Mã nơi cấp CCCD</label><span> * </span>
+        <input type="text" id="noiCapCCCD-code" class="form-control" formControlName="code" />
+        <div *ngIf="isFieldInvalid('code')" class="text-danger small mt-1">
+          Mã nơi cấp CCCD là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-abbreviation">Tên viết tắt</label><span> * </span>
+        <input type="text" id="noiCapCCCD-abbreviation" class="form-control" formControlName="abbreviation" />
+        <div *ngIf="isFieldInvalid('abbreviation')" class="text-danger small mt-1">
+          Tên viết tắt là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-address">Địa chỉ</label><span> * </span>
+        <input type="text" id="noiCapCCCD-address" class="form-control" formControlName="address" />
+        <div *ngIf="isFieldInvalid('address')" class="text-danger small mt-1">
+          Địa chỉ là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-note">Ghi chú</label><span> * </span>
+        <input type="text" id="noiCapCCCD-note" class="form-control" formControlName="note" />
+        <div *ngIf="isFieldInvalid('note')" class="text-danger small mt-1">
+          Ghi chú là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-isActive">Trạng thái</label><span> * </span>
+        <select id="noiCapCCCD-isActive" class="form-control" formControlName="isActive">
+          <option value="">-- Chọn --</option>
+          <option [value]="true">Có</option>
+          <option [value]="false">Không</option>
+        </select>
+        <div *ngIf="isFieldInvalid('isActive')" class="text-danger small mt-1">
+          Trạng thái là bắt buộc
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <label for="noiCapCCCD-province">Tỉnh</label><span> * </span>
+        <input type="text" id="noiCapCCCD-province" class="form-control" formControlName="province" />
+        <div *ngIf="isFieldInvalid('province')" class="text-danger small mt-1">
+          Tỉnh là bắt buộc
+        </div>
+      </div>
+
+      <!-- Debug Panel - Có thể ẩn đi khi production -->
+      <div class="mt-3 p-3 bg-light border rounded" *ngIf="form.invalid">
+        <h6 class="text-muted">Debug Info:</h6>
+        <div class="small">
+          <strong>Form Status:</strong> {{ form.status }}<br>
+          <strong>Form Valid:</strong> {{ form.valid }}<br>
+          <strong>Form Invalid:</strong> {{ form.invalid }}<br>
+          <strong>Form Pristine:</strong> {{ form.pristine }}<br>
+          <strong>Form Dirty:</strong> {{ form.dirty }}<br>
+          <strong>Form Touched:</strong> {{ form.touched }}
+        </div>
+        <div class="mt-2" *ngIf="form.errors">
+          <strong>Form Errors:</strong>
+          <pre class="small">{{ form.errors | json }}</pre>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Close' | abpLocalization }}
+    </button>
+
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </button>
+  </ng-template>
+
+</abp-modal>

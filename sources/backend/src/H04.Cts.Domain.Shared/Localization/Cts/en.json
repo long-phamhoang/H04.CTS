@@ -12,6 +12,13 @@
     "SuccessfullyDeleted": "Successfully deleted!",
     "Menu:Home": "Home",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
-    "Welcome": "Welcome"
+    "Welcome": "Welcome",
+    
+    "DanhMucs.NguoiTiepNhan": "Receivers",
+    "Menu:NguoiTiepNhan": "Receivers",
+    "Permission:DanhMucs.NguoiTiepNhan": "Receivers",
+    "Permission:DanhMucs.NguoiTiepNhan.Create": "Create receiver",
+    "Permission:DanhMucs.NguoiTiepNhan.Edit": "Edit receiver",
+    "Permission:DanhMucs.NguoiTiepNhan.Delete": "Delete receiver"
   }
 }

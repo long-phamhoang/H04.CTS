@@ -47,6 +47,23 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
 
+        // Keyword filter across short text fields (<=256)
+        if (!string.IsNullOrWhiteSpace(input.Keyword))
+        {
+            var keyword = input.Keyword.Trim();
+
+            queryable = queryable.Where(x =>
+                (x.FullName != null && x.FullName.Contains(keyword)) ||
+                (x.CCCD != null && x.CCCD.Contains(keyword)) ||
+                (x.Position != null && x.Position.Contains(keyword)) ||
+                (x.Phone != null && x.Phone.Contains(keyword)) ||
+                (x.Email != null && x.Email.Contains(keyword)) ||
+                (x.SubmissionAddress != null && x.SubmissionAddress.Contains(keyword)) ||
+                (x.Province != null && x.Province.Contains(keyword)) ||
+                (x.Ward != null && x.Ward.Contains(keyword))
+            );
+        }
+
         // Filters
         if (input.OrganizationId.HasValue)
         {
@@ -127,22 +144,24 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
     public async Task<NguoiTiepNhanDto> CreateAsync(CreateUpdateNguoiTiepNhanDto input)
     {
-        if (!input.OrganizationId.HasValue)
+        // Optional validations when IDs are provided
+        if (input.OrganizationId.HasValue)
         {
-            throw new UserFriendlyException("Tổ chức (OrganizationId) là bắt buộc.");
+            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
+            if (!organizationExists)
+            {
+                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
+            }
         }
 
-        var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
-        if (!organizationExists)
+        if (input.NoiCapCCCDId.HasValue)
         {
-            throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
-        }
-
-            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId);
+            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value);
             if (!noiCapCCCDExists)
             {
                 throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId}.");
             }
+        }
 
         var normalizedCccd = input.CCCD?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(normalizedCccd))
@@ -164,22 +183,24 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
     public async Task<NguoiTiepNhanDto> UpdateAsync(long id, CreateUpdateNguoiTiepNhanDto input)
     {
-        if (!input.OrganizationId.HasValue)
+        // Optional validations when IDs are provided
+        if (input.OrganizationId.HasValue)
         {
-            throw new UserFriendlyException("Tổ chức (OrganizationId) là bắt buộc.");
+            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
+            if (!organizationExists)
+            {
+                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
+            }
         }
 
-        var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
-        if (!organizationExists)
+        if (input.NoiCapCCCDId.HasValue)
         {
-            throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
-        }
-
-            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId);
+            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value);
             if (!noiCapCCCDExists)
             {
                 throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId}.");
             }
+        }
 
         var nguoiTiepNhan = await _repository.GetAsync(id);
         var normalizedCccd = input.CCCD?.Trim() ?? string.Empty;

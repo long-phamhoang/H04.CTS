@@ -20,10 +20,10 @@ public class NguoiTiepNhan : FullAuditedAggregateRoot<long>
 
     public virtual DateTime DateOfIssue { get; set; }
 
-    public virtual long NoiCapCCCDId { get; set; }
+    public virtual long? NoiCapCCCDId { get; set; }
 
     [ForeignKey(nameof(NoiCapCCCDId))]
-    public NoiCapCCCD NoiCapCCCDFk { get; set; }
+    public NoiCapCCCD? NoiCapCCCDFk { get; set; }
 
     public virtual string Position { get; set; }
 

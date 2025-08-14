@@ -21,10 +21,6 @@ public class NguoiTiepNhanConfiguration : IEntityTypeConfiguration<NguoiTiepNhan
         builder.HasIndex(x => new { x.Position });
         builder.HasIndex(x => new { x.Phone });
         builder.HasIndex(x => new { x.Email });
-		builder.HasIndex(x => x.OrganizationId)
-			.IsUnique()
-			.HasFilter(@"""IsDefault"" = true AND ""IsDeleted"" = false")
-			.HasDatabaseName("UX_NguoiTiepNhans_DefaultPerOrg");
         #endregion
 
         builder

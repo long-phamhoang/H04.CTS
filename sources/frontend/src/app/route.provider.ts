@@ -21,7 +21,22 @@ function configureRoutes() {
       path: '/main/danh-muc/to-chuc',
       name: '::Menu:DanhMucs',
       iconClass: 'fas fa-book',
+      layout: eLayoutType.empty,
       order: 2,
+    },
+    {
+      path: '/main/danh-muc/nguoi-tiep-nhan',
+      name: '::Menu:DanhMucs.NguoiTiepNhan',
+      iconClass: 'fas fa-book',
+      layout: eLayoutType.empty,
+      order: 3,
+    },
+    {
+      path: '/main/danh-muc/noi-cap-cccd',
+      name: '::Menu:DanhMucs.NoiCapCCCD',
+      iconClass: 'fas fa-book',
+      layout: eLayoutType.empty,
+      order: 4,
     },
   ]);
 }

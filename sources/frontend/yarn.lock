@@ -5913,13 +5913,6 @@ ng-zorro-antd@~19.0.0:
     date-fns "^2.16.1"
     tslib "^2.3.0"
 
-ngx-bootstrap@^19.0.2:
-  version "19.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-bootstrap/-/ngx-bootstrap-19.0.2.tgz#328b278317346a35840108e3b160ade305b3e815"
-  integrity sha512-DR5sA5e9k1bwtVeo8lQW4Yr8IgU7ba2pco5rlznnr7k91BJ3SNgrUSq+BQfigwARHGmgKCcw9lexu8ZWvefEXg==
-  dependencies:
-    tslib "^2.3.0"
-
 ngx-spinner@^19.0.0:
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/ngx-spinner/-/ngx-spinner-19.0.0.tgz#88b4f7b7751198bc91fdd7b3503d664226f7435b"

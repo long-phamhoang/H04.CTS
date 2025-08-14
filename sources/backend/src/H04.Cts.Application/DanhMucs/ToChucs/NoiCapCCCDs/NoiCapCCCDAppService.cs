@@ -43,6 +43,20 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
 
+        // Keyword filter across short text fields (<=256)
+        if (!string.IsNullOrWhiteSpace(input.Keyword))
+        {
+            var keyword = input.Keyword.Trim();
+            queryable = queryable.Where(x =>
+                (x.Name != null && x.Name.Contains(keyword)) ||
+                (x.Code != null && x.Code.Contains(keyword)) ||
+                (x.Abbreviation != null && x.Abbreviation.Contains(keyword)) ||
+                (x.Address != null && x.Address.Contains(keyword)) ||
+                (x.Province != null && x.Province.Contains(keyword)) ||
+                (x.Note != null && x.Note.Contains(keyword))
+            );
+        }
+
         // Filters
         if (!string.IsNullOrWhiteSpace(input.Name))
         {
