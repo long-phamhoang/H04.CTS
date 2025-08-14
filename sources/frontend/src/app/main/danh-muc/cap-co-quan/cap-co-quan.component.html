@@ -1,28 +1,71 @@
-<page-header title="::Cts.DanhMucs" description="::Cts.DanhMucs.CapCoQuan"></page-header>
-<div class="card">
-  <div class="card-header">
-    <div class="row">
-      <div class="col col-md-6">
-        <h5 class="card-title">
-          {{ '::Menu:CapCoQuans' | abpLocalization }}
-        </h5>
-      </div>
-      <div class="text-end col col-md-6">
-
-        <div class="text-lg-end pt-2">
-          <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Create'" id="create" class="btn btn-primary" type="button" (click)="createCapCoQuan()">
-            <i class="fa fa-plus me-1"></i>
-            <span>{{ '::NewCapCoQuan' | abpLocalization }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div style="box-shadow: none !important;">
+    <page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.CapCoQuan' | abpLocalization"></page-header> 
   </div>
+  <div class = "btn-create">
+    <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Create'" id="create" class="btn btn-primary my-custom-btn" type="button" (click)="createCapCoQuan()">
+      <i class="fa fa-plus me-1"></i>
+      <span>{{ '::CreateNew' | abpLocalization }}</span>
+    </button>
+  </div>
+</div>
+<div class="card">
   <div class="card-body">
-    <ngx-datatable [rows]="CapCoQuan.items" [count]="CapCoQuan.totalCount" [list]="list" default>
+    <div class="search-container">
+      <label for="searchInput" class="visually-hidden">{{ '::Search' | abpLocalization }}</label>
+      <input
+        id="searchInput"
+        type="text"
+        class="form-control search-input"
+        placeholder="Tìm kiếm..."
+        (keyup)="updateFilter($event)"
+      />
+    </div>
+    <ngx-datatable 
+    [headerHeight]="50"
+    [footerHeight]="50"
+    rowHeight="auto"
+    [rows]="filteredRows" 
+    [count]="CapCoQuan.totalCount"
+    [columnMode] = "ColumnMode.force" 
+    [limit]="pageSize"
+    default>
+      <ngx-datatable-column name="#" [minWidth]="50" [maxWidth]="60">
+        <ng-template let-rowIndex="rowIndex" ngx-datatable-cell-template>
+          {{  currentPage * pageSize + rowIndex + 1 }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::TenCapCoQuan' | abpLocalization" prop="tenCapCoQuan">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div class="text-link" style="cursor:pointer; color:#007bff;"
+                (click)="viewCapCoQuan(row)">
+            {{ row.tenCapCoQuan }}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::MaCapCoQuan' | abpLocalization" prop="maCapCoQuan"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::CreationTime' | abpLocalization" prop="creationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::LastModificationTime' | abpLocalization" prop="lastModificationTime"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Enum:TrangThai' | abpLocalization" prop="trangThai">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <span
+            [ngStyle]="{
+              'background-color': row.trangThai === 1 ? '#28a745' : '#dc3545',
+              'color': '#fff',
+              'padding': '2px 10px',
+              'border-radius': '12px',
+              'display': 'inline-block',
+              'width': '130px',
+              'text-align': 'center'
+            }"
+          >
+            {{ getTrangThaiLabel(row.trangThai) | abpLocalization}}
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
       <ngx-datatable-column
         [name]="'::Actions' | abpLocalization"
-        [maxWidth]="150"
+        [maxWidth]="90"
         [sortable]="false"
       >
         <ng-template let-row="row" ngx-datatable-cell-template>
@@ -33,7 +76,7 @@
               aria-haspopup="true"
               ngbDropdownToggle
             >
-              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
+              <i class="fa fa-cog me-1"></i>
             </button>
             <div ngbDropdownMenu>
               <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Edit'" ngbDropdownItem (click)="editCapCoQuan(row.id)">
@@ -46,76 +89,47 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::TenCapCoQuan' | abpLocalization" prop="tenCapCoQuan"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::MaCapCoQuan' | abpLocalization" prop="maCapCoQuan"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::TrangThai' | abpLocalization" prop="maSoThue"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::GhiChu' | abpLocalization" prop="capCoQuanId"></ngx-datatable-column>
-      <!-- <ngx-datatable-column [name]="'::Type' | abpLocalization" prop="type">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ '::Enum:CapCoQuanType.' + row.type | abpLocalization }}
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::PublishDate' | abpLocalization" prop="publishDate">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.publishDate | date }}
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Price' | abpLocalization" prop="price">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          {{ row.price | currency }}
-        </ng-template>
-      </ngx-datatable-column> -->
     </ngx-datatable>
+    <div class="flex items-center justify-center">
+      <div class="flex-1">
+        <p-paginator 
+          [rows]="pageSize" 
+          [totalRecords]="CapCoQuan.totalCount"
+          [rowsPerPageOptions]="[5,10,20]"
+          (onPageChange)="onPageChange($event)">
+        </p-paginator>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Add the modal here -->
 <abp-modal [(visible)]="isModalOpen">
   <ng-template #abpHeader>
-    <h3>{{ (selectedCapCoQuan.id ? '::Edit' : '::NewCapCoQuan' ) | abpLocalization }}</h3>
+    <h3>{{ (selectedCapCoQuan.id ? '::Permission:DanhMucs.CapCoQuan.Edit' : '::Permission:DanhMucs.CapCoQuan.Create' ) | abpLocalization }}</h3>
   </ng-template>
 
   <ng-template #abpBody>
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="mt-2">
-        <label for="CapCoQuan-tenCapCoQuan">Tên cấp cơ quan</label><span> * </span>
+        <label for="CapCoQuan-tenCapCoQuan">{{'::TenCapCoQuan' | abpLocalization }}</label><span class="required-filed"> * </span>
         <input type="text" id="CapCoQuan-tenCapCoQuan" class="form-control" formControlName="tenCapCoQuan" autofocus />
       </div>
 
       <div class="mt-2">
-        <label for="CapCoQuan-maCapCoQuan">Mã cấp cơ quan</label><span> * </span>
+        <label for="CapCoQuan-maCapCoQuan">{{'::MaCapCoQuan' | abpLocalization }}</label><span class="required-filed"> * </span>
         <input type="text" id="CapCoQuan-maCapCoQuan" class="form-control" formControlName="maCapCoQuan" />
         <!-- <input type="number" id="CapCoQuan-price" class="form-control" formControlName="price" /> -->
       </div>
       <div class="mt-2">
-        <label for="CapCoQuan-trangThai">Trạng thái</label>
+        <label for="CapCoQuan-trangThai">{{'::Enum:TrangThai' | abpLocalization }}</label><span class="required-filed"> * </span>
         <select id="CapCoQuan-trangThai" class="form-control" formControlName="trangThai">
-          <option value="">-- Chọn trạng thái --</option>
-          <option *ngFor="let opt of trangThaiOptions" [value]="opt.value">
-            {{ opt.label }}
-          </option>
+            <option [ngValue]="null">-- Chọn trạng thái --</option>
+            <option *ngFor="let opt of trangThaiOptions" [ngValue]="opt.value">
+                {{ '::Enum:TrangThai.' + opt.key | abpLocalization }}
+            </option>
         </select>
       </div>
-
-      <!-- <div class="mt-2">
-        <label for="CapCoQuan-type">Type</label><span> * </span>
-        <select class="form-control" id="CapCoQuan-type" formControlName="type">
-          <option [ngValue]="null">Select a CapCoQuan type</option>
-          <option [ngValue]="type.value" *ngFor="let type of CapCoQuanTypes"> {{ '::Enum:CapCoQuanType.' + type.value | abpLocalization }}</option>
-        </select>
-      </div> -->
-
-      <!-- <div class="mt-2">
-        <label>Publish date</label><span> * </span>
-        <input
-          #datepicker="ngbDatepicker"
-          class="form-control"
-          name="datepicker"
-          formControlName="publishDate"
-          ngbDatepicker
-          (click)="datepicker.toggle()"
-        />
-      </div> -->
     </form>
   </ng-template>
 

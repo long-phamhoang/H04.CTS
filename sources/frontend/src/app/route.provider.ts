@@ -15,13 +15,21 @@ function configureRoutes() {
       name: '::Menu:Home',
       iconClass: 'fas fa-home',
       order: 1,
-      layout: eLayoutType.application,
+      // layout: eLayoutType.application,
     },
     {
       path: '/main/danh-muc/to-chuc',
       name: '::Menu:DanhMucs',
       iconClass: 'fas fa-book',
       order: 2,
+      // layout: eLayoutType.application, 
+    },
+    {
+      path: '/main/danh-muc/cap-co-quan',
+      name: '::Menu:DanhMucs',
+      iconClass: 'fas fa-book',
+      order: 3,
+      // layout: eLayoutType.application, 
     },
   ]);
 }

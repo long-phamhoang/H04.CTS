@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-
 namespace H04.Cts.Application.DanhMucs;
 
 [Authorize(CtsPermissions.DanhMucs.CapCoQuan)]
@@ -35,8 +34,14 @@ public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
     public async Task<PagedResultDto<CapCoQuanDto>> GetListAsync(PagedAndSortedResultRequestDto input)
     {
         var queryable = await _repository.GetQueryableAsync();
+
+        if (!input.Sorting.IsNullOrWhiteSpace())
+            queryable = queryable.OrderBy(input.Sorting)
+                                 .ThenByDescending(x => x.LastModificationTime != null ? x.LastModificationTime : x.CreationTime);
+        else
+            queryable = queryable.OrderByDescending(x => x.LastModificationTime != null ? x.LastModificationTime : x.CreationTime);
+
         var query = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "TenCapCoQuan" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 

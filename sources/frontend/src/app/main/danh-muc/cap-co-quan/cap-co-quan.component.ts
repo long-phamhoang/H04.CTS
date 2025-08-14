@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { CapCoQuanDto, CapCoQuanService, trangThaiOptions } from '@app/proxy';
-
+import { ColumnMode } from '@swimlane/ngx-datatable';
 @Component({
   standalone: false,
   selector: 'app-cap-co-quan',
@@ -23,8 +23,12 @@ export class CapCoQuanComponent implements OnInit {
   form: FormGroup;
 
   trangThaiOptions = trangThaiOptions;
-
+  filteredRows = [];
   isModalOpen = false;
+  totalCount = 0;
+  currentPage = 0;
+  pageSize = 10;
+  ColumnMode = ColumnMode;
 
   constructor(
     public readonly list: ListService,
@@ -34,13 +38,35 @@ export class CapCoQuanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const capCoQuanStreamCreator = (query) => this.CapCoQuanService.getList(query);
+    this.loadData(0);
+  }
 
+  loadData(page: number ) { 
+    const capCoQuanStreamCreator = (query) => {
+      query.skipCount = page * this.pageSize;
+      query.maxResultCount = this.pageSize;
+      return this.CapCoQuanService.getList(query);
+    };
     this.list.hookToQuery(capCoQuanStreamCreator).subscribe((response) => {
       this.CapCoQuan = response;
+      this.currentPage = page;
+      this.filteredRows = this.CapCoQuan.items;
     });
   }
 
+  onPageChange(event: any) {
+    this.pageSize = event.rows;
+    this.loadData(event.page);
+  }
+
+  updateFilter(event) {
+    const val = event.target.value.toLowerCase();
+    this.filteredRows = this.CapCoQuan.items.filter(d =>
+      d.tenCapCoQuan?.toLowerCase().includes(val) ||
+      d.maCapCoQuan?.toLowerCase().includes(val) ||
+      !val
+    );
+  }
   createCapCoQuan() {
     this.selectedCapCoQuan = {} as CapCoQuanDto; // reset the selected CapCoQuan
     this.buildForm();
@@ -55,7 +81,15 @@ export class CapCoQuanComponent implements OnInit {
     });
   }
 
-  delete(id: number) {
+  viewCapCoQuan(row: CapCoQuanDto) {
+    this.CapCoQuanService.get(row.id).subscribe((CapCoQuan) => {
+      this.selectedCapCoQuan = CapCoQuan;
+      this.buildForm();
+      this.isModalOpen = true;
+    });
+  }
+
+  deleteCapCoQuan(id: number) {
     this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
       if (status === Confirmation.Status.confirm) {
         this.CapCoQuanService.delete(id).subscribe(() => this.list.get());
@@ -86,5 +120,10 @@ export class CapCoQuanComponent implements OnInit {
       this.form.reset();
       this.list.get();
     });
+  }
+
+  getTrangThaiLabel(value: number): string {
+    const option = this.trangThaiOptions.find(opt => opt.value === value);
+    return option ? (('::Enum:TrangThai.' + option.key) as string) : '';
   }
 }
