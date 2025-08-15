@@ -23,5 +23,17 @@ function configureRoutes() {
       iconClass: 'fas fa-book',
       order: 2,
     },
+    {
+      path: '/main/danh-muc/tinh-thanh-pho',
+      name: '::Menu:TinhThanhPho',
+      iconClass: 'fas fa-book',
+      order: 2,
+    },
+    {
+      path: '/main/danh-muc/xa-phuong',
+      name: '::Menu:XaPhuong',
+      iconClass: 'fas fa-book',
+      order: 2,
+    },
   ]);
 }

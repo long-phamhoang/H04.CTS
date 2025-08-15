@@ -1,6 +1,4 @@
 using H04.Cts.Entities.DanhMucs;
-using H04.Cts.Tinhs;
-using H04.Cts.Xas;
 using H04.Cts.EntityFrameworkCore.EntityConfigurations.DanhMucs;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -15,6 +13,8 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
+using H04.Cts.DanhMucs;
+using H04.Cts.EntityFrameworkCore.EntityTypeConfigurations.DanhMucs;
 
 namespace H04.Cts.EntityFrameworkCore;
 
@@ -46,8 +46,8 @@ public class CtsDbContext :
 
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
-    public DbSet<Tinh> Tinhs { get; set; }
-    public DbSet<Xa> Xas { get; set; }
+    public DbSet<TinhThanhPho> TinhThanhPhos { get; set; }
+    public DbSet<XaPhuong> XaPhuongs { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -73,11 +73,8 @@ public class CtsDbContext :
 
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
-
-        builder.Entity<Xa>(b =>
-        {
-            b.HasOne(e => e.Tinh).WithMany(e => e.Xas).HasForeignKey(e => e.TinhId);
-        });
+        builder.ApplyConfiguration(new XaPhuongConfiguration());
+        builder.ApplyConfiguration(new TinhThanhPhoConfiguration());
         #endregion
     }
 }

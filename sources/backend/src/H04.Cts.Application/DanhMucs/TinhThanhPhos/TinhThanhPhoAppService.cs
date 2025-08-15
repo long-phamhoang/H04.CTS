@@ -2,45 +2,59 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using H04.Cts.DanhMucs.TinhTHanhPhos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using System.Linq.Dynamic.Core;
+using H04.Cts.Permissions;
+using Microsoft.AspNetCore.Authorization;
 
-namespace H04.Cts.Tinhs;
-public class ProvinceAppService : ApplicationService
+
+namespace H04.Cts.DanhMucs.TinhThanhPhos;
+
+[Authorize(CtsPermissions.DanhMucs.TinhThanhPho)]
+public class TinhThanhPhoAppService : ApplicationService
 {
-    private readonly IRepository<Tinh, Guid> _repository;
+    private readonly IRepository<TinhThanhPho, Guid> _repository;
 
-    public ProvinceAppService(IRepository<Tinh, Guid> repository)
+    public TinhThanhPhoAppService(IRepository<TinhThanhPho, Guid> repository)
     {
         _repository = repository;
     }
 
-    // get all provinces
-    public async Task<PagedResultDto<Tinh>> GetAllAsync(PagedAndSortedResultRequestDto input)
+    // Get All
+    public async Task<PagedResultDto<TinhThanhPho>> GetAllAsync(string? tenTinhThanhPho, PagedAndSortedResultRequestDto input)
     {
         try
         {
             var queryable = await _repository.GetQueryableAsync();
-            var totalCount = await _repository.GetCountAsync();
-            var query = queryable
-                .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "TenTinh" : input.Sorting)
+            var query = queryable;
+
+            if (!string.IsNullOrEmpty(tenTinhThanhPho))
+            {
+                query = query.Where(x => x.TenTinhThanhPho.Contains(tenTinhThanhPho));
+            }
+
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            query = query.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "TenTinhThanhPho" : input.Sorting)
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount);
+
             var tinhs = await AsyncExecuter.ToListAsync(query);
 
-            return new PagedResultDto<Tinh>(totalCount, tinhs);
+            return new PagedResultDto<TinhThanhPho>(totalCount, tinhs);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception("An error occurred while retrieving provinces.", ex);
         }
-            
+
     }
 
     // get province by id
-    public async Task<Tinh> GetAsync(Guid id)
+    public async Task<TinhThanhPho> GetAsync(Guid id)
     {
         try
         {
@@ -53,7 +67,8 @@ public class ProvinceAppService : ApplicationService
     }
 
     // create a new province
-    public async Task<String> CreateAsync(CreateProvinceDto province)
+    [Authorize(CtsPermissions.DanhMucs.TinhThanhPhoCreate)]
+    public async Task<CreateProvinceDto> CreateAsync(CreateProvinceDto province)
     {
         try
         {
@@ -61,20 +76,15 @@ public class ProvinceAppService : ApplicationService
             {
                 throw new ArgumentNullException(nameof(province), "Province data cannot be null.");
             }
-            var is_exist_code = await _repository.AnyAsync(x => x.MaTinh == province.MaTinh);
+            var is_exist_code = await _repository.AnyAsync(x => x.MaTinhThanhPho == province.MaTinhThanhPho);
             if (is_exist_code)
             {
-                throw new Exception($"Province with code {province.MaTinh} already exists.");
+                throw new Exception($"Province with code {province.MaTinhThanhPho} already exists.");
             }
-            //var is_exist_name = await _repository.AnyAsync(x => x.TenTinh == province.TenTinh);
-            //if (is_exist_name)
-            //{
-            //    throw new Exception($"Province with name {province.TenTinh} already exists.");
-            //}
 
-            var newProvince = ObjectMapper.Map<CreateProvinceDto, Tinh>(province);
+            var newProvince = ObjectMapper.Map<CreateProvinceDto, TinhThanhPho>(province);
             await _repository.InsertAsync(newProvince);
-            return "OK";
+            return ObjectMapper.Map<TinhThanhPho, CreateProvinceDto>(newProvince);
         }
         catch (Exception ex)
         {
@@ -83,7 +93,8 @@ public class ProvinceAppService : ApplicationService
     }
 
     // Create bulks provinces
-    public async Task<String> CreateBulksAsync(List<CreateProvinceDto> provinces)
+    [Authorize(CtsPermissions.DanhMucs.TinhThanhPhoCreate)]
+    public async Task<List<CreateProvinceDto>> CreateBulksAsync(List<CreateProvinceDto> provinces)
     {
         try
         {
@@ -92,7 +103,7 @@ public class ProvinceAppService : ApplicationService
                 throw new ArgumentNullException(nameof(provinces), "Province data cannot be null or empty.");
             }
             var duplicateCodes = provinces
-            .GroupBy(p => p.MaTinh?.Trim(), StringComparer.OrdinalIgnoreCase)
+            .GroupBy(p => p.MaTinhThanhPho?.Trim(), StringComparer.OrdinalIgnoreCase)
             .Where(g => g.Count() > 1)
             .Select(g => g.Key)
             .ToList();
@@ -101,31 +112,17 @@ public class ProvinceAppService : ApplicationService
                 throw new Exception($"Duplicate codes found in input list: {string.Join(", ", duplicateCodes)}");
             }
 
-            //var duplicateNames = provinces
-            //    .GroupBy(p => p.TenTinh?.Trim(), StringComparer.OrdinalIgnoreCase)
-            //    .Where(g => g.Count() > 1)
-            //    .Select(g => g.Key)
-            //    .ToList();
-            //if (duplicateNames.Any())
-            //{
-            //    throw new Exception($"Duplicate names found in input list: {string.Join(", ", duplicateNames)}");
-            //}
             foreach (var province in provinces)
             {
-                var is_exist_code = await _repository.AnyAsync(x => x.MaTinh == province.MaTinh);
+                var is_exist_code = await _repository.AnyAsync(x => x.MaTinhThanhPho == province.MaTinhThanhPho);
                 if (is_exist_code)
                 {
-                    throw new Exception($"Province with code {province.MaTinh} already exists.");
+                    throw new Exception($"Province with code {province.MaTinhThanhPho} already exists.");
                 }
-                //var is_exist_name = await _repository.AnyAsync(x => x.TenTinh == province.TenTinh);
-                //if (is_exist_name)
-                //{
-                //    throw new Exception($"Province with name {province.TenTinh} already exists.");
-                //}
             }
-            var newProvinces = ObjectMapper.Map<List<CreateProvinceDto>, List<Tinh>>(provinces);
+            var newProvinces = ObjectMapper.Map<List<CreateProvinceDto>, List<TinhThanhPho>>(provinces);
             await _repository.InsertManyAsync(newProvinces);
-            return "OK";
+            return ObjectMapper.Map<List<TinhThanhPho>, List<CreateProvinceDto>>(newProvinces);
         }
         catch (Exception ex)
         {
@@ -134,7 +131,8 @@ public class ProvinceAppService : ApplicationService
     }
 
     // update a province
-    public async Task<String> UpdateAsync(Guid id, CreateProvinceDto province)
+    [Authorize(CtsPermissions.DanhMucs.TinhThanhPhoEdit)]
+    public async Task<CreateProvinceDto> UpdateAsync(Guid id,CreateProvinceDto province)
     {
         try
         {
@@ -147,10 +145,11 @@ public class ProvinceAppService : ApplicationService
             {
                 throw new Exception($"Province with ID {id} does not exist.");
             }
-            
-            ObjectMapper.Map(province, existingProvince);
+            province.Id = id;
+
+            var newProvince = ObjectMapper.Map(province, existingProvince);
             await _repository.UpdateAsync(existingProvince);
-            return "OK";
+            return ObjectMapper.Map<TinhThanhPho, CreateProvinceDto>(newProvince);
         }
         catch (Exception ex)
         {
@@ -159,7 +158,8 @@ public class ProvinceAppService : ApplicationService
     }
 
     // delete a province
-    public async Task<String> DeleteAsync(Guid id)
+    [Authorize(CtsPermissions.DanhMucs.TinhThanhPhoDelete)]
+    public async Task DeleteAsync(Guid id)
     {
         try
         {
@@ -169,13 +169,12 @@ public class ProvinceAppService : ApplicationService
                 throw new Exception($"Province with ID {id} does not exist.");
             }
             await _repository.DeleteAsync(existingProvince);
-            return "OK";
+            return;
         }
         catch (Exception ex)
         {
             throw new Exception("An error occurred while deleting the province.", ex);
         }
     }
-
 }
 

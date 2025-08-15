@@ -34,3 +34,32 @@ export interface ToChucDto extends AuditedEntityDto<number> {
   trangThai?: TrangThai;
   ghiChu?: string;
 }
+
+export interface CreateUpdateTinhThanhPhoDto {
+  tenTinhThanhPho: string;
+  maTinhThanhPho: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface TinhThanhPhoDto extends AuditedEntityDto<string> {
+  tenTinhThanhPho?: string;
+  maTinhThanhPho?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface CreateUpdateXaPhuongDto {
+  tenXaPhuong: string;
+  maXaPhuong: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface XaPhuongDto extends AuditedEntityDto<string> { 
+  tinhThanhPhoId?: string;
+  tenXaPhuong?: string;
+  maXaPhuong?: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
