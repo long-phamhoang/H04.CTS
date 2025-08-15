@@ -114,7 +114,8 @@ export class CapCoQuanComponent implements OnInit {
     request.subscribe(() => {
       this.isModalOpen = false;
       this.form.reset();
-      this.loadData(0, this.filterString);
+      this.currentPage = 0; 
+      this.onPageChange({ page: this.currentPage, rows: this.pageSize });
     });
   }
 

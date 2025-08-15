@@ -90,7 +90,7 @@
               <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Edit'" ngbDropdownItem (click)="editCapCoQuan(row.id)">
                 {{ '::Edit' | abpLocalization }}
               </button>
-              <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Delete'" ngbDropdownItem (click)="delete(row.id)">
+              <button *abpPermission="'Cts.DanhMucs.CapCoQuan.Delete'" ngbDropdownItem (click)="deleteCapCoQuan(row.id)">
                 {{ '::Delete' | abpLocalization }}
               </button>
             </div>
@@ -107,6 +107,7 @@
           [rows]="pageSize" 
           [totalRecords]="CapCoQuan.totalCount"
           [rowsPerPageOptions]="[5,10,20]"
+          [first]="currentPage * pageSize"
           (onPageChange)="onPageChange($event)">
         </p-paginator>
       </div>

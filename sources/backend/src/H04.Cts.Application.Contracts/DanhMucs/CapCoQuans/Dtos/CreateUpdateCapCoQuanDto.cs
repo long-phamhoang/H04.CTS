@@ -6,7 +6,6 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class CreateUpdateCapCoQuanDto
 {
-
     [Required]
     [StringLength(CapCoQuanConsts.MaCapCoQuanMaxLength)]
     public virtual string? MaCapCoQuan { get; set; }
@@ -19,5 +18,4 @@ public class CreateUpdateCapCoQuanDto
 
     [StringLength(CapCoQuanConsts.GhiChuMaxLength)]
     public virtual string? GhiChu { get; set; }
-
 }

@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 namespace H04.Cts.Application.DanhMucs;
-
 [Authorize(CtsPermissions.DanhMucs.CapCoQuan)]
 public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
 {
@@ -65,6 +65,10 @@ public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
     [Authorize(CtsPermissions.DanhMucs.CapCoQuanCreate)]
     public async Task<CapCoQuanDto> CreateAsync(CreateUpdateCapCoQuanDto input)
     {
+        if (await _repository.AnyAsync(x => x.MaCapCoQuan == input.MaCapCoQuan))
+        {
+            throw new UserFriendlyException(CtsDomainErrorCodes.DuplicateCode);
+        }
         var book = ObjectMapper.Map<CreateUpdateCapCoQuanDto, CapCoQuan>(input);
         await _repository.InsertAsync(book);
         return ObjectMapper.Map<CapCoQuan, CapCoQuanDto>(book);
@@ -75,6 +79,10 @@ public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
     [Authorize(CtsPermissions.DanhMucs.CapCoQuanEdit)]
     public async Task<CapCoQuanDto> UpdateAsync(long id, CreateUpdateCapCoQuanDto input)
     {
+        if (await _repository.AnyAsync(x => x.MaCapCoQuan == input.MaCapCoQuan && x.Id != id))
+        {
+            throw new UserFriendlyException(CtsDomainErrorCodes.DuplicateCode);
+        }
         var book = await _repository.GetAsync(id);
         ObjectMapper.Map(input, book);
         await _repository.UpdateAsync(book);
