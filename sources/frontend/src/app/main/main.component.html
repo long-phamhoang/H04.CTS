@@ -15,11 +15,25 @@
   <div id="right-panel">
     <div id="right-panel-header">
       <div id="current-time">{{ currentTime }}</div>
-      <p-menu #menu [model]="userMenu" [popup]="true" />
-      <button id="user-menu" class="btn btn-light" (click)="menu.toggle($event)">
-        <div id="user-account-name">Administrator</div>
-        <img id="user-avatar" src="assets/images/anonymous-user.jpg" width="40" height="40" />
-      </button>
+      <div id="control-bars">
+        <div id="lang-control" (click)="langMenu.toggle($event)">
+          <span>{{ '::Menu:Lang' | abpLocalization }}</span>
+          <i class="pi pi-caret-down ms-2"></i>
+        </div>
+        <p-menu #langMenu [model]="langOptions" [popup]="true">
+          <ng-template #item let-item>
+            <button type="button" class="btn" (click)="changeLang(item.value)">
+              <img [src]="item.icon" width="24" height="16" />
+              <span class="ms-2">{{ item.label }}</span>
+            </button>
+          </ng-template>
+        </p-menu>
+        <div id="user-control" (click)="userMenu.toggle($event)">
+          <div id="user-account-name">{{ getUserDisplayName() }}</div>
+          <img id="user-avatar" src="assets/images/anonymous-user.jpg" width="40" height="40" />
+        </div>
+        <p-menu #userMenu [model]="userOptions" [popup]="true" />
+      </div>
     </div>
     <div id="right-panel-body">
       <router-outlet></router-outlet>
