@@ -116,5 +116,10 @@ namespace H04.Cts.DanhMucs.LoaiHoSos
             var responseUpdated = await _repository.UpdateAsync(documentType);
             return ObjectMapper.Map<LoaiHoSo, LoaiHoSoDto>(documentType);
         }
+
+        public async Task<bool> IsExistsMaLoaiHoSo(string maLoaiHoSo, long? id = 0)
+        {
+            return await _repository.AnyAsync(x => x.MaLoaiHoSo.ToLower().Trim() == maLoaiHoSo.ToLower().Trim() && x.Id != id);
+        }
     }
 }

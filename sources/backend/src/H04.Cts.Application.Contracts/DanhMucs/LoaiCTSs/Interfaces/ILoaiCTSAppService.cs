@@ -17,5 +17,6 @@ namespace H04.Cts.DanhMucs.LoaiCTSs.Interfaces
     {
         Task SoftDeleteAsync(long id);
         Task<PagedResultDto<LoaiCTSDto>> GetListFilterData(LoaiCTSFilterDto input);
+        Task<bool> IsExistsMaLoaiCTS(string maLoaiCTS, long? id = 0);
     }
 }

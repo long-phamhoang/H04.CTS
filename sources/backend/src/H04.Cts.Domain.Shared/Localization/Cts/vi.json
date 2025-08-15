@@ -277,6 +277,8 @@
     "TenLoaiHoSo": "Tên Loại hồ sơ",
     "MaLoaiHoSo": "Mã Loại hồ sơ",
     "NewLoaiHoSo": "Thêm mới loại hồ sơ",
+    "EditLoaiHoSo": "Cập nhật loại hồ sơ",
+    "MaLoaiHoSoExists": "Mã loại hồ sơ đã tồn tại",
     //#endregion
 
     //#region 1.15. Danh mục Loại chứng thư số
@@ -289,7 +291,9 @@
     "ThongTinLoaiCTS": "Thông tin loại chứng thư số",
     "TenLoaiCTS": "Tên Loại chứng thư số",
     "MaLoaiCTS": "Mã Loại chứng thư số",
-    "NewLoaiCTS": "Thêm mới loại chứng thư số"
+    "NewLoaiCTS": "Thêm mới loại chứng thư số",
+    "EditLoaiCTS": "Cập nhật loại chứng thư số",
+    "MaLoaiCTSExists": "Mã loại chứng thư số đã tồn tại",
     //#endregion
 
     //#region 1.16. Danh mục Trích yếu

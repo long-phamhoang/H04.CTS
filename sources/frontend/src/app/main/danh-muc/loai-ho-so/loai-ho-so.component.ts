@@ -1,12 +1,13 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TrangThai } from '@app/proxy/enums';
 import { LoaiHoSoDto } from '@app/proxy/models';
 import { LoaiHoSoService } from '@app/proxy/services';
+import { ExportColumn } from '@app/shared/components/export-excel-dialog/export-excel-dialog.component';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, Subject, switchMap, takeUntil, timer } from 'rxjs';
 
 @Component({
   selector: 'app-loai-ho-so',
@@ -20,10 +21,10 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } fro
 })
 
 export class LoaiHoSoComponent implements OnInit {
-  documentType = { items: [], totalCount: 0 } as PagedResultDto<LoaiHoSoDto>;
+  loaiHoSo = { items: [], totalCount: 0 } as PagedResultDto<LoaiHoSoDto>;
   isModalOpen = false;
   form: FormGroup;
-  selectedDocumentType = {} as LoaiHoSoDto;
+  selectedLoaiHoSo = {} as LoaiHoSoDto;
   keySearch = '';
   statuses$ = [
     { value: TrangThai.HoatDong, label: '::Enum:TrangThai.HoatDong' },
@@ -32,11 +33,20 @@ export class LoaiHoSoComponent implements OnInit {
   private searchSubject = new Subject<string>();
   rows = 10;
   skipCount = 0;
+  TrangThai = TrangThai;
+  exportVisible = false;
+  exportColumns: ExportColumn[] = [
+    { field: 'maLoaiHoSo', header: 'Mã loại hồ sơ' },
+    { field: 'tenLoaiHoSo', header: 'Tên loại hồ sơ' },
+    { field: 'trangThai', header: 'Trạng thái' },
+    { field: 'ghiChu', header: 'Ghi chú' },
+  ];
+  exportData: any[] = [];
 
 
   constructor(
     public list: ListService,
-    private readonly documentTypeService: LoaiHoSoService,
+    private readonly loaiHoSoService: LoaiHoSoService,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     private toaster: ToasterService
@@ -53,38 +63,38 @@ export class LoaiHoSoComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(keyword => {
-      this.documentTypeService.getFilterList({
+      this.loaiHoSoService.getFilterList({
         keyword: keyword || ''
-      }).subscribe(res => this.documentType = res)
+      }).subscribe(res => this.loaiHoSo = res)
     });
   }
 
   loadData() {
-    this.documentTypeService.getFilterList({
+    this.loaiHoSoService.getFilterList({
       keyword: this.keySearch || '',
       skipCount: this.skipCount,
       maxResultCount: this.rows
-    }).subscribe(res => this.documentType = res);
+    }).subscribe(res => this.loaiHoSo = res);
   }
 
-  createDocumentType() {
-    this.selectedDocumentType = {} as LoaiHoSoDto;
+  createLoaiHoSo() {
+    this.selectedLoaiHoSo = {} as LoaiHoSoDto;
     this.buildForm();
     this.isModalOpen = true;
   }
 
-  editDocumentType(id: number) {
-    this.documentTypeService.get(id).subscribe((response) => {
-      this.selectedDocumentType = response;
+  editLoaiHoSo(id: number) {
+    this.loaiHoSoService.get(id).subscribe((response) => {
+      this.selectedLoaiHoSo = response;
       this.buildForm();
       this.isModalOpen = true;
     })
   }
 
-  deleteDocumentType(id: number) {
+  deleteLoaiHoSo(id: number) {
     this.confirmationService.warn('Cts::AreYouSureDelete', 'Cts::AreYouSure').subscribe((status) => {
       if(status === Confirmation.Status.confirm) {
-        this.documentTypeService.softDelete(id).subscribe(() => {
+        this.loaiHoSoService.softDelete(id).subscribe(() => {
           this.toaster.success('Cts::SuccessfullyDeleted', 'Thông báo');
           this.loadData();
         });
@@ -92,13 +102,31 @@ export class LoaiHoSoComponent implements OnInit {
     })
   }
 
+  maLoaiHoSoUniqueValidator():AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      const ma = control.value;
+      if(!ma || ma === this.selectedLoaiHoSo.maLoaiHoSo) {
+        return of(null);
+      }
+      return timer(500).pipe(
+        switchMap(() =>
+          this.loaiHoSoService.isExistsMaLoaiHoSo(ma, this.selectedLoaiHoSo?.id).pipe(
+            map(isDuplicate => (isDuplicate ? {maLoaiHoSoExists: true} : null))
+          )
+        )
+      );
+    }
+  }
+
   buildForm() {
     this.form = this.fb.group({
-      maLoaiHoSo: [this.selectedDocumentType.maLoaiHoSo || '', Validators.required],
-      tenLoaiHoSo: [this.selectedDocumentType.tenLoaiHoSo || '', Validators.required],
-      trangThai: [this.selectedDocumentType.trangThai || null, Validators.required],
-      ghiChu: [this.selectedDocumentType.ghiChu || ''],
-    })
+      maLoaiHoSo: [this.selectedLoaiHoSo.maLoaiHoSo || '', Validators.required, [this.maLoaiHoSoUniqueValidator()]],
+      tenLoaiHoSo: [this.selectedLoaiHoSo.tenLoaiHoSo || '', Validators.required],
+      trangThai: [this.selectedLoaiHoSo.trangThai || null, Validators.required],
+      ghiChu: [this.selectedLoaiHoSo.ghiChu || ''],
+    });
+
+
   }
 
   save() {
@@ -106,15 +134,15 @@ export class LoaiHoSoComponent implements OnInit {
       return;
     }
 
-    const request = this.selectedDocumentType.id
-      ? this.documentTypeService.update(this.selectedDocumentType.id, this.form.value)
-      : this.documentTypeService.create(this.form.value);
+    const request = this.selectedLoaiHoSo.id
+      ? this.loaiHoSoService.update(this.selectedLoaiHoSo.id, this.form.value)
+      : this.loaiHoSoService.create(this.form.value);
 
     request.subscribe(() => {
       this.isModalOpen = false;
       this.form.reset();
       this.loadData();
-      this.toaster.success(this.selectedDocumentType.id
+      this.toaster.success(this.selectedLoaiHoSo.id
         ? 'Cts::UpdatedSuccessfully'
         : 'Cts::CreatedSuccessfully', 'Thông báo');
     })
@@ -128,5 +156,20 @@ export class LoaiHoSoComponent implements OnInit {
     this.skipCount = event.page * event.rows;
     this.rows = event.rows;
     this.loadData();
+  }
+
+  onExported() {
+    // const mapTrangThai = (v: number | null | undefined) => this.getTrangThai(v);
+    this.loaiHoSoService.getFilterList({
+      keyword: this.keySearch || '',
+      skipCount: 0,
+      maxResultCount: this.loaiHoSo.totalCount
+    }).subscribe(res => {
+      this.exportData = (res.items || []).map(x => ({
+        ...x,
+        trangThai: x.trangThai === TrangThai.HoatDong ? 'Hoạt động' : 'Không hoạt động'
+      }));
+      this.exportVisible = true;
+    });
   }
 }

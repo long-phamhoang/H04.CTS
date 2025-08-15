@@ -86,6 +86,11 @@ namespace H04.Cts.DanhMucs.LoaiCTSs
             );
         }
 
+        public async Task<bool> IsExistsMaLoaiCTS(string maLoaiCTS, long? id = 0)
+        {
+            return await _repository.AnyAsync(x => x.MaLoaiCTS.ToLower().Trim() == maLoaiCTS.ToLower().Trim() && x.Id != id);
+        }
+
         [Authorize(CtsPermissions.DanhMucs.LoaiCTSDelete)]
         [HttpDelete("/api/app/loai-cts/soft-delete/{id}")]
         public async Task SoftDeleteAsync(long id)

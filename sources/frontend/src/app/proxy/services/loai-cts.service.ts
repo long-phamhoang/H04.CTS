@@ -51,6 +51,13 @@ export class LoaiCTSService {
     },
     { apiName: this.apiName,...config });
   
+  
+  isExistsMaLoaiCTS = (maLoaiCTS: string, id?: number, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, LoaiCTSDto>({
+      method: 'POST',
+      url: `/api/app/loai-cTS/${id ?? 0}/is-exists-ma-loai-cTS?maLoaiCTS=${maLoaiCTS}`,
+    },
+    { apiName: this.apiName,...config });
 
   softDelete = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({

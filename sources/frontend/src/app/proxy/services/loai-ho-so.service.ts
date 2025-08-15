@@ -50,6 +50,13 @@ export class LoaiHoSoService {
       params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount, keyword: input.keyword },
     },
     { apiName: this.apiName,...config });
+  
+  isExistsMaLoaiHoSo = (maLoaiHoSo: string, id?: number, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, LoaiHoSoDto>({
+      method: 'POST',
+      url: `/api/app/loai-ho-so/${id ?? 0}/is-exists-ma-loai-ho-so?maLoaiHoSo=${maLoaiHoSo}`,
+    },
+    { apiName: this.apiName,...config });
 
   softDelete = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({

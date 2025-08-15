@@ -1,4 +1,20 @@
-<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.LoaiCTS' | abpLocalization"></page-header>
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.LoaiCTS' | abpLocalization">
+  <div>
+    <button id="export" type="button" class="btn btn-info btn-xs"
+      (click)="onExported()">
+      <i class="pi pi-download"></i>
+      <span class="ms-2">Xuất dữ liệu</span>
+    </button>
+    <button *abpPermission="'Cts.DanhMucs.LoaiCTS.Create'" id="upload" type="button" class="btn btn-warning btn-xs">
+      <i class="pi pi-upload"></i>
+      <span class="ms-2">Upload tài liệu</span>
+    </button>
+    <button *abpPermission="'Cts.DanhMucs.LoaiCTS.Create'" id="create" type="button" class="btn btn-success btn-xs" (click)="createLoaiCTS()">
+      <i class="pi pi-plus"></i>
+      <span class="ms-2">{{ '::CreateNew' | abpLocalization }}</span>
+    </button>
+  </div>
+</page-header>
 
 <div class="card">
   <div class="card-header">
@@ -7,7 +23,7 @@
         <!-- <h5 class="card-title">
           {{'::Menu:LoaiCTS' | abpLocalization}}
         </h5> -->
-        <div class="input-group mt-2 group-search">
+        <div class="input-group group-search">
           <span class="input-group-text pe-0">
             <i class="fas fa-search ms-1"></i>
           </span>
@@ -19,21 +35,58 @@
             [placeholder]="'::Search' | abpLocalization">
         </div>
       </div>
-
-      <div class="text-end col col-md-6">
-        <div class="text-lg-end pt-2">
-          <button type="button" class="btn btn-primary" (click)="createDigitalCertiType()">
-            <i class="fa fa-plus me-1"></i>
-            <span>{{ '::CreateNew' | abpLocalization }}</span>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
   <div class="card-body">
-    <ngx-datatable
-      [rows]="digitalCertiType.items"
-      [count]="digitalCertiType.totalCount"
+    <p-table
+      [value]="loaiCTS.items">
+      <ng-template #header>
+        <tr>
+          <th>#</th>
+          <th>{{'::MaLoaiCTS' | abpLocalization}}</th>
+          <th>{{'::TenLoaiCTS' | abpLocalization}}</th>
+          <th>{{'::TrangThai' | abpLocalization}}</th>
+          <th>{{'::GhiChu' | abpLocalization}}</th>
+          <th>{{'::Actions' | abpLocalization}}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-row let-index="rowIndex">
+        <tr>
+          <td>{{index + 1}}</td>
+          <td>{{row.maLoaiCTS}}</td>
+          <td>{{row.tenLoaiCTS}}</td>
+          <td>
+            <span *ngIf="row.trangThai === TrangThai.HoatDong" class="badge bg-success">
+              {{'::Enum:TrangThai.HoatDong' | abpLocalization}}
+            </span>
+            <span *ngIf="row.trangThai === TrangThai.KhongHoatDong" class="badge bg-danger">
+              {{'::Enum:TrangThai.KhongHoatDong' | abpLocalization}}
+            </span>
+          </td>
+          <td>{{row.ghiChu}}</td>
+          <td>
+            <div ngbDropdown class="d-inline-block">
+              <button
+                class="btn btn-primary btn-sm"
+                style="background-color: #009ef7"
+                ngbDropdownToggle
+              >
+                <i class="pi pi-cog" style="margin-right: 20px"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button *abpPermission="'Cts.DanhMucs.LoaiCTS.Edit'" ngbDropdownItem (click)="editLoaiCTS(row.id)">{{'::Edit' | abpLocalization}}</button>
+                <button *abpPermission="'Cts.DanhMucs.LoaiCTS.Delete'" ngbDropdownItem class="text-danger" (click)="deleteLoaiCTS(row.id)">{{'::Delete' | abpLocalization}}</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        
+      </ng-template>
+      
+    </p-table>
+    <!-- <ngx-datatable
+      [rows]="loaiCTS.items"
+      [count]="loaiCTS.totalCount"
       default>
       <ngx-datatable-column [name]="'::MaLoaiCTS' | abpLocalization" prop="maLoaiCTS"></ngx-datatable-column>
       <ngx-datatable-column [name]="'::TenLoaiCTS' | abpLocalization" prop="tenLoaiCTS"></ngx-datatable-column>
@@ -60,10 +113,10 @@
             </button>
 
             <div ngbDropdownMenu>
-              <button ngbDropdownItem (click)="editDigitalCertiType(row.id)">
+              <button ngbDropdownItem (click)="editLoaiCTS(row.id)">
                 {{'::Edit' | abpLocalization}}
               </button>
-              <button ngbDropdownItem (click)="deleteDigitalCertiType(row.id)">
+              <button ngbDropdownItem (click)="deleteLoaiCTS(row.id)">
                 {{'::Delete' | abpLocalization}}
               </button>
             </div>
@@ -72,71 +125,94 @@
         </ng-template>
         
       </ngx-datatable-column>
-    </ngx-datatable>
+    </ngx-datatable> -->
     <div class="col d-flex justify-content-end">
       <div class="col col-md-4">
         <p-paginator
           [rows]="rows"
-          [totalRecords]="digitalCertiType.totalCount"
+          [totalRecords]="loaiCTS.totalCount"
           (onPageChange)="onPageChange($event)"
-          [rowsPerPageOptions]="[10, 20, 30]">
+          [rowsPerPageOptions]="[10, 20, 30]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Tổng cộng: {totalRecords}"
+          >
         </p-paginator>
       </div>
     </div>
   </div>
 </div>
 
-<abp-modal [(visible)]="isModalOpen">
-  <ng-template #abpHeader>
-    <h3>{{ (selectedDigitalCerti.id ? '::Edit' : '::NewLoaiCTS' ) | abpLocalization }}</h3>
+
+<p-dialog
+    [(visible)]="isModalOpen"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '480px' }"
+    [baseZIndex]="1055"
+    [dismissableMask]="true"
+  >
+  <ng-template pTemplate="header">
+    <h3 class="fw-bold">{{ (selectedLoaiCTS.id ? '::EditLoaiCTS' : '::NewLoaiCTS' ) | abpLocalization }}</h3>
   </ng-template>
-
-  <ng-template #abpBody>
+  <ng-template pTemplate="content">
     <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="mt-2">
-        <label for="maLoaiCTS">Mã loại chứng thư số</label><span> * </span>
-        <input type="text" id="maLoaiCTS" class="form-control" formControlName="maLoaiCTS"
-          [readonly]="selectedDigitalCerti.id"
-          autofocus/>
-        <!-- <span
-          *ngIf="form.get('maLoaiCTS')?.invalid && (form.get('maLoaiCTS')?.touched || form.get('maLoaiCTS')?.dirty)"
-          class="text-danger">
-          {{'::RequiredField' | abpLocalization}}
-        </span> -->
-        <!-- <span *ngIf="maLoaiCTS.invalid && (maLoaiCTS.dirty || maLoaiCTS.touched)">Mã loại chứng thư số là bắt buộc</span> -->
+      <div class="mb-3">
+        <label class="form-label">{{'::MaLoaiCTS' | abpLocalization}}<span class="text-danger"> *</span></label>
+        <input type="text" class="form-control" formControlName="maLoaiCTS"
+          [readOnly]="selectedLoaiCTS.id"/>
+        <div
+          class="text-danger mt-1"
+          *ngIf="form?.get('maLoaiCTS')?.dirty && form?.get('maLoaiCTS')?.errors?.['maLoaiCTSExists']"
+        >
+          {{'::MaLoaiCTSExists' | abpLocalization}}
+        </div>
       </div>
-
-      <div class="mt-2">
-        <label for="tenLoaiCTS">Tên loại chứng thư số</label><span> * </span>
-        <input type="text" name="tenLoaiCTS" id="ghiChu" class="form-control" formControlName="tenLoaiCTS">
+      <div class="mb-3">
+        <label class="form-label">{{'::TenLoaiCTS' | abpLocalization}}<span class="text-danger"> *</span></label>
+        <input type="text" class="form-control" formControlName="tenLoaiCTS"/>
       </div>
-
-      <div class="mt-2">
-        <label for="tenLoaiCTS">Trạng thái</label><span> * </span>
+      <div class="mb-3">
+        <label class="form-label">{{'::TrangThai' | abpLocalization}} <span class="text-danger"> *</span></label>
         <select class="form-control" formControlName="trangThai" id="">
           <option [ngValue]="null" selected disabled>Chọn trạng thái</option>
           <option [ngValue]="status.value" *ngFor="let status of statuses$">
             {{status.label | abpLocalization}}
           </option>
-        </select>
+      </select>
       </div>
-      <div class="mt-2">
-        <label for="ghiChu">Ghi chú</label>
-        <input type="text" name="ghiChu" id="ghiChu" class="form-control" formControlName="ghiChu">
+      <div class="mb-3">
+        <label class="form-label">{{'::GhiChu' | abpLocalization}}</label>
+        <textarea class="form-control" formControlName="ghiChu"></textarea>
       </div>
     </form>
   </ng-template>
-
-  <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
-      {{ '::Close' | abpLocalization }}
+  <ng-template pTemplate="footer">
+    <button type="submit" class="btn btn-success" (click)="save()" [disabled]="form?.invalid">
+      <i class="bi bi-check-lg"></i> Lưu
     </button>
-
-    <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
-      <i class="fa fa-check mr-1"></i>
-      {{ '::Save' | abpLocalization }}
+    <button type="button" class="btn btn-danger" (click)="isModalOpen = false">
+      <i class="bi bi-x-lg"></i> Đóng
     </button>
   </ng-template>
+</p-dialog>
 
-</abp-modal>
+<app-export-excel-dialog
+  [(visible)]="exportVisible"
+  [data]="exportData"
+  [columns]="exportColumns"
+  [defaultFileName]="'LoaiChungThuSo.xlsx'"
+  [defaultSheetName]="'LoaiChungThuSo'"
+  (exported)="onExported()"
+></app-export-excel-dialog>
+
+  <!-- <app-import-excel-dialog
+    [(visible)]="showImport"
+    [columns]="importColumns"
+    [templateFileName]="'import_luc_luong.xlsx'"
+    [templateSheetName]="'Sheet1'"
+    [requiredFields]="['maLucLuong', 'tenLucLuong']"
+    [uniqueByField]="'maLucLuong'"
+    [existingValues]="existingMaLucLuongValues"
+    (imported)="onImported($event)"
+  ></app-import-excel-dialog> -->

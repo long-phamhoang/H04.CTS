@@ -1,0 +1,66 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="close()"
+  [modal]="true"
+  header="Xuất Excel"
+  [style]="{ width: '500px' }"
+  [baseZIndex]="1055"
+  [dismissableMask]="true"
+>
+  <div class="space-y-3">
+    <div>
+      <label class="block text-sm font-medium mb-1">Chọn cột cần xuất</label>
+      <div
+        class="grid grid-cols-2 gap-2 max-h-64 overflow-auto"
+        style="
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          max-height: 256px;
+          overflow: auto;
+        "
+      >
+        <div
+          *ngFor="let col of columns"
+          class="flex items-center gap-2"
+          style="display: flex; align-items: center; gap: 8px"
+        >
+          <p-checkbox
+            [binary]="false"
+            [value]="col.field"
+            [(ngModel)]="selectedFields"
+            [inputId]="'col-' + col.field"
+          ></p-checkbox>
+          <span>{{ col.header || col.field }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-2 gap-3"
+      style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+    >
+      <div>
+        <label class="block text-sm font-medium mb-1">Tên sheet</label>
+        <input pInputText type="text" [(ngModel)]="sheetName" class="w-full" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Tên file</label>
+        <input pInputText type="text" [(ngModel)]="fileName" class="w-full" />
+      </div>
+    </div>
+
+    <div
+      class="flex justify-end gap-2 mt-4"
+      style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px"
+    >
+      <p-button label="Huỷ" severity="secondary" (onClick)="close()"></p-button>
+      <p-button
+        label="Xuất"
+        icon="pi pi-file-excel"
+        severity="success"
+        (onClick)="doExport()"
+      ></p-button>
+    </div>
+  </div>
+</p-dialog>

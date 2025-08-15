@@ -42,6 +42,8 @@ import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 //#region Components
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { ExportExcelDialogComponent } from './components/export-excel-dialog/export-excel-dialog.component';
+import { Button } from "primeng/button";
 //#endregion
 
 const modules = [
@@ -87,6 +89,7 @@ const modules = [
 
 const components = [
   PageHeaderComponent,
+  ExportExcelDialogComponent
 ];
 
 @NgModule({
@@ -95,7 +98,8 @@ const components = [
   ],
   imports: [
     ...modules,
-  ],
+    Button
+],
   exports: [
     ...modules,
     ...components,
