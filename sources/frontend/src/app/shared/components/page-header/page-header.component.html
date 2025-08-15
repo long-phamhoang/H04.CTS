@@ -1,7 +1,9 @@
 <div id="page-header">
+  <div id="page-toolbar">
   <div id="page-title">{{ title }}</div>
-  <div *ngIf="description" id="page-description">{{ description }}</div>
-  <ul *ngIf="breadcrumbs?.length" id="page-breadcrumb">
+    <div *ngIf="description || breadcrumbs" id="page-toolbar-divider"></div>
+    <div *ngIf="description" id="page-description">{{ description }}</div>
+    <ul *ngIf="breadcrumbs?.length" id="page-breadcrumb">
     <li *ngFor="let breadcrumbItem of breadcrumbs" class="breadcrumb-item">
       <a *ngIf="breadcrumbItem.isLink(); else text" href="javascript:;" (click)="goToBreadcrumb(breadcrumbItem)">
         {{ breadcrumbItem.text }}
@@ -10,5 +12,9 @@
         <span>{{ breadcrumbItem.text }}</span>
       </ng-template>
     </li>
-  </ul>
+    </ul>
+  </div>
+  <div id="page-actions">
+    <ng-content></ng-content>
+  </div>
 </div>

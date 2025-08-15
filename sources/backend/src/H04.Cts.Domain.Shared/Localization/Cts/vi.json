@@ -14,8 +14,12 @@
     "Menu:Home": "Trang chủ",
     "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
     "Welcome": "Xin chào",
-    "RequiredField": "Trường này không được bỏ trống",
-    "Search": "Tìm kiếm",
+    "Menu:Lang": "Ngôn ngữ",
+    "LangMenu:VietNam": "Tiếng Việt",
+    "LangMenu:English": "Tiếng Anh",
+    "UserMenu:Profile": "Thông tin cá nhân",
+    "UserMenu:ChangePassword": "Đổi mật khẩu",
+    "UserMenu:Logout": "Đăng xuất",
     //#endregion
 
     //#region 0.2. Enums
@@ -25,6 +29,7 @@
     //#endregion
 
     //#region 0.3. Common
+    "Search": "Tìm kiếm",
     "Sort": "Sắp xếp",
     "Newest": "Mới nhất",
     "Oldest": "Cũ nhất",
@@ -64,6 +69,7 @@
     "Update": "Cập nhật",
     "UpdateTooltip": "Bấm để cập nhật",
     "Clone": "Nhân bản",
+    "RequiredField": "Trường này không được bỏ trống",
     //#endregion
 
     //#region 0.4. Messages
