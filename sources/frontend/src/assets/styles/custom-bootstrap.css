@@ -1,0 +1,78 @@
+:root {
+
+}
+
+html, body {
+  color: rgba(9, 9, 11, 1);
+  font-family: 'Roboto';
+  font-size: 14px;
+}
+
+.btn-success {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: rgba(34, 197, 94, 1);
+  --bs-btn-border-color: rgba(34, 197, 94, 1);;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #16a34a;
+  --bs-btn-hover-border-color: #16a34a;
+  --bs-btn-focus-shadow-rgb: 11, 172, 204;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #16a34a;
+  --bs-btn-active-border-color: #16a34a;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgba(34, 197, 94, 1);;
+  --bs-btn-disabled-border-color: rgba(34, 197, 94, 1);;
+}
+
+.btn-info {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: rgba(0, 95, 153, 1);
+  --bs-btn-border-color: rgba(0, 95, 153, 1);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #0284c7;
+  --bs-btn-hover-border-color: #0284c7;
+  --bs-btn-focus-shadow-rgb: 11, 172, 204;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0284c7;
+  --bs-btn-active-border-color: #0284c7;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgba(0, 95, 153, 1);
+  --bs-btn-disabled-border-color: rgba(0, 95, 153, 1);
+}
+
+.btn-warning {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: rgba(240, 173, 78, 1);
+  --bs-btn-border-color: rgba(240, 173, 78, 1);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #fb923c;
+  --bs-btn-hover-border-color: #fb923c;
+  --bs-btn-focus-shadow-rgb: 11, 172, 204;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #fb923c;
+  --bs-btn-active-border-color: #fb923c;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgba(240, 173, 78, 1);
+  --bs-btn-disabled-border-color: rgba(240, 173, 78, 1);
+}
+
+.btn-group-xs > .btn,
+.btn-xs {
+  --bs-btn-padding-y: 4px;
+  --bs-btn-padding-x: 8px;
+  --bs-btn-font-size: 14px;
+  --bs-btn-line-height: 100%;
+  --bs-btn-border-radius: 4px;
+}
+
+.btn-group-xs > .btn > i,
+.btn-xs > i {
+  font-size: 13px;
+}
+
+.btn + .btn {
+  margin-left: 0.5rem;
+}
