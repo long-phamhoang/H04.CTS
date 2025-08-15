@@ -3,7 +3,7 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { NguoiTiepNhanDto, NguoiTiepNhanService, trangThaiOptions, NoiCapCCCDService, NoiCapCCCDDto } from '@app/proxy';
+import { NguoiTiepNhanDto, NguoiTiepNhanService, trangThaiOptions, NoiCapCCCDService, NoiCapCCCDDto, ToChucService, ToChucDto } from '@app/proxy';
 
 @Component({
   standalone: false,
@@ -27,6 +27,7 @@ export class NguoiTiepNhanComponent implements OnInit {
   isModalOpen = false;
 
   noiCapCCCDs: NoiCapCCCDDto[] = [];
+  organizations: ToChucDto[] = [];
 
 	pageSize = 10;
 
@@ -37,18 +38,26 @@ export class NguoiTiepNhanComponent implements OnInit {
     private nguoiTiepNhanService: NguoiTiepNhanService,
     private fb: FormBuilder,
     private noiCapCCCDService: NoiCapCCCDService,
+    private toChucService: ToChucService,
     private confirmation: ConfirmationService // inject the ConfirmationService
   ) { }
 
   ngOnInit() {
     // initial load
-    this.reload();
+    // this.reload();
 
     // Load NoiCapCCCD options for select
     this.noiCapCCCDService
       .getList({ skipCount: 0, maxResultCount: 1000, sorting: 'name' })
       .subscribe(res => {
         this.noiCapCCCDs = res.items ?? [];
+      });
+
+    // Load Organizations options for select
+    this.toChucService
+      .getList({ skipCount: 0, maxResultCount: 1000, sorting: 'tenToChuc' })
+      .subscribe(res => {
+        this.organizations = res.items ?? [];
       });
   }
 
@@ -101,7 +110,7 @@ export class NguoiTiepNhanComponent implements OnInit {
       organizationId: [this.selectedNguoiTiepNhan.organizationId || null],
       fullName: [this.selectedNguoiTiepNhan.fullName || '', Validators.required],
       cccd: [this.selectedNguoiTiepNhan.cccd || null, Validators.required],
-      dateOfIssue: [this.selectedNguoiTiepNhan.dateOfIssue || null, Validators.required],
+      dateOfIssue: [this.toDateStruct(this.selectedNguoiTiepNhan.dateOfIssue) || null, Validators.required],
       noiCapCCCDId: [this.selectedNguoiTiepNhan.noiCapCCCDId || null],
       position: [this.selectedNguoiTiepNhan.position || null, Validators.required],
       phone: [this.selectedNguoiTiepNhan.phone || null, Validators.required],
@@ -132,6 +141,7 @@ export class NguoiTiepNhanComponent implements OnInit {
       ...raw,
       organizationId: toNullableNumber(raw.organizationId),
       noiCapCCCDId: toNullableNumber(raw.noiCapCCCDId),
+      dateOfIssue: this.toIsoDate(raw.dateOfIssue),
       isDefault: typeof raw.isDefault === 'string' ? raw.isDefault === 'true' : !!raw.isDefault,
     };
 
@@ -144,6 +154,22 @@ export class NguoiTiepNhanComponent implements OnInit {
       this.form.reset();
       this.reload();
     });
+  }
+
+  private toDateStruct(input?: string | Date | null): any {
+    if (!input) return null;
+    const d = typeof input === 'string' ? new Date(input) : input;
+    if (isNaN(d.getTime())) return null;
+    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+  }
+
+  private toIsoDate(struct: any): string | null {
+    if (!struct) return null;
+    if (struct instanceof Date) return struct.toISOString();
+    const { year, month, day } = struct || {};
+    if (!year || !month || !day) return null;
+    const dt = new Date(year, month - 1, day);
+    return isNaN(dt.getTime()) ? null : dt.toISOString();
   }
 
   // Helper method to debug form validation

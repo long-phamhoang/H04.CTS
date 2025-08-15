@@ -1038,6 +1038,18 @@
               "parameters": [
                 {
                   "nameOnMethod": "input",
+                  "name": "Keyword",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
                   "name": "OrganizationId",
                   "jsonName": null,
                   "type": "System.Int64?",
@@ -1556,6 +1568,18 @@
                 }
               ],
               "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Keyword",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
                 {
                   "nameOnMethod": "input",
                   "name": "Name",
@@ -4303,7 +4327,7 @@
           "jsonName": null,
           "type": "System.Int64?",
           "typeSimple": "number?",
-          "isRequired": true,
+          "isRequired": false,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -4349,9 +4373,9 @@
         {
           "name": "NoiCapCCCDId",
           "jsonName": null,
-          "type": "System.Int64",
-          "typeSimple": "number",
-          "isRequired": true,
+          "type": "System.Int64?",
+          "typeSimple": "number?",
+          "isRequired": false,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -4722,6 +4746,18 @@
       "genericArguments": null,
       "properties": [
         {
+          "name": "Keyword",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "OrganizationId",
           "jsonName": null,
           "type": "System.Int64?",
@@ -4911,6 +4947,18 @@
       "genericArguments": null,
       "properties": [
         {
+          "name": "Keyword",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "Name",
           "jsonName": null,
           "type": "System.String",
@@ -5016,6 +5064,18 @@
           "regex": null
         },
         {
+          "name": "OrganizationName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
           "name": "FullName",
           "jsonName": null,
           "type": "System.String",
@@ -5056,6 +5116,18 @@
           "jsonName": null,
           "type": "System.Int64",
           "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NoiCapCCCDName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

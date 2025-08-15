@@ -6,7 +6,7 @@ export interface CreateUpdateNguoiTiepNhanDto {
   fullName?: string;
   cccd: string;
   dateOfIssue: string;
-  noiCapCCCDId: number;
+  noiCapCCCDId?: number;
   position?: string;
   phone?: string;
   email?: string;
@@ -75,10 +75,12 @@ export interface GetNoiCapCCCDListDto extends PagedAndSortedResultRequestDto {
 
 export interface NguoiTiepNhanDto extends AuditedEntityDto<number> {
   organizationId?: number;
+  organizationName?: string;
   fullName?: string;
   cccd?: string;
   dateOfIssue?: string;
   noiCapCCCDId: number;
+  noiCapCCCDName?: string;
   position?: string;
   phone?: string;
   email?: string;

@@ -7,6 +7,8 @@ public class NguoiTiepNhanDto : AuditedEntityDto<long>
 {
     public long? OrganizationId { get; set; }
 
+    public string OrganizationName { get; set; }
+
     public string FullName { get; set; }
 
     public string CCCD { get; set; }
@@ -14,6 +16,8 @@ public class NguoiTiepNhanDto : AuditedEntityDto<long>
     public DateTime DateOfIssue { get; set; }
 
     public long NoiCapCCCDId { get; set; }
+
+    public string NoiCapCCCDName { get; set; }
 
     public string Position { get; set; }
 

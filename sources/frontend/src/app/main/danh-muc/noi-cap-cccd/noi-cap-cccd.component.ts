@@ -39,7 +39,7 @@ export class NoiCapCCCDComponent implements OnInit {
 
   ngOnInit() {
     // initial load
-    this.reload();
+    // this.reload();
   }
 
   createNoiCapCCCD() {

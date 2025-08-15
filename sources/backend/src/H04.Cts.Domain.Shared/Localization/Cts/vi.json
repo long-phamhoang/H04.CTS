@@ -252,6 +252,13 @@
     //#endregion
 
     //#region 1.11. Danh mục Nơi cấp CCCD
+    "DanhMucs.NoiCapCCCD": "Nơi cấp CCCD",
+    "TenNoiCapCCCD": "Tên nơi cấp CCCD",
+    "MaNoiCapCCCD": "Mã nơi cấp CCCD",
+    "TenVietTat": "Tên viết tắt",
+    "DiaChi": "Địa chỉ",
+    "Province": "Tỉnh, thành phố",
+    "TrangThai": "Trạng thái",
     //#endregion
 
     //#region 1.12. Danh mục Người tiếp nhận
@@ -261,6 +268,12 @@
     "Permission:DanhMucs.NguoiTiepNhan.Create": "Thêm người tiếp nhận",
     "Permission:DanhMucs.NguoiTiepNhan.Edit": "Sửa người tiếp nhận",
     "Permission:DanhMucs.NguoiTiepNhan.Delete": "Xoá người tiếp nhận",
+    "TenNguoiTiepNhan": "Tên người tiếp nhận",
+    "MaNguoiTiepNhan": "Mã người tiếp nhận",
+    "TenCoQuan": "Tên cơ quan",
+    "CapCoQuanId": "Cấp cơ quan",
+    "NoiCapCCCDId": "Nơi cấp CCCD",
+    "NgayCapCCCD": "Ngày cấp CCCD"
     //#endregion
 
     //#region 1.13. Danh mục Người được cấp CTS

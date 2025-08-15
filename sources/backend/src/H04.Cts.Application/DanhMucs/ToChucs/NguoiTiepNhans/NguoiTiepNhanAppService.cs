@@ -29,15 +29,44 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
     public async Task<NguoiTiepNhanDto> GetAsync(long id)
     {
-        var queryable = await _repository.GetQueryableAsync();
-        var nguoiTiepNhan = await AsyncExecuter.FirstOrDefaultAsync(
-            queryable.Where(x => x.Id == id && !x.IsDeleted)
-        );
-        if (nguoiTiepNhan == null)
+        var nguoiTiepNhanQueryable = await _repository.GetQueryableAsync();
+        var orgQueryable = await _organizationRepository.GetQueryableAsync();
+        var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
+
+        var dtoQuery = from x in nguoiTiepNhanQueryable
+                       join org in orgQueryable on x.OrganizationId equals org.Id into orgJoin
+                       from org in orgJoin.DefaultIfEmpty()
+                       join issuing in noiCapQueryable on x.NoiCapCCCDId equals issuing.Id into issuingJoin
+                       from issuing in issuingJoin.DefaultIfEmpty()
+                       where x.Id == id && !x.IsDeleted
+                       select new NguoiTiepNhanDto
+                       {
+                           Id = x.Id,
+                           OrganizationId = x.OrganizationId,
+                           OrganizationName = org != null ? org.TenToChuc : null,
+                           FullName = x.FullName,
+                           CCCD = x.CCCD,
+                           DateOfIssue = x.DateOfIssue,
+                           NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
+                           NoiCapCCCDName = issuing != null ? issuing.Name : null,
+                           Position = x.Position,
+                           Phone = x.Phone,
+                           Email = x.Email,
+                           SubmissionAddress = x.SubmissionAddress,
+                           Province = x.Province,
+                           Ward = x.Ward,
+                           IsDefault = x.IsDefault,
+                           IsDeleted = x.IsDeleted,
+                           DeletedBy = x.DeletedBy,
+                           DeletedAt = x.DeletedAt
+                       };
+
+        var dto = await AsyncExecuter.FirstOrDefaultAsync(dtoQuery);
+        if (dto == null)
         {
             throw new EntityNotFoundException(typeof(NguoiTiepNhan), id);
         }
-        return ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(nguoiTiepNhan);
+        return dto;
     }
 
     public async Task<PagedResultDto<NguoiTiepNhanDto>> GetListAsync(GetNguoiTiepNhanListDto input)
@@ -128,18 +157,45 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
         // Intentionally not exposing deleted records in list
 
-        var query = queryable
+        var ordered = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "FullName" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
-        var nguoiTiepNhans = await AsyncExecuter.ToListAsync(query);
+        var orgQueryable = await _organizationRepository.GetQueryableAsync();
+        var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
+
+        var dtoQuery = from x in ordered
+                       join org in orgQueryable on x.OrganizationId equals org.Id into orgJoin
+                       from org in orgJoin.DefaultIfEmpty()
+                       join issuing in noiCapQueryable on x.NoiCapCCCDId equals issuing.Id into issuingJoin
+                       from issuing in issuingJoin.DefaultIfEmpty()
+                       select new NguoiTiepNhanDto
+                       {
+                           Id = x.Id,
+                           OrganizationId = x.OrganizationId,
+                           OrganizationName = org != null ? org.TenToChuc : null,
+                           FullName = x.FullName,
+                           CCCD = x.CCCD,
+                           DateOfIssue = x.DateOfIssue,
+                           NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
+                           NoiCapCCCDName = issuing != null ? issuing.Name : null,
+                           Position = x.Position,
+                           Phone = x.Phone,
+                           Email = x.Email,
+                           SubmissionAddress = x.SubmissionAddress,
+                           Province = x.Province,
+                           Ward = x.Ward,
+                           IsDefault = x.IsDefault,
+                           IsDeleted = x.IsDeleted,
+                           DeletedBy = x.DeletedBy,
+                           DeletedAt = x.DeletedAt
+                       };
+
+        var nguoiTiepNhans = await AsyncExecuter.ToListAsync(dtoQuery);
         var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-        return new PagedResultDto<NguoiTiepNhanDto>(
-            totalCount,
-            ObjectMapper.Map<List<NguoiTiepNhan>, List<NguoiTiepNhanDto>>(nguoiTiepNhans)
-        );
+        return new PagedResultDto<NguoiTiepNhanDto>(totalCount, nguoiTiepNhans);
     }
 
     public async Task<NguoiTiepNhanDto> CreateAsync(CreateUpdateNguoiTiepNhanDto input)
