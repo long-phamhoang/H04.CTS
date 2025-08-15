@@ -36,38 +36,52 @@ public class ThueBaoCaNhanAppService : ApplicationService, IThueBaoCaNhanAppServ
     public async Task<PagedResultDto<ThueBaoCaNhanDto>> GetListAsync(GetListThueBaoCaNhanInput input)
     {
         var queryable = await _repository.GetQueryableAsync();
+
+        // Bao gồm navigation properties để AutoMapper map được TenChucVu và TenToChuc
         queryable = queryable
-        .Include(x => x.ChucVuFk).Include(x => x.ToChucFk);
-        // filter
+            .Include(x => x.ChucVuFk)
+            .Include(x => x.ToChucFk)
+            .AsNoTracking(); // Đọc-only nên dùng để tăng hiệu suất
+
+        // Áp dụng bộ lọc nếu có
         if (!string.IsNullOrWhiteSpace(input.FilterInput))
         {
             queryable = queryable.Where(x =>
-                x.HoTen.Contains(input.FilterInput) || x.ChucVuFk.TenChucVu.Contains(input.FilterInput));
+                x.HoTen.ToLower().Contains(input.FilterInput.ToLower()) ||
+                x.ToChucFk.TenToChuc.ToLower().Contains(input.FilterInput.ToLower())
+            );
         }
 
         // Sắp xếp
-        queryable = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "HoTen" : input.Sorting);
+        //queryable = queryable.OrderBy(
+        //    input.Sorting.IsNullOrWhiteSpace() ? "HoTen" : input.Sorting
+        //);
 
-        // Lấy tổng số bản ghi sau khi filter
+        // Lấy tổng số bản ghi sau khi lọc
         var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-        // Lấy dữ liệu theo phân trang
-        var items = await AsyncExecuter.ToListAsync(queryable
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount));
-
-        return new PagedResultDto<ThueBaoCaNhanDto>(
-            totalCount,
-            ObjectMapper.Map<List<ThueBaoCaNhan>, List<ThueBaoCaNhanDto>>(items)
+        // Lấy dữ liệu phân trang
+        var items = await AsyncExecuter.ToListAsync(
+            queryable
+                .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "HoTen" : input.Sorting)
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount)
         );
+
+        // Map sang DTO
+        var dtos = ObjectMapper.Map<List<ThueBaoCaNhan>, List<ThueBaoCaNhanDto>>(items);
+
+        return new PagedResultDto<ThueBaoCaNhanDto>(totalCount, dtos);
     }
+
 
     [Authorize(CtsPermissions.DanhMucs.ThueBaoCaNhanCreate)]
     public async Task<ThueBaoCaNhanDto> CreateAsync(CreateUpdateThueBaoCaNhanDto input)
     {
-        var book = ObjectMapper.Map<CreateUpdateThueBaoCaNhanDto, ThueBaoCaNhan>(input);
-        await _repository.InsertAsync(book);
-        return ObjectMapper.Map<ThueBaoCaNhan, ThueBaoCaNhanDto>(book);
+
+        var thueBaoCaNhan = ObjectMapper.Map<CreateUpdateThueBaoCaNhanDto, ThueBaoCaNhan>(input);
+        await _repository.InsertAsync(thueBaoCaNhan);
+        return ObjectMapper.Map<ThueBaoCaNhan, ThueBaoCaNhanDto>(thueBaoCaNhan);
     }
 
     [Authorize(CtsPermissions.DanhMucs.ThueBaoCaNhanEdit)]

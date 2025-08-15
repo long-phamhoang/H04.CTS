@@ -18,12 +18,18 @@
         <i class="fa fa-search"></i>
       </button>
     </div>
-    <p-table [value]="thueBaoCaNhans.items" [rows]="pageSize" [lazy]="true" (onLazyLoad)="onPageChange($event)"
-      [loading]="false" class="p-datatable-sm p-datatable-striped">
+    <p-table #dataTable [value]="thueBaoCaNhans.items" [rows]="pageSize" [lazy]="true"
+      (onLazyLoad)="onPageChange($event)" [loading]="true" class="p-datatable-sm p-datatable-gridlines">
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 50px;">#</th>
-          <th>{{ '::HoTen' | abpLocalization }}</th>
+
+          <th pSortableColumn="hoTen" >
+                <div class="flex items-center gap-2">
+                    {{ '::HoTen' | abpLocalization }}
+                    <p-sortIcon field="hoTen" />
+                </div>
+            </th>
           <th>{{ '::NgaySinh' | abpLocalization }}</th>
           <th>{{ '::SoDinhDanhCaNhan' | abpLocalization }}</th>
           <th>{{ '::ToChuc' | abpLocalization }}</th>
@@ -36,12 +42,12 @@
       <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
         <tr>
           <td>{{ rowIndex + 1 + page * pageSize }}</td>
-          <td>{{ row.tenThueBaoCaNhan }}</td>
+          <td>{{ row.hoTen }}</td>
           <td>{{ row.ngaySinh | date:'dd/MM/yyyy' }}</td>
           <td>{{ row.soDinhDanhCaNhan }}</td>
-          <td>{{ row.toChuc }}</td>
-          <td>{{ row.chucVu }}</td>
-          <td>{{ row.emailCongVu }}</td>
+          <td>{{ row.tenToChuc }}</td>
+          <td>{{ row.tenChucVu }}</td>
+          <td>{{ row.diaChiThuDienTuCongVu }}</td>
           <td>
             <div ngbDropdown container="body" class="d-inline-block">
               <button class="btn btn-primary btn-sm dropdown-toggle" ngbDropdownToggle>
@@ -180,8 +186,6 @@
             <option *ngFor="let item of phuongXaOptions" [value]="item.id">{{ item.name }}</option>
           </select>
         </div>
-
-
       </div>
     </form>
   </ng-template>

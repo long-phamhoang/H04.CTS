@@ -3,7 +3,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace H04.Cts.DanhMucs.Dtos
 {
-    public class ThueBaoCaNhanDto : AuditedEntityDto<Guid>
+    public class ThueBaoCaNhanDto : AuditedEntityDto<long>
     {
         public string HoTen { get; set; } = null!;
         public DateTime? NgaySinh { get; set; }

@@ -14,13 +14,17 @@ public class CtsApplicationAutoMapperProfile : Profile
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
 
+        //ChucVu
         CreateMap<ChucVu, ChucVuDto>();
         CreateMap<CreateUpdateChucVuDto, ChucVu>();
 
+        //ThueBaoCaNhan
         CreateMap<ThueBaoCaNhan, ThueBaoCaNhanDto>()
             .ForMember(dest => dest.TenChucVu, opt => opt.MapFrom(src => src.ChucVuFk.TenChucVu))
-            .ForMember(dest => dest.TenToChuc, opt => opt.MapFrom(src => src.ToChucFk.TenToChuc)); ;
+            .ForMember(dest => dest.TenToChuc, opt => opt.MapFrom(src => src.ToChucFk.TenToChuc));
 
-        CreateMap<CreateUpdateThueBaoCaNhanDto, ThueBaoCaNhan>();
+        CreateMap<CreateUpdateThueBaoCaNhanDto, ThueBaoCaNhan>()
+            .ForMember(dest => dest.ChucVuFk, opt => opt.Ignore())
+            .ForMember(dest => dest.ToChucFk, opt => opt.Ignore());
     }
 }

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { ChucVuService, ThueBaoCaNhanDto, ToChucService } from '@app/proxy';
 import { ThueBaoCaNhanService } from '@app/proxy/services/thue-bao-ca-nhan.service';
 import { PROVINCES_MOCK } from '@app/proxy/mock-data-location';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-chuc-vu',
   templateUrl: './thue-bao-ca-nhan.component.html',
@@ -11,6 +12,7 @@ import { PROVINCES_MOCK } from '@app/proxy/mock-data-location';
   standalone: false,
 })
 export class ThueBaoCaNhanComponent implements OnInit {
+  @ViewChild('dataTable', { static: true }) dataTable: Table;
   thueBaoCaNhans = { items: [], totalCount: 0 };
 
   selectedThueBaoCaNhan = {} as ThueBaoCaNhanDto;
@@ -39,12 +41,18 @@ export class ThueBaoCaNhanComponent implements OnInit {
     this.loadTinhThanhPho();
   }
 
-  loadData() {
+  loadData(event?: { sorting?: string }) {
     const skipCount = this.page * this.pageSize;
     const maxResultCount = this.pageSize;
+    const sorting = event?.sorting;
 
     this.thueBaoCaNhanService
-      .getList({ filterInput: this.filterInput, skipCount, maxResultCount })
+      .getList({
+        filterInput: this.filterInput,
+        sorting,
+        skipCount,
+        maxResultCount,
+      })
       .subscribe(response => {
         this.thueBaoCaNhans = {
           items: response.items ?? [],
@@ -57,7 +65,10 @@ export class ThueBaoCaNhanComponent implements OnInit {
     if (selectedTinh) {
       this.onTinhThanhPhoChange(selectedTinh);
     }
+
+    this.dataTable.loading = false;
   }
+
   loadDropdowns() {
     this._chucVuService.getChucVuDropdown().subscribe(data => {
       this.chucVuOptions = data.map(x => ({ id: x.id, name: x.tenChucVu }));
@@ -66,10 +77,6 @@ export class ThueBaoCaNhanComponent implements OnInit {
     this._toChucService.getToChucDropdown().subscribe(data => {
       this.toChucOptions = data.map(x => ({ id: x.id, name: x.tenToChuc }));
     });
-
-    // Nếu có API thì load tỉnh/thành và phường/xã ở đây
-    this.tinhThanhPhoOptions = []; // optional
-    this.phuongXaOptions = []; // optional
   }
 
   loadTinhThanhPho() {
@@ -80,10 +87,9 @@ export class ThueBaoCaNhanComponent implements OnInit {
   }
 
   onTinhThanhPhoChange(tinhId: number): void {
-  const selected = PROVINCES_MOCK.find(p => p.id === +tinhId);
-  this.phuongXaOptions = selected?.communes ?? [];
-}
-
+    const selected = PROVINCES_MOCK.find(p => p.id === +tinhId);
+    this.phuongXaOptions = selected?.communes ?? [];
+  }
   onSearchChange() {
     this.page = 0; // Reset to first page on search
     this.loadData();
@@ -92,7 +98,10 @@ export class ThueBaoCaNhanComponent implements OnInit {
   onPageChange(event: any) {
     this.page = event.first / event.rows;
     this.pageSize = event.rows;
-    this.loadData();
+    const sortField = event?.sortField;
+    const sortOrder = event?.sortOrder; // 1 asc, -1 desc
+    const sorting = sortField ? `${sortField} ${sortOrder === 1 ? 'asc' : 'desc'}` : undefined;
+    this.loadData({ sorting });
   }
 
   totalPages(): number {
@@ -106,10 +115,17 @@ export class ThueBaoCaNhanComponent implements OnInit {
     this.isModalOpen = true;
   }
 
-  editthueBaoCaNhan(id: number) {
+  editThueBaoCaNhan(id: number) {
     this.thueBaoCaNhanService.get(id).subscribe(thueBaoCaNhan => {
       this.selectedThueBaoCaNhan = thueBaoCaNhan;
       this.buildForm();
+
+      // Gọi sau khi form đã được build xong
+      const selectedTinh = this.selectedThueBaoCaNhan.tinhThanhPho;
+      if (selectedTinh) {
+        this.onTinhThanhPhoChange(selectedTinh);
+      }
+
       this.isModalOpen = true;
     });
   }
@@ -123,12 +139,21 @@ export class ThueBaoCaNhanComponent implements OnInit {
   }
 
   buildForm() {
+    const formatDateToInput = (date: any) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     this.form = this.fb.group({
       hoTen: [this.selectedThueBaoCaNhan.hoTen || '', Validators.required],
-      ngaySinh: [this.selectedThueBaoCaNhan.ngaySinh || '', Validators.required],
+      ngaySinh: [formatDateToInput(this.selectedThueBaoCaNhan.ngaySinh), Validators.required],
       soDinhDanhCaNhan: [this.selectedThueBaoCaNhan.soDinhDanhCaNhan || '', Validators.required],
       noiCap: [this.selectedThueBaoCaNhan.noiCap || '', Validators.required],
-      ngayCap: [this.selectedThueBaoCaNhan.ngayCap || '', Validators.required],
+      ngayCap: [formatDateToInput(this.selectedThueBaoCaNhan.ngayCap), Validators.required],
       toChucId: [this.selectedThueBaoCaNhan.toChucId || '', Validators.required],
       chucVuId: [this.selectedThueBaoCaNhan.chucVuId || '', Validators.required],
       diaChiThuDienTuCongVu: [
@@ -145,9 +170,27 @@ export class ThueBaoCaNhanComponent implements OnInit {
       return;
     }
 
+    const formValue = { ...this.form.value };
+
+    // Chuyển thành Date nếu chưa phải Date
+    if (formValue.ngaySinh && !(formValue.ngaySinh instanceof Date)) {
+      formValue.ngaySinh = new Date(formValue.ngaySinh);
+    }
+    if (formValue.ngayCap && !(formValue.ngayCap instanceof Date)) {
+      formValue.ngayCap = new Date(formValue.ngayCap);
+    }
+
+    // Sau đó mới gọi toISOString()
+    if (formValue.ngaySinh) {
+      formValue.ngaySinh = formValue.ngaySinh.toISOString().split('T')[0];
+    }
+    if (formValue.ngayCap) {
+      formValue.ngayCap = formValue.ngayCap.toISOString().split('T')[0];
+    }
+
     const request = this.selectedThueBaoCaNhan.id
-      ? this.thueBaoCaNhanService.update(this.selectedThueBaoCaNhan.id, this.form.value)
-      : this.thueBaoCaNhanService.create(this.form.value);
+      ? this.thueBaoCaNhanService.update(this.selectedThueBaoCaNhan.id, formValue)
+      : this.thueBaoCaNhanService.create(formValue);
 
     request.subscribe(() => {
       this.isModalOpen = false;
