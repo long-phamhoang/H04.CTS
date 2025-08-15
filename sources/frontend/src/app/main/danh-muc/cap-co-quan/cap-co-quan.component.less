@@ -74,14 +74,25 @@
 ::ng-deep .p-select-list-container {
   background: #fff !important;
   color: #000 !important;
+  border-radius: 4px !important;
+}
+::ng-deep .p-select-overlay {
+  border-color: #739dd3 !important;
+  margin-bottom: 10px !important;
+  margin-top: 5px !important;
+}
+::ng-deep .p-paginator-rpp-dropdown.p-focus,
+::ng-deep .p-paginator-rpp-dropdown:hover {
+  border-color: #739dd3 !important;
 }
 
 ::ng-deep .p-select-label {
   color: #000 !important;
 }
 
-::ng-deep .p-select-option:not(.p-select-option-selected):not(.p-disabled).p-focus {
-  background: #dff7ee !important;
+::ng-deep .p-select-option:not(.p-select-option-selected):not(.p-disabled).p-focus,
+::ng-deep .p-select-option.p-select-option-selected  {
+  background: #eff6ff !important;
   color: #000 !important;
 }
 
@@ -89,12 +100,20 @@
   color: #000 !important;
 }
 
+::ng-deep .p-ripple:hover,
+::ng-deep .p-paginator-page-selected {
+  background-color: #eff6ff !important;
+}
+
+::ng-deep .p-paginator-page {
+  color: #005f99 !important;
+}
+
 ::ng-deep .datatable-footer-inner {
   display: none !important;
 }
 
 ::ng-deep .visible{
-  
   border-radius: 4px !important;
   border: #e5e7eb 0.5px solid !important;
 }

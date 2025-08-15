@@ -135,7 +135,6 @@
       <div class="mt-2">
         <label for="CapCoQuan-trangThai">{{'::Enum:TrangThai' | abpLocalization }}</label><span class="required-filed"> * </span>
         <select id="CapCoQuan-trangThai" class="form-control" formControlName="trangThai">
-            <option [ngValue]="null">-- Chọn trạng thái --</option>
             <option *ngFor="let opt of trangThaiOptions" [ngValue]="opt.value">
                 {{ '::Enum:TrangThai.' + opt.key | abpLocalization }}
             </option>

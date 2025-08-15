@@ -97,7 +97,7 @@ export class CapCoQuanComponent implements OnInit {
     this.form = this.fb.group({
       tenCapCoQuan: [this.selectedCapCoQuan.tenCapCoQuan || '', Validators.required],
       maCapCoQuan: [this.selectedCapCoQuan.maCapCoQuan || '', Validators.required],
-      trangThai: [this.selectedCapCoQuan.trangThai || null, Validators.required],
+      trangThai: [this.selectedCapCoQuan.trangThai || 1, Validators.required],
     });
   }
 

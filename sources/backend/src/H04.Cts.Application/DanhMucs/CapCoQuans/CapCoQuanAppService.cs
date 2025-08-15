@@ -38,8 +38,8 @@ public class CapCoQuanAppService : ApplicationService, ICapCoQuanAppService
 
         if (!input.FilterString.IsNullOrWhiteSpace())
         {
-            queryable = queryable.Where(x => (x.TenCapCoQuan != null && x.TenCapCoQuan.Contains(input.FilterString))
-                                          || (x.MaCapCoQuan != null && x.MaCapCoQuan.Contains(input.FilterString)));
+            queryable = queryable.Where(x => (x.TenCapCoQuan != null && x.TenCapCoQuan.ToLower().Contains(input.FilterString.ToLower()))
+                                          || (x.MaCapCoQuan != null && x.MaCapCoQuan.ToLower().Contains(input.FilterString.ToLower())));
         }
         if (!input.Sorting.IsNullOrWhiteSpace())
             queryable = queryable.OrderBy(input.Sorting)
