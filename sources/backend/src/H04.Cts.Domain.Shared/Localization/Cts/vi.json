@@ -269,7 +269,7 @@
     "Permission:DanhMucs.NguoiTiepNhan.Edit": "Sửa người tiếp nhận",
     "Permission:DanhMucs.NguoiTiepNhan.Delete": "Xoá người tiếp nhận",
     "TenNguoiTiepNhan": "Tên người tiếp nhận",
-    "MaNguoiTiepNhan": "Mã người tiếp nhận",
+    "CCCD": "Căn cước công dân",
     "TenCoQuan": "Tên cơ quan",
     "CapCoQuanId": "Cơ quan cấp",
     "NoiCapCCCDId": "Nơi cấp CCCD",
@@ -279,7 +279,8 @@
     "Phone": "Điện thoại",
     "Email": "Email",
     "SubmissionAddress": "Địa chỉ thư công vụ",
-    "Ward": "Quận, huyện"
+    "Ward": "Quận, huyện",
+    "IsDefault": "Mặc định"
     //#endregion
 
     //#region 1.13. Danh mục Người được cấp CTS

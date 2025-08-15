@@ -3,7 +3,7 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { NoiCapCCCDDto, NoiCapCCCDService, trangThaiOptions } from '@app/proxy';
+import { NoiCapCCCDDto, NoiCapCCCDService, trangThaiOptions, CreateUpdateNoiCapCCCDDto } from '@app/proxy';
 
 @Component({
   standalone: false,
@@ -40,6 +40,9 @@ export class NoiCapCCCDComponent implements OnInit {
   ngOnInit() {
     // initial load
     // this.reload();
+    
+    // Initialize form first
+    this.buildForm();
   }
 
   createNoiCapCCCD() {
@@ -71,8 +74,8 @@ export class NoiCapCCCDComponent implements OnInit {
       abbreviation: [this.selectedNoiCapCCCD.abbreviation || null, Validators.required],
       address: [this.selectedNoiCapCCCD.address || null, Validators.required],
       province: [this.selectedNoiCapCCCD.province || null, Validators.required],
-      note: [this.selectedNoiCapCCCD.note || null, Validators.required],
-      isActive: [this.selectedNoiCapCCCD.isActive || null, Validators.required],
+      note: [this.selectedNoiCapCCCD.note || null], // Remove required validator for note
+      isActive: [this.selectedNoiCapCCCD.isActive || true], // Default to true
     });
   }
 
@@ -131,5 +134,31 @@ export class NoiCapCCCDComponent implements OnInit {
 
   onSearch() {
     this.reload({ first: 0, rows: this.pageSize });
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
+
+  // Add new method for toggle functionality
+  toggleIsActive(row: NoiCapCCCDDto, checked: boolean) {
+    const updateDto: CreateUpdateNoiCapCCCDDto = {
+      name: row.name || '',
+      code: row.code,
+      abbreviation: row.abbreviation,
+      address: row.address,
+      province: row.province,
+      note: row.note,
+      isActive: checked
+    };
+    
+    this.noiCapCCCDService.update(row.id, updateDto).subscribe(() => {
+      // Cập nhật trực tiếp giá trị isActive thay vì reload toàn bộ danh sách
+      row.isActive = checked;
+    }, (error) => {
+      // Nếu update thất bại, revert lại giá trị cũ
+      console.error('Failed to update isActive:', error);
+      // Không cần làm gì vì PrimeNG sẽ tự động revert UI
+    });
   }
 }

@@ -1,81 +1,63 @@
-<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.NguoiTiepNhan' | abpLocalization"></page-header>
-<div class="card">
-  <div class="card-header">
-    <div class="row">
-      <div class="col col-md-6">
-        <h5 class="card-title">
-          {{ '::Menu:NguoiTiepNhan' | abpLocalization }}
-        </h5>
-      </div>
-      <div class="text-end col col-md-6">
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.NguoiTiepNhan' | abpLocalization">
+</page-header>
 
-        <div class="text-lg-end pt-2">
-          <!-- <button *abpPermission="'Cts.DanhMucs.NguoiTiepNhan.Create'" id="create" class="btn btn-primary" type="button" (click)="createNguoiTiepNhan()"> -->
-          <button id="create" class="btn btn-primary" type="button" (click)="createNguoiTiepNhan()">
-            <i class="fa fa-plus me-1"></i>
-            <span>{{ '::CreateNew' | abpLocalization }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">{{ '::Menu:NguoiTiepNhan' | abpLocalization }}</h5>
+    <button id="create" class="btn btn-primary" (click)="createNguoiTiepNhan()"
+      title="{{ '::CreateNew' | abpLocalization }}">
+      <i class="fa fa-plus me-1"></i> {{ '::CreateNew' | abpLocalization }}
+    </button>
   </div>
-  <div class="card-body">
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Tìm kiếm..." [(ngModel)]="keyword" (keyup.enter)="onSearch()" />
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-outline-primary w-100" (click)="onSearch()">
-          <i class="fa fa-search me-1"></i> Tìm kiếm
-        </button>
-      </div>
+
+  <div class="card-body custom-border m-3">
+    <div class="input-group mb-3" style="width: 300px;">
+      <input type="text" class="form-control" placeholder="Tìm kiếm..." [(ngModel)]="keyword"
+        (keydown.enter)="onSearch()" />
+      <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+        <i class="fa fa-search"></i>
+      </button>
     </div>
-    <p-table
-      [value]="nguoiTiepNhan.items"
-      [paginator]="true"
-      [rows]="pageSize"
-      [totalRecords]="nguoiTiepNhan.totalCount"
-      [lazy]="true"
-      (onLazyLoad)="loadNguoiTiepNhan($event)"
-    >
+    <p-table [value]="nguoiTiepNhan.items" [rows]="pageSize" [lazy]="true" (onLazyLoad)="loadNguoiTiepNhan($event)"
+      [loading]="false" class="p-datatable-sm p-datatable-striped p-datatable-gridlines custom-header-table">
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 150px">{{ '::Actions' | abpLocalization }}</th>
+          <th style="width: 50px;">#</th>
           <th pSortableColumn="FullName">
             {{ '::TenNguoiTiepNhan' | abpLocalization }}
             <p-sortIcon field="FullName"></p-sortIcon>
           </th>
           <th pSortableColumn="CCCD">
-            {{ '::MaNguoiTiepNhan' | abpLocalization }}
+            {{ '::CCCD' | abpLocalization }}
             <p-sortIcon field="CCCD"></p-sortIcon>
           </th>
-          <th pSortableColumn="OrganizationName">
-            {{ '::TenCoQuan' | abpLocalization }}
-            <p-sortIcon field="OrganizationName"></p-sortIcon>
-          </th>
-          <th pSortableColumn="DateOfIssue">
-            {{ '::NgayCapCCCD' | abpLocalization }}
-            <p-sortIcon field="DateOfIssue"></p-sortIcon>
-          </th>
-          <th pSortableColumn="NoiCapCCCDName">
-            {{ '::NoiCapCCCDName' | abpLocalization }}
-            <p-sortIcon field="NoiCapCCCDName"></p-sortIcon>
-          </th>
-          <th class="col-large-only" pSortableColumn="Position">
+          <th pSortableColumn="Position">
             {{ '::Position' | abpLocalization }}
             <p-sortIcon field="Position"></p-sortIcon>
           </th>
-          <th class="col-large-only" pSortableColumn="Phone">
+          <th pSortableColumn="Phone">
             {{ '::Phone' | abpLocalization }}
             <p-sortIcon field="Phone"></p-sortIcon>
           </th>
-          <th class="col-large-only" pSortableColumn="Email">
+          <th pSortableColumn="Email">
             {{ '::Email' | abpLocalization }}
             <p-sortIcon field="Email"></p-sortIcon>
           </th>
-          <th class="col-large-only" pSortableColumn="SubmissionAddress">
+          <th pSortableColumn="SubmissionAddress">
             {{ '::SubmissionAddress' | abpLocalization }}
             <p-sortIcon field="SubmissionAddress"></p-sortIcon>
+          </th>
+          <th class="col-large-only" pSortableColumn="OrganizationName">
+            {{ '::TenCoQuan' | abpLocalization }}
+            <p-sortIcon field="OrganizationName"></p-sortIcon>
+          </th>
+          <th class="col-large-only" pSortableColumn="DateOfIssue">
+            {{ '::NgayCapCCCD' | abpLocalization }}
+            <p-sortIcon field="DateOfIssue"></p-sortIcon>
+          </th>
+          <th class="col-large-only" pSortableColumn="NoiCapCCCDName">
+            {{ '::NoiCapCCCDName' | abpLocalization }}
+            <p-sortIcon field="NoiCapCCCDName"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Province">
             {{ '::Province' | abpLocalization }}
@@ -85,166 +67,153 @@
             {{ '::Ward' | abpLocalization }}
             <p-sortIcon field="Ward"></p-sortIcon>
           </th>
-          <th class="col-large-only" pSortableColumn="IsDefault">
+          <th pSortableColumn="IsDefault">
             {{ '::IsDefault' | abpLocalization }}
             <p-sortIcon field="IsDefault"></p-sortIcon>
           </th>
+          <th style="width: 150px;">{{ '::Actions' | abpLocalization }}</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-row>
+
+      <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
         <tr>
-          <td>
-            <div class="btn-group">
-              <button class="btn btn-primary btn-sm" (click)="editNguoiTiepNhan(row.id)">{{ '::Edit' | abpLocalization }}</button>
-              <button class="btn btn-danger btn-sm" (click)="delete(row.id)">{{ '::Delete' | abpLocalization }}</button>
-            </div>
-          </td>
+          <td>{{ rowIndex + 1 }}</td>
           <td>{{ row.fullName }}</td>
           <td>{{ row.cccd }}</td>
-          <td>{{ row.organizationName }}</td>
-          <td>{{ row.dateOfIssue }}</td>
-          <td>{{ row.noiCapCCCDName }}</td>
-          <td class="col-large-only">{{ row.position }}</td>
-          <td class="col-large-only">{{ row.phone }}</td>
-          <td class="col-large-only">{{ row.email }}</td>
-          <td class="col-large-only">{{ row.submissionAddress }}</td>
+          <td>{{ row.position }}</td>
+          <td>{{ row.phone }}</td>
+          <td>{{ row.email }}</td>
+          <td>{{ row.submissionAddress }}</td>
+          <td class="col-large-only">{{ row.organizationName }}</td>
+          <td class="col-large-only">{{ row.dateOfIssue }}</td>
+          <td class="col-large-only">{{ row.noiCapCCCDName }}</td>
           <td class="col-large-only">{{ row.province }}</td>
           <td class="col-large-only">{{ row.ward }}</td>
-          <td class="col-large-only">{{ row.isDefault }}</td>
+          <td>
+            <p-toggleSwitch 
+              [ngModel]="row.isDefault"
+              (onChange)="toggleIsDefault(row, $event.checked)"
+            >
+            </p-toggleSwitch>
+          </td>
+          <td>
+            <div ngbDropdown container="body" class="d-inline-block">
+              <button class="btn btn-primary btn-sm dropdown-toggle" ngbDropdownToggle>
+                <i class="fa fa-cog me-1"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button ngbDropdownItem (click)="editNguoiTiepNhan(row.id)">
+                  {{ '::Edit' | abpLocalization }}
+                </button>
+                <button ngbDropdownItem (click)="delete(row.id)">
+                  {{ '::Delete' | abpLocalization }}
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="14" class="text-center py-3">{{ '::NoDataFound' | abpLocalization }}</td>
         </tr>
       </ng-template>
     </p-table>
+    <div class="d-flex justify-content-between align-items-center p-2">
+      <div>Tổng cộng: {{ nguoiTiepNhan.totalCount || 0 }}</div>
+      <p-paginator [rows]="pageSize" [first]="0" [totalRecords]="nguoiTiepNhan.totalCount || 0"
+        [rowsPerPageOptions]="[5, 10, 20, 50]" (onPageChange)="loadNguoiTiepNhan($event)">
+      </p-paginator>
+    </div>
   </div>
 </div>
 
-<!-- Add the modal here -->
-<abp-modal [(visible)]="isModalOpen">
-  <ng-template #abpHeader>
-    <h3>{{ (selectedNguoiTiepNhan.id ? '::Edit' : '::NewNguoiTiepNhan' ) | abpLocalization }}</h3>
-  </ng-template>
-
-  <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-fullName">Tên người tiếp nhận</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-fullName" class="form-control" formControlName="fullName" autofocus />
-        <div *ngIf="isFieldInvalid('fullName')" class="text-danger small mt-1">
-          Tên người tiếp nhận là bắt buộc
+<!-- Modal -->
+<p-dialog 
+  [(visible)]="isModalOpen" 
+  [modal]="true" 
+  [draggable]="false" 
+  [resizable]="false"
+  [style]="{width: '70vw'}"
+  [header]="selectedNguoiTiepNhan?.id ? ('::Edit' | abpLocalization) : ('::NewNguoiTiepNhan' | abpLocalization)"
+  [closable]="true">
+  
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="save()" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="mb-2 fw-bold">Thông tin cơ quan nộp hồ sơ</div>
+          <div class="d-flex flex-wrap gap-2">
+            <span *ngFor="let org of organizations" class="btn btn-outline-primary btn-sm" [class.active]="form?.value?.organizationId === org.id" (click)="form?.patchValue({ organizationId: org.id })">{{ org.tenToChuc }}</span>
+          </div>
         </div>
-      </div>
 
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-organizationId">Tên cơ quan</label>
-        <select id="nguoiTiepNhan-organizationId" class="form-control" formControlName="organizationId">
-          <option [ngValue]="null">-- Chọn cơ quan --</option>
-          <option *ngFor="let org of organizations" [ngValue]="org.id">{{ org.tenToChuc }}</option>
-        </select>
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-cccd">CCCD</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-cccd" class="form-control" formControlName="cccd" />
-        <div *ngIf="isFieldInvalid('cccd')" class="text-danger small mt-1">
-          CCCD là bắt buộc
+        <div class="col-12">
+          <label for="nguoiTiepNhan-fullName" class="form-label">Họ tên <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-fullName" class="form-control" formControlName="fullName" maxlength="100" placeholder="Họ tên" [class.is-invalid]="form?.controls?.fullName?.invalid && form?.controls?.fullName?.touched" />
         </div>
-      </div>
 
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-dateOfIssue">Ngày cấp</label><span> * </span>
-        <div class="input-group">
-          <input id="nguoiTiepNhan-dateOfIssue" class="form-control" formControlName="dateOfIssue" ngbDatepicker #doi="ngbDatepicker" />
-          <button class="btn btn-outline-secondary" type="button" (click)="doi.toggle()">
-            <i class="fa fa-calendar"></i>
-          </button>
+        <div class="col-12 d-flex align-items-center">
+          <label class="form-label me-3">Là mặc định:</label>
+          <p-toggleSwitch formControlName="isDefault">
+          </p-toggleSwitch>
         </div>
-        <div *ngIf="isFieldInvalid('dateOfIssue')" class="text-danger small mt-1">
-          Ngày cấp là bắt buộc
+
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-cccd" class="form-label">Số định danh cá nhân <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-cccd" class="form-control" formControlName="cccd" maxlength="20" placeholder="Số định danh cá nhân" [class.is-invalid]="form?.controls?.cccd?.invalid && form?.controls?.cccd?.touched" />
         </div>
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-position">Chức vụ</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-position" class="form-control" formControlName="position" />
-        <div *ngIf="isFieldInvalid('position')" class="text-danger small mt-1">
-          Chức vụ là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-dateOfIssue" class="form-label">Ngày cấp <span class="text-danger">*</span></label>
+            <input type="date" id="nguoiTiepNhan-dateOfIssue" class="form-control" formControlName="dateOfIssue" required
+            [class.is-invalid]="form?.controls?.dateOfIssue?.invalid && form?.controls?.dateOfIssue?.touched" />
+          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
         </div>
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-phone">Số điện thoại</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-phone" class="form-control" formControlName="phone" />
-        <div *ngIf="isFieldInvalid('phone')" class="text-danger small mt-1">
-          Số điện thoại là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-noiCapCCCDId" class="form-label">Nơi cấp <span class="text-danger">*</span></label>
+          <select id="nguoiTiepNhan-noiCapCCCDId" class="form-select" formControlName="noiCapCCCDId">
+            <option [ngValue]="null">-- Chọn nơi cấp --</option>
+            <option *ngFor="let item of noiCapCCCDs" [ngValue]="item.id">{{ item.name }}</option>
+          </select>
         </div>
-      </div>
 
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-email">Email</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-email" class="form-control" formControlName="email" />
-        <div *ngIf="isFieldInvalid('email')" class="text-danger small mt-1">
-          Email là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-position" class="form-label">Chức vụ</label>
+          <input type="text" id="nguoiTiepNhan-position" class="form-control" formControlName="position" maxlength="100" placeholder="Chức vụ" />
         </div>
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-submissionAddress">Địa chỉ nơi nhận</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-submissionAddress" class="form-control" formControlName="submissionAddress" />
-        <div *ngIf="isFieldInvalid('submissionAddress')" class="text-danger small mt-1">
-          Địa chỉ nơi nhận là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-phone" class="form-label">Điện thoại <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-phone" class="form-control" formControlName="phone" maxlength="20" placeholder="Điện thoại" [class.is-invalid]="form?.controls?.phone?.invalid && form?.controls?.phone?.touched" />
         </div>
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-noiCapCCCDId">Nơi cấp CCCD</label>
-        <select id="nguoiTiepNhan-noiCapCCCDId" class="form-control" formControlName="noiCapCCCDId">
-          <option [ngValue]="null">-- Chọn nơi cấp --</option>
-          <option *ngFor="let item of noiCapCCCDs" [ngValue]="item.id">{{ item.name }}</option>
-        </select>
-        <!-- <div *ngIf="isFieldInvalid('noiCapCCCDId')" class="text-danger small mt-1">
-          Nơi cấp CCCD là bắt buộc
-        </div> -->
-      </div>
-
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-province">Tỉnh</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-province" class="form-control" formControlName="province" />
-        <div *ngIf="isFieldInvalid('province')" class="text-danger small mt-1">
-          Tỉnh là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-email" class="form-label">Địa chỉ thư điện tử công vụ</label>
+          <input type="email" id="nguoiTiepNhan-email" class="form-control" formControlName="email" maxlength="100" placeholder="Email công vụ" />
         </div>
-      </div>
 
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-ward">Phường/Xã</label><span> * </span>
-        <input type="text" id="nguoiTiepNhan-ward" class="form-control" formControlName="ward" />
-        <div *ngIf="isFieldInvalid('ward')" class="text-danger small mt-1">
-          Phường/Xã là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-province" class="form-label">Tỉnh, thành phố <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-province" class="form-control" formControlName="province" maxlength="100" placeholder="Tỉnh, thành phố" [class.is-invalid]="form?.controls?.province?.invalid && form?.controls?.province?.touched" />
         </div>
-      </div>
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-ward" class="form-label">Phường, xã <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-ward" class="form-control" formControlName="ward" maxlength="100" placeholder="Phường, xã" [class.is-invalid]="form?.controls?.ward?.invalid && form?.controls?.ward?.touched" />
+        </div>
 
-      <div class="mt-2">
-        <label for="nguoiTiepNhan-isDefault">Mặc định</label><span> * </span>
-        <select id="nguoiTiepNhan-isDefault" class="form-control" formControlName="isDefault">
-          <option [ngValue]="null">-- Chọn --</option>
-          <option [ngValue]="true">Có</option>
-          <option [ngValue]="false">Không</option>
-        </select>
-        <div *ngIf="isFieldInvalid('isDefault')" class="text-danger small mt-1">
-          Trường mặc định là bắt buộc
+        <div class="col-md-4">
+          <label for="nguoiTiepNhan-submissionAddress" class="form-label">Địa chỉ tiếp nhận <span class="text-danger">*</span></label>
+          <input type="text" id="nguoiTiepNhan-submissionAddress" class="form-control" formControlName="submissionAddress" maxlength="200" placeholder="Địa chỉ tiếp nhận" [class.is-invalid]="form?.controls?.submissionAddress?.invalid && form?.controls?.submissionAddress?.touched" />
         </div>
       </div>
     </form>
-  </ng-template>
+  </div>
 
-  <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
+  <ng-template pTemplate="footer" #dialogFooter>
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">
       {{ '::Close' | abpLocalization }}
     </button>
-
-    <!--added save button-->
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
-      <i class="fa fa-check mr-1"></i>
-      {{ '::Save' | abpLocalization }}
+    <button class="btn btn-primary" (click)="save()" [disabled]="form?.invalid">
+      <i class="fa fa-check me-1"></i> {{ '::Save' | abpLocalization }}
     </button>
   </ng-template>
-
-</abp-modal>
+</p-dialog>

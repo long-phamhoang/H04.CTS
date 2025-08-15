@@ -34,9 +34,9 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
 
         var dtoQuery = from x in nguoiTiepNhanQueryable
-                       join org in orgQueryable on x.OrganizationId equals org.Id into orgJoin
+                       join org in orgQueryable.Where(o => !o.IsDeleted) on x.OrganizationId equals org.Id into orgJoin
                        from org in orgJoin.DefaultIfEmpty()
-                       join issuing in noiCapQueryable on x.NoiCapCCCDId equals issuing.Id into issuingJoin
+                       join issuing in noiCapQueryable.Where(n => !n.IsDeleted) on x.NoiCapCCCDId equals issuing.Id into issuingJoin
                        from issuing in issuingJoin.DefaultIfEmpty()
                        where x.Id == id && !x.IsDeleted
                        select new NguoiTiepNhanDto
@@ -89,12 +89,12 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             var allNoiCaps = searchNoiCapQueryable.ToList();
 
             var matchingOrgIds = searchOrgQueryable
-                .Where(org => org.TenToChuc != null && org.TenToChuc.ToLower().Contains(keyword.ToLower()))
+                .Where(org => !org.IsDeleted && org.TenToChuc != null && org.TenToChuc.ToLower().Contains(keyword.ToLower()))
                 .Select(org => org.Id)
                 .ToList();
 
             var matchingNoiCapIds = searchNoiCapQueryable
-                .Where(issuing => issuing.Name != null && issuing.Name.ToLower().Contains(keyword.ToLower()))
+                .Where(issuing => !issuing.IsDeleted && issuing.Name != null && issuing.Name.ToLower().Contains(keyword.ToLower()))
                 .Select(issuing => issuing.Id)
                 .ToList();
 
@@ -153,9 +153,9 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
 
         var dtoQuery = from x in ordered
-                       join org in orgQueryable on x.OrganizationId equals org.Id into orgJoin
+                       join org in orgQueryable.Where(o => !o.IsDeleted) on x.OrganizationId equals org.Id into orgJoin
                        from org in orgJoin.DefaultIfEmpty()
-                       join issuing in noiCapQueryable on x.NoiCapCCCDId equals issuing.Id into issuingJoin
+                       join issuing in noiCapQueryable.Where(n => !n.IsDeleted) on x.NoiCapCCCDId equals issuing.Id into issuingJoin
                        from issuing in issuingJoin.DefaultIfEmpty()
                        select new NguoiTiepNhanDto
                        {
@@ -219,19 +219,19 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         // Optional validations when IDs are provided
         if (input.OrganizationId.HasValue)
         {
-            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
+            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value && !x.IsDeleted);
             if (!organizationExists)
             {
-                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
+                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId} hoặc tổ chức đã bị xóa.");
             }
         }
 
         if (input.NoiCapCCCDId.HasValue)
         {
-            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value);
+            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value && !x.IsDeleted);
             if (!noiCapCCCDExists)
             {
-                throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId}.");
+                throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId} hoặc cơ quan đã bị xóa.");
             }
         }
 
@@ -258,19 +258,19 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         // Optional validations when IDs are provided
         if (input.OrganizationId.HasValue)
         {
-            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value);
+            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value && !x.IsDeleted);
             if (!organizationExists)
             {
-                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId}.");
+                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId} hoặc tổ chức đã bị xóa.");
             }
         }
 
         if (input.NoiCapCCCDId.HasValue)
         {
-            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value);
+            var noiCapCCCDExists = await _noiCapCCCDRepository.AnyAsync(x => x.Id == input.NoiCapCCCDId.Value && !x.IsDeleted);
             if (!noiCapCCCDExists)
             {
-                throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId}.");
+                throw new UserFriendlyException($"Không tìm thấy cơ quan cấp với Id = {input.NoiCapCCCDId} hoặc cơ quan đã bị xóa.");
             }
         }
 

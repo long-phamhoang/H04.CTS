@@ -46,6 +46,9 @@ export class NguoiTiepNhanComponent implements OnInit {
     // initial load
     // this.reload();
 
+    // Initialize form first
+    this.buildForm();
+
     // Load NoiCapCCCD options for select
     this.noiCapCCCDService
       .getList({ skipCount: 0, maxResultCount: 1000, sorting: 'name' })
@@ -106,19 +109,28 @@ export class NguoiTiepNhanComponent implements OnInit {
   }
 
   buildForm() {
+    const formatDateToInput = (date: any) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     this.form = this.fb.group({
       organizationId: [this.selectedNguoiTiepNhan.organizationId || null],
       fullName: [this.selectedNguoiTiepNhan.fullName || '', Validators.required],
       cccd: [this.selectedNguoiTiepNhan.cccd || null, Validators.required],
-      dateOfIssue: [this.toDateStruct(this.selectedNguoiTiepNhan.dateOfIssue) || null, Validators.required],
-      noiCapCCCDId: [this.selectedNguoiTiepNhan.noiCapCCCDId || null],
+      dateOfIssue: [formatDateToInput(this.selectedNguoiTiepNhan.dateOfIssue) || null, Validators.required],
+      noiCapCCCDId: [this.selectedNguoiTiepNhan.noiCapCCCDId || null, Validators.required],
       position: [this.selectedNguoiTiepNhan.position || null, Validators.required],
       phone: [this.selectedNguoiTiepNhan.phone || null, Validators.required],
       email: [this.selectedNguoiTiepNhan.email || null, Validators.required],
       submissionAddress: [this.selectedNguoiTiepNhan.submissionAddress || null, Validators.required],
       province: [this.selectedNguoiTiepNhan.province || null, Validators.required],
       ward: [this.selectedNguoiTiepNhan.ward || null, Validators.required],
-      isDefault: [this.selectedNguoiTiepNhan.isDefault || null, Validators.required],
+      isDefault: [this.selectedNguoiTiepNhan.isDefault ?? false],
     });
   }
 
@@ -137,13 +149,37 @@ export class NguoiTiepNhanComponent implements OnInit {
       return Number.isNaN(n) ? null : n;
     };
 
+    if (raw.dateOfIssue && !(raw.dateOfIssue instanceof Date)) {
+      raw.dateOfIssue = new Date(raw.dateOfIssue);
+    }
+
+    if (raw.dateOfIssue) {
+      raw.dateOfIssue = raw.dateOfIssue.toISOString().split('T')[0];
+    }
+
+    // Build DTO with proper null handling
     const dto: any = {
-      ...raw,
-      organizationId: toNullableNumber(raw.organizationId),
-      noiCapCCCDId: toNullableNumber(raw.noiCapCCCDId),
-      dateOfIssue: this.toIsoDate(raw.dateOfIssue),
+      fullName: raw.fullName,
+      cccd: raw.cccd,
+      dateOfIssue: raw.dateOfIssue,
+      position: raw.position,
+      phone: raw.phone,
+      email: raw.email,
+      submissionAddress: raw.submissionAddress,
+      province: raw.province,
+      ward: raw.ward,
       isDefault: typeof raw.isDefault === 'string' ? raw.isDefault === 'true' : !!raw.isDefault,
     };
+
+    // Only include organizationId if it has a value
+    if (raw.organizationId !== null && raw.organizationId !== undefined && raw.organizationId !== '') {
+      dto.organizationId = toNullableNumber(raw.organizationId);
+    }
+
+    // Only include noiCapCCCDId if it has a value
+    if (raw.noiCapCCCDId !== null && raw.noiCapCCCDId !== undefined && raw.noiCapCCCDId !== '') {
+      dto.noiCapCCCDId = toNullableNumber(raw.noiCapCCCDId);
+    }
 
     const request = this.selectedNguoiTiepNhan.id
       ? this.nguoiTiepNhanService.update(this.selectedNguoiTiepNhan.id, dto)
@@ -155,23 +191,6 @@ export class NguoiTiepNhanComponent implements OnInit {
       this.reload();
     });
   }
-
-  private toDateStruct(input?: string | Date | null): any {
-    if (!input) return null;
-    const d = typeof input === 'string' ? new Date(input) : input;
-    if (isNaN(d.getTime())) return null;
-    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
-  }
-
-  private toIsoDate(struct: any): string | null {
-    if (!struct) return null;
-    if (struct instanceof Date) return struct.toISOString();
-    const { year, month, day } = struct || {};
-    if (!year || !month || !day) return null;
-    const dt = new Date(year, month - 1, day);
-    return isNaN(dt.getTime()) ? null : dt.toISOString();
-  }
-
   // Helper method to debug form validation
   logFormErrors() {
     console.log('Form is invalid. Current errors:');
@@ -187,5 +206,56 @@ export class NguoiTiepNhanComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return field ? field.invalid && field.touched : false;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
+
+  // Toggle isDefault status directly from table
+  toggleIsDefault(row: NguoiTiepNhanDto, newValue: boolean) {
+    // Store original value to revert if update fails
+    const originalValue = row.isDefault;
+    
+    // Optimistically update UI first
+    row.isDefault = newValue;
+    
+    // Create update DTO with only the isDefault field and other required fields
+    const updateDto: any = {
+      fullName: row.fullName,
+      cccd: row.cccd,
+      dateOfIssue: row.dateOfIssue,
+      position: row.position,
+      phone: row.phone,
+      email: row.email,
+      submissionAddress: row.submissionAddress,
+      province: row.province,
+      ward: row.ward,
+      isDefault: newValue,
+    };
+
+    // Only include organizationId if it has a value
+    if (row.organizationId !== null && row.organizationId !== undefined) {
+      updateDto.organizationId = row.organizationId;
+    }
+
+    // Only include noiCapCCCDId if it has a value
+    if (row.noiCapCCCDId !== null && row.noiCapCCCDId !== undefined && row.noiCapCCCDId !== 0) {
+      updateDto.noiCapCCCDId = row.noiCapCCCDId;
+    }
+
+    // Call update API
+    this.nguoiTiepNhanService.update(row.id, updateDto).subscribe({
+      next: () => {
+        // Success - no need to reload, UI is already updated
+        console.log('isDefault updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating isDefault:', error);
+        // Revert the toggle if update fails
+        row.isDefault = originalValue;
+        // You can add a toast notification here
+      }
+    });
   }
 }

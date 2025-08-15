@@ -2,7 +2,7 @@
   "Culture": "en",
   "Texts": {
     "AppName": "Cts",
-    "Actions": "Actions",
+    // "Actions": "Actions",
     "Close": "Close",
     "Delete": "Delete",
     "Edit": "Edit",
