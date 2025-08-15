@@ -1,4 +1,7 @@
 using AutoMapper;
+using H04.Cts.DanhMucs;
+using H04.Cts.DanhMucs.LoaiThietBiDichVuPhanMems.Dtos;
+using H04.Cts.DanhMucs.ThietBiDichVuPhanMems.Dtos;
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 
@@ -10,5 +13,11 @@ public class CtsApplicationAutoMapperProfile : Profile
     {
         CreateMap<ToChuc, ToChucDto>();
         CreateMap<CreateUpdateToChucDto, ToChuc>();
+
+        CreateMap<ThietBiDichVuPhanMem, ThietBiDichVuPhanMemDto>();
+        CreateMap<CreateUpdateThietBiDichVuPhanMemDto, ThietBiDichVuPhanMem>();
+
+        CreateMap<LoaiThietBiDichVuPhanMem, LoaiThietBiDichVuPhanMemDto>();
+        CreateMap<CreateUpdateLoaiThietBiDichVuPhanMemDto, LoaiThietBiDichVuPhanMem>();
     }
 }

@@ -1,0 +1,157 @@
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::Danh mục' | abpLocalization"></page-header>
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col col-md-6">
+        <h5 class="card-title">
+          {{ '::Menu:Loai-Thiet-Bi-Dich-Vu-Phan-Mem' | abpLocalization}}
+        </h5>
+      </div>
+      <div class="text-end col col-md-6">
+        <div class="row mb-2">
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-text bg-white">
+                <i class="fa fa-search"></i>
+              </span>
+              <input class="form-control" placeholder="Tìm kiếm tên hoặc mã loại thiết bị..." [ngModel]="searchValue" (ngModelChange)="onSearchChange($event)" />
+            </div>
+          </div>
+        </div>
+        <div class="text-lg-end pt-2">
+          <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Create'" id="create" class="btn btn-primary" type="button" (click)="createLoaiThietBiPhanMem()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::CreateNew' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ngx-datatable 
+      [rows]="loaiThietBiPhanMem.items" 
+      [count]="loaiThietBiPhanMem.totalCount" 
+      [list]="list" 
+      [limit]="5"
+      [offset]="page"
+      (page)="onPage($event)"
+      [footerHeight]="50"
+      [headerHeight]="50"
+      [rowHeight]="'auto'"
+      [columnMode]="'force'"
+      [externalPaging]="true"
+      default
+    >
+      <ngx-datatable-column
+        [name]="'::Chức năng' | abpLocalization"
+        [maxWidth]="150"
+        [sortable]="false"
+      >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div ngbDropdown container="body" class="d-inline-block">
+            <button
+              class="btn btn-primary btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              ngbDropdownToggle
+            >
+              <i class="fa fa-cog me-1"></i>{{ '::Hành động' | abpLocalization }}
+            </button>
+            <div ngbDropdownMenu>
+              <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Edit'" ngbDropdownItem (click)="editLoaiThietBiPhanMem(row.id)">
+                {{ '::Edit' | abpLocalization }}
+              </button>
+              <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Delete'" ngbDropdownItem (click)="delete(row.id)">
+                {{ '::Delete' | abpLocalization }}
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Tên Loại Thiết Bị Dịch Vụ Phần Mềm' | abpLocalization" prop="tenLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Mã Loại Thiết Bị Dịch Vụ Phần Mềm' | abpLocalization" prop="maLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Trạng thái' | abpLocalization" prop="trangThai">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <span [ngClass]="{
+            'text-success': row.trangThai === trangthaienums.HoatDong,
+            'text-danger': row.trangThai === trangthaienums.KhongHoatDong
+          }">
+            {{ row.trangThai === trangthaienums.HoatDong ? ('::Hoạt động' | abpLocalization) : ('::Không hoạt động' | abpLocalization) }}
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Ghi chú' | abpLocalization" prop="ghiChu"></ngx-datatable-column>
+      <ng-template #footerTemplate>
+          <div class="datatable-footer-custom px-3 py-2">
+            <span class="mr-3">
+              Tổng số: <b>{{ loaiThietBiPhanMem.totalCount }}</b>
+            </span>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="page === 0">
+                  <button class="page-link" (click)="goToPage(page - 1)" [disabled]="page === 0">&lt;</button>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">
+                    Trang {{ page + 1 }} / {{ totalPages }}
+                  </span>
+                </li>
+                <li class="page-item" [class.disabled]="page >= totalPages - 1">
+                  <button class="page-link" (click)="goToPage(page + 1)" [disabled]="page >= totalPages - 1">&gt;</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+      </ng-template>
+      <ngx-datatable-footer [template]="footerTemplate"></ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+</div>
+
+<!-- Add the modal here -->
+<abp-modal [(visible)]="isModalOpen">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedLoaiThietBiPhanMem.id ? '::Edit' : '::Loại thiết bị dịch vụ phần mềm' ) | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mt-2">
+        <label for="loaiThietBiPhanMem-tenLoaiThietBiDichVuPhanMem">Tên loại thiết bị phần mềm</label><span> * </span>
+        <input type="text" id="loaiThietBiPhanMem-tenLoaiThietBiDichVuPhanMem" class="form-control" formControlName="tenLoaiThietBiDichVuPhanMem" autofocus />
+      </div>
+
+      <div class="mt-2">
+        <label for="loaiThietBiPhanMem-maLoaiThietBiDichVuPhanMem">Mã loại thiết bị phần mềm</label><span> * </span>
+        <input type="text" id="loaiThietBiPhanMem-maLoaiThietBiDichVuPhanMem" class="form-control" formControlName="maLoaiThietBiDichVuPhanMem" />
+      </div>
+
+      <div class="mt-2">
+        <label for="loaiThietBiPhanMem-trangThai">Trạng thái</label><span> * </span>
+        <select class="form-select" formControlName="trangThai">
+          <option *ngFor="let option of trangThaiOptions" [value]="option.value">
+            {{ option.value === trangthaienums.HoatDong ? ('::Hoạt động' | abpLocalization) : ('::Không hoạt động' | abpLocalization) }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="mt-2">
+        <label for="loaiThietBiPhanMem-ghiChu">Ghi chú</label>
+        <input type="text" id="loaiThietBiPhanMem-ghiChu" class="form-control" formControlName="ghiChu" />
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Close' | abpLocalization }}
+    </button>
+
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </button>
+  </ng-template>
+
+</abp-modal>

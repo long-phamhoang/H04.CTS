@@ -23,5 +23,11 @@ function configureRoutes() {
       iconClass: 'fas fa-book',
       order: 2,
     },
+    {
+      path: '/main/danh-muc/loai-thiet-bi-dich-vu-phan-mem',
+      name: '::Menu:DanhMucs',
+      iconClass: 'fas fa-book',
+      order: 3,
+    },
   ]);
 }

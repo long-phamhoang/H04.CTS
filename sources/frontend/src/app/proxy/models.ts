@@ -34,3 +34,17 @@ export interface ToChucDto extends AuditedEntityDto<number> {
   trangThai?: TrangThai;
   ghiChu?: string;
 }
+
+export interface CreateUpdateLoaiThietBiDichVuPhanMemDto {
+  tenLoaiThietBiDichVuPhanMem: string;
+  maLoaiThietBiDichVuPhanMem: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
+
+export interface LoaiThietBiDichVuPhanMemDto extends AuditedEntityDto<number> {
+  tenLoaiThietBiDichVuPhanMem: string;
+  maLoaiThietBiDichVuPhanMem: string;
+  trangThai?: TrangThai;
+  ghiChu?: string;
+}
