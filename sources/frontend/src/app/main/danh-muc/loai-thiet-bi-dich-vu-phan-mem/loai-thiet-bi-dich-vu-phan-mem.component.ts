@@ -97,9 +97,24 @@ export class LoaiThietBiDichVuPhanMemComponent implements OnInit {
     return Math.ceil(this.loaiThietBiPhanMem.totalCount / this.limit) || 1;
   }
 
+  get pages(): number[] {
+    // Hiển thị tối đa 3 trang, có thể custom thêm
+    const pages = [];
+    const start = Math.max(0, this.page - 1);
+    const end = Math.min(this.totalPages, start + 3);
+    for (let i = start; i < end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
   goToPage(page: number) {
     if (page < 0 || page >= this.totalPages) return;
     this.page = page;
+    this.loadData();
+  }
+  onLimitChange(limit: number) {
+    this.limit = limit;
+    this.page = 0;
     this.loadData();
   }
   createLoaiThietBiPhanMem() {

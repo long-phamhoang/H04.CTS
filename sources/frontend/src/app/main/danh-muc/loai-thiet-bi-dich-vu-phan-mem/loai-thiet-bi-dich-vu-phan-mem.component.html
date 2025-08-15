@@ -1,29 +1,33 @@
-<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::Danh mục' | abpLocalization"></page-header>
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.LoaiThietBiDichVuPhanMem' | abpLocalization">
+  <div>
+    <button id="export" type="button" class="btn btn-info btn-xs">
+      <i class="pi pi-download"></i>
+      <span class="ms-2">Xuất dữ liệu</span>
+    </button>
+    <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Create'" id="upload" type="button" class="btn btn-warning btn-xs">
+      <i class="pi pi-upload"></i>
+      <span class="ms-2">Upload tài liệu</span>
+    </button>
+    <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Create'" id="create" type="button" class="btn btn-success btn-xs" (click)="createLoaiThietBiPhanMem()">
+      <i class="pi pi-plus"></i>
+      <span class="ms-2">{{ '::CreateNew' | abpLocalization }}</span>
+    </button>
+  </div>
+</page-header>
 <div class="card">
-  <div class="card-header">
-    <div class="row">
-      <div class="col col-md-6">
-        <h5 class="card-title">
-          {{ '::Menu:Loai-Thiet-Bi-Dich-Vu-Phan-Mem' | abpLocalization}}
-        </h5>
-      </div>
-      <div class="text-end col col-md-6">
-        <div class="row mb-2">
-          <div class="col-md-6">
-            <div class="input-group">
-              <span class="input-group-text bg-white">
-                <i class="fa fa-search"></i>
-              </span>
-              <input class="form-control" placeholder="Tìm kiếm tên hoặc mã loại thiết bị..." [ngModel]="searchValue" (ngModelChange)="onSearchChange($event)" />
-            </div>
-          </div>
-        </div>
-        <div class="text-lg-end pt-2">
-          <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Create'" id="create" class="btn btn-primary" type="button" (click)="createLoaiThietBiPhanMem()">
-            <i class="fa fa-plus me-1"></i>
-            <span>{{ '::CreateNew' | abpLocalization }}</span>
-          </button>
-        </div>
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="search-input-group">
+      <div class="position-relative">
+        <input
+          class="form-control search-input ps-5"
+          type="text"
+          placeholder="Tìm kiếm"
+          [ngModel]="searchValue"
+          (ngModelChange)="onSearchChange($event)"
+        />
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
       </div>
     </div>
   </div>
@@ -42,11 +46,25 @@
       [externalPaging]="true"
       default
     >
-      <ngx-datatable-column
-        [name]="'::Chức năng' | abpLocalization"
-        [maxWidth]="150"
-        [sortable]="false"
-      >
+      <ngx-datatable-column [name]="'#'" [maxWidth]="60" [sortable]="false">
+        <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+          {{ page * limit + rowIndex + 1 }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::TenThietBiPhanMem'| abpLocalization" prop="tenLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::MaThietBiPhanMem' | abpLocalization" prop="maLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Enum:TrangThai' | abpLocalization" prop="trangThai">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <span [ngClass]="{
+              'text-success': row.trangThai === trangthaienums.HoatDong,
+              'text-danger': row.trangThai === trangthaienums.KhongHoatDong
+            }">
+              {{ row.trangThai === trangthaienums.HoatDong ? ('::Hoạt động' | abpLocalization) : ('::Không hoạt động' | abpLocalization) }}
+            </span>
+          </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::GhiChu' | abpLocalization" prop="ghiChu"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Action' | abpLocalization" [maxWidth]="100" [sortable]="false">
         <ng-template let-row="row" ngx-datatable-cell-template>
           <div ngbDropdown container="body" class="d-inline-block">
             <button
@@ -55,7 +73,7 @@
               aria-haspopup="true"
               ngbDropdownToggle
             >
-              <i class="fa fa-cog me-1"></i>{{ '::Hành động' | abpLocalization }}
+              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
             </button>
             <div ngbDropdownMenu>
               <button *abpPermission="'Cts.DanhMucs.LoaiThietBiDichVuPhanMem.Edit'" ngbDropdownItem (click)="editLoaiThietBiPhanMem(row.id)">
@@ -68,40 +86,40 @@
           </div>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Tên Loại Thiết Bị Dịch Vụ Phần Mềm' | abpLocalization" prop="tenLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Mã Loại Thiết Bị Dịch Vụ Phần Mềm' | abpLocalization" prop="maLoaiThietBiDichVuPhanMem"></ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Trạng thái' | abpLocalization" prop="trangThai">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <span [ngClass]="{
-            'text-success': row.trangThai === trangthaienums.HoatDong,
-            'text-danger': row.trangThai === trangthaienums.KhongHoatDong
-          }">
-            {{ row.trangThai === trangthaienums.HoatDong ? ('::Hoạt động' | abpLocalization) : ('::Không hoạt động' | abpLocalization) }}
-          </span>
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column [name]="'::Ghi chú' | abpLocalization" prop="ghiChu"></ngx-datatable-column>
+
       <ng-template #footerTemplate>
-          <div class="datatable-footer-custom px-3 py-2">
-            <span class="mr-3">
-              Tổng số: <b>{{ loaiThietBiPhanMem.totalCount }}</b>
-            </span>
-            <nav>
-              <ul class="pagination mb-0">
-                <li class="page-item" [class.disabled]="page === 0">
-                  <button class="page-link" (click)="goToPage(page - 1)" [disabled]="page === 0">&lt;</button>
-                </li>
-                <li class="page-item disabled">
-                  <span class="page-link">
-                    Trang {{ page + 1 }} / {{ totalPages }}
-                  </span>
-                </li>
-                <li class="page-item" [class.disabled]="page >= totalPages - 1">
-                  <button class="page-link" (click)="goToPage(page + 1)" [disabled]="page >= totalPages - 1">&gt;</button>
-                </li>
-              </ul>
-            </nav>
-          </div>
+        <div class="datatable-footer-custom d-flex align-items-center px-3 py-2">
+          <span>
+            Tổng cộng : <b>{{ loaiThietBiPhanMem.totalCount }}</b>
+          </span>
+          <nav class="d-flex align-items-center">
+            <ul class="pagination mb-0 me-2">
+              <li class="page-item" [class.disabled]="page === 0">
+                <button class="page-link" (click)="goToPage(0)" [disabled]="page === 0">&laquo;</button>
+              </li>
+              <li class="page-item" [class.disabled]="page === 0">
+                <button class="page-link" (click)="goToPage(page - 1)" [disabled]="page === 0">&lt;</button>
+              </li>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
+                <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+              </li>
+              <li class="page-item" [class.disabled]="page >= totalPages - 1">
+                <button class="page-link" (click)="goToPage(page + 1)" [disabled]="page >= totalPages - 1">&gt;</button>
+              </li>
+              <li class="page-item" [class.disabled]="page >= totalPages - 1">
+                <button class="page-link" (click)="goToPage(totalPages - 1)" [disabled]="page >= totalPages - 1">&raquo;</button>
+              </li>
+            </ul>
+            <div class="position-relative d-inline-block" style="min-width: 70px;">
+              <select class="form-select form-select-sm w-auto pe-4" [(ngModel)]="limit" (ngModelChange)="onLimitChange($event)">
+                <option *ngFor="let opt of [5, 10, 20, 50]" [value]="opt">{{ opt }}</option>
+              </select>
+              <span class="dropdown-arrow">
+                <i class="fa fa-chevron-down"></i>
+              </span>
+            </div>
+          </nav>
+        </div>
       </ng-template>
       <ngx-datatable-footer [template]="footerTemplate"></ngx-datatable-footer>
     </ngx-datatable>
@@ -117,17 +135,17 @@
   <ng-template #abpBody>
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="mt-2">
-        <label for="loaiThietBiPhanMem-tenLoaiThietBiDichVuPhanMem">Tên loại thiết bị phần mềm</label><span> * </span>
+        <label for="loaiThietBiPhanMem-tenLoaiThietBiDichVuPhanMem">Tên loại thiết bị phần mềm</label><span class="required-star"> * </span>
         <input type="text" id="loaiThietBiPhanMem-tenLoaiThietBiDichVuPhanMem" class="form-control" formControlName="tenLoaiThietBiDichVuPhanMem" autofocus />
       </div>
 
       <div class="mt-2">
-        <label for="loaiThietBiPhanMem-maLoaiThietBiDichVuPhanMem">Mã loại thiết bị phần mềm</label><span> * </span>
+        <label for="loaiThietBiPhanMem-maLoaiThietBiDichVuPhanMem">Mã loại thiết bị phần mềm</label><span class="required-star"> * </span>
         <input type="text" id="loaiThietBiPhanMem-maLoaiThietBiDichVuPhanMem" class="form-control" formControlName="maLoaiThietBiDichVuPhanMem" />
       </div>
 
       <div class="mt-2">
-        <label for="loaiThietBiPhanMem-trangThai">Trạng thái</label><span> * </span>
+        <label for="loaiThietBiPhanMem-trangThai">Trạng thái</label><span class="required-star"> * </span>
         <select class="form-select" formControlName="trangThai">
           <option *ngFor="let option of trangThaiOptions" [value]="option.value">
             {{ option.value === trangthaienums.HoatDong ? ('::Hoạt động' | abpLocalization) : ('::Không hoạt động' | abpLocalization) }}
