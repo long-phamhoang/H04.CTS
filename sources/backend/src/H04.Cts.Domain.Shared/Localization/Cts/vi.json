@@ -1,20 +1,26 @@
 {
   "Culture": "vi",
-    "Texts": {
-        //#region 0.1. Abp
-        "AppName": "Cts",
-        "Actions": "Hành động",
-        "Close": "Đóng",
-        "Delete": "Xoá",
-        "Edit": "Sửa",
-        "CreationTime": "Ngày tạo",
-        "AreYouSure": "Xác nhận?",
-        "AreYouSureToDelete": "Bạn có chắc chắn muốn xoá bản ghi này không?",
-        "SuccessfullyDeleted": "Xoá thành công!",
-        "Menu:Home": "Trang chủ",
-        "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
-        "Welcome": "Xin chào",
-        //#endregion
+  "Texts": {
+    //#region 0.1. Abp
+    "AppName": "Cts",
+    "Actions": "Hành động",
+    "Close": "Đóng",
+    "Delete": "Xoá",
+    "Edit": "Sửa",
+    "CreationTime": "Ngày tạo",
+    "AreYouSure": "Xác nhận?",
+    "AreYouSureToDelete": "Bạn có chắc chắn muốn xoá bản ghi này không?",
+    "SuccessfullyDeleted": "Xoá thành công!",
+    "Menu:Home": "Trang chủ",
+    "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
+    "Welcome": "Xin chào",
+    "Menu:Lang": "Ngôn ngữ",
+    "LangMenu:VietNam": "Tiếng Việt",
+    "LangMenu:English": "Tiếng Anh",
+    "UserMenu:Profile": "Thông tin cá nhân",
+    "UserMenu:ChangePassword": "Đổi mật khẩu",
+    "UserMenu:Logout": "Đăng xuất",
+    //#endregion
 
         //#region 0.2. Enums
         "Enum:TrangThai": "Trạng thái",

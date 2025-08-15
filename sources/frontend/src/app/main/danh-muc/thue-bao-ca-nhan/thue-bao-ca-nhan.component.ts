@@ -22,8 +22,8 @@ export class ThueBaoCaNhanComponent implements OnInit {
 
   isModalOpen = false;
   filterInput = '';
-  chucVuOptions = [];
-  toChucOptions = [];
+  chucVuOptions: { id: number; name: string }[] =[];
+  toChucOptions: { id: number; name: string }[] =[];
   tinhThanhPhoOptions: { id: number; name: string }[] = [];
   phuongXaOptions: { id: number; name: string }[] = [];
   page = 0;

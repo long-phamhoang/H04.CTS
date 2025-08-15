@@ -2,8 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 import { ChucVuDto, ChucVuService, trangThaiOptions } from '@app/proxy';
-import { MustUniqueChucVuMaDirective } from './chuc-vu.directive';
-import { map, of } from 'rxjs';
+import { map, of, switchMap, timer } from 'rxjs';
 @Component({
   selector: 'app-chuc-vu',
   templateUrl: './chuc-vu.component.html',
@@ -112,10 +111,12 @@ export class ChucVuComponent implements OnInit {
       return of(null); // không kiểm tra nếu mã không đổi
     }
 
-    return this.chucVuService.isMaChucVuUnique(control.value.trim()).pipe(
-      map((isUnique: boolean) => {
-        return isUnique ? null : { isValidMustUniqueMa: true };
-      })
+    return timer(500).pipe(
+      switchMap(() =>
+        this.chucVuService
+          .isMaChucVuUnique(control.value.trim())
+          .pipe(map((isUnique: boolean) => (isUnique ? null : { isValidMustUniqueMa: true })))
+      )
     );
   }
   buildForm() {
@@ -125,7 +126,6 @@ export class ChucVuComponent implements OnInit {
       maChucVu: [
         this.selectedChucVu.maChucVu || '',
         Validators.required,
-        // 👇 THÊM async validator ở đây:
         [this.mustUniqueChucVuMaValidator.bind(this)],
       ],
       trangThai: [this.selectedChucVu.trangThai ?? 1, Validators.required],

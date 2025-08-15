@@ -41,5 +41,30 @@ input.form-control:focus, select.form-select:focus, textarea.form-control:focus 
   background-color: #e4e7e9 !important;
 }
 
-//modal styles
+.form-select {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 140,0 70,80' fill='%23999'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px calc(50% + 4px);;
+  background-size: 12px;
+  appearance: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
 
+/* Khi focus */
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Style cho các option */
+.form-select option {
+  padding: 10px;         /* Tăng khoảng cách giữa các option */
+  font-size: 1rem;
+  line-height: 1.6;
+}
