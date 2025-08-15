@@ -1,0 +1,140 @@
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.LoaiHoSo' | abpLocalization"></page-header>
+
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col col-md-6">
+        <!-- <h5 class="card-title">
+          {{'::Menu:LoaiHoSo' | abpLocalization}}
+        </h5> -->
+        <div class="input-group mt-2 group-search">
+          <span class="input-group-text pe-0">
+            <i class="fas fa-search ms-1"></i>
+          </span>
+          <input class="form-control input-search"
+            type="text"
+            name="search"
+            [(ngModel)]="keySearch"
+            (input)="search()"
+            [placeholder]="'::Search' | abpLocalization">
+        </div>
+      </div>
+
+      <div class="text-end col col-md-6">
+        <div class="text-lg-end pt-2">
+          <button type="button" class="btn btn-primary" (click)="createDocumentType()">
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ '::CreateNew' | abpLocalization }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ngx-datatable
+      [rows]="documentType.items"
+      [count]="documentType.totalCount"
+      default>
+      <ngx-datatable-column [name]="'::MaLoaiHoSo' | abpLocalization" prop="maLoaiHoSo"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::TenLoaiHoSo' | abpLocalization" prop="tenLoaiHoSo"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::TrangThai' | abpLocalization" prop="trangThai">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <span *ngIf="row.trangThai === 1">
+            <i class="fas fa-check-circle text-success"></i> {{'::Enum:TrangThai.HoatDong' | abpLocalization}}
+          </span>
+          <span *ngIf="row.trangThai === 2">
+            <i class="fas fa-times-circle text-danger"></i> {{'::Enum:TrangThai.KhongHoatDong' | abpLocalization}}
+          </span>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [name]="'::GhiChu' | abpLocalization" prop="ghiChu"></ngx-datatable-column>
+      <ngx-datatable-column [name]="'::Actions' | abpLocalization" [maxWidth]="150" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div ngbDropdown container="body" class="d-inline-block">
+            <button
+              class="btn btn-primary btn-sm dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              ngbDropdownToggle>
+              <i class="fa fa-cog me-1"></i>{{ '::Actions' | abpLocalization }}
+            </button>
+
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem (click)="editDocumentType(row.id)">
+                {{'::Edit' | abpLocalization}}
+              </button>
+              <button ngbDropdownItem (click)="deleteDocumentType(row.id)">
+                {{'::Delete' | abpLocalization}}
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+    <div class="col col-md-12 d-flex justify-content-end">
+      <div class="col col-md-4">
+        <p-paginator
+          [rows]="rows"
+          [totalRecords]="documentType.totalCount"
+          (onPageChange)="onPageChange($event)"
+          [rowsPerPageOptions]="[10, 20, 30]">
+        </p-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+<abp-modal [(visible)]="isModalOpen">
+  <ng-template #abpHeader>
+    <h3>{{ (selectedDocumentType.id ? '::Edit' : '::NewLoaiHoSo' ) | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="mt-2">
+        <label for="maLoaiHoSo">Mã loại hồ sơ</label><span> * </span>
+        <input type="text" id="maLoaiHoSo" class="form-control" formControlName="maLoaiHoSo"
+          [readonly]="selectedDocumentType.id"
+          autofocus/>
+        <!-- <span
+          *ngIf="form.get('maLoaiHoSo')?.invalid && (form.get('maLoaiHoSo')?.touched || form.get('maLoaiHoSo')?.dirty)"
+          class="text-danger">
+          {{'::RequiredField' | abpLocalization}}
+        </span> -->
+        <!-- <span *ngIf="maLoaiHoSo.invalid && (maLoaiHoSo.dirty || maLoaiHoSo.touched)">Mã loại hồ sơ là bắt buộc</span> -->
+      </div>
+
+      <div class="mt-2">
+        <label for="tenLoaiHoSo">Tên loại hồ sơ</label><span> * </span>
+        <input type="text" name="tenLoaiHoSo" id="ghiChu" class="form-control" formControlName="tenLoaiHoSo">
+      </div>
+
+      <div class="mt-2">
+        <label for="tenLoaiHoSo">Trạng thái</label><span> * </span>
+        <select class="form-control" formControlName="trangThai" id="">
+          <option [ngValue]="null" selected disabled>Chọn trạng thái</option>
+          <option [ngValue]="status.value" *ngFor="let status of statuses$">
+            {{status.label | abpLocalization}}
+          </option>
+        </select>
+      </div>
+      <div class="mt-2">
+        <label for="ghiChu">Ghi chú</label>
+        <input type="text" name="ghiChu" id="ghiChu" class="form-control" formControlName="ghiChu">
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Close' | abpLocalization }}
+    </button>
+
+    <!--added save button-->
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
+      <i class="fa fa-check mr-1"></i>
+      {{ '::Save' | abpLocalization }}
+    </button>
+  </ng-template>
+
+</abp-modal>

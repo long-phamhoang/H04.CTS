@@ -16,5 +16,6 @@ namespace H04.Cts.DanhMucs.LoaiCTSs.Interfaces
         CreateUpdateLoaiCTS>
     {
         Task SoftDeleteAsync(long id);
+        Task<PagedResultDto<LoaiCTSDto>> GetListFilterData(LoaiCTSFilterDto input);
     }
 }

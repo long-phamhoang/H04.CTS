@@ -1,281 +1,304 @@
 {
-  "Culture": "vi",
-  "Texts": {
-    //#region 0.1. Abp
-    "AppName": "Cts",
-    "Actions": "Hành động",
-    "Close": "Đóng",
-    "Delete": "Xoá",
-    "Edit": "Sửa",
-    "CreationTime": "Ngày tạo",
-    "AreYouSure": "Xác nhận?",
-    "AreYouSureToDelete": "Bạn có chắc chắn muốn xoá bản ghi này không?",
-    "SuccessfullyDeleted": "Xoá thành công!",
-    "Menu:Home": "Trang chủ",
-    "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
-    "Welcome": "Xin chào",
-    //#endregion
+    "Culture": "vi",
+    "Texts": {
+        //#region 0.1. Abp
+        "AppName": "Cts",
+        "Actions": "Hành động",
+        "Close": "Đóng",
+        "Delete": "Xoá",
+        "Edit": "Sửa",
+        "CreationTime": "Ngày tạo",
+        "AreYouSure": "Xác nhận?",
+        "AreYouSureToDelete": "Bạn có chắc chắn muốn xoá bản ghi này không?",
+        "SuccessfullyDeleted": "Xoá thành công!",
+        "Menu:Home": "Trang chủ",
+        "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một startup project dựa trên framework ABP. Để biết thêm thông tin, hãy truy cập",
+        "Welcome": "Xin chào",
+        "RequiredField": "Trường này không được bỏ trống",
+        "Search": "Tìm kiếm",
+        //#endregion
 
-    //#region 0.2. Enums
-    "Enum:TrangThai": "Trạng thái",
-    "Enum:TrangThai.HoatDong": "Hoạt động",
-    "Enum:TrangThai.KhongHoatDong": "Không hoạt động",
-    //#endregion
+        //#region 0.2. Enums
+        "Enum:TrangThai": "Trạng thái",
+        "Enum:TrangThai.HoatDong": "Hoạt động",
+        "Enum:TrangThai.KhongHoatDong": "Không hoạt động",
+        //#endregion
 
-    //#region 0.3. Common
-    "Sort": "Sắp xếp",
-    "Newest": "Mới nhất",
-    "Oldest": "Cũ nhất",
-    "Reload": "Tải lại",
-    "ViewDataAsTable": "Xem dữ liệu dạng bảng",
-    "ViewDataAsTreeTable": "Xem dữ liệu dạng cây",
-    "ThongTinChung": "Thông tin chung",
-    "ThongTinCoBan": "Thông tin cơ bản",
-    "ThongTinChiTiet": "Thông tin chi tiết",
-    "ThongTinThem": "Thông tin thêm",
-    "ThongTinKhac": "Thông tin khác",
-    "ThongTin": "Thông tin",
-    "From": "Từ",
-    "To": "Đến",
-    "And": "Và",
-    "Or": "Hoặc",
-    "XemThem": "Xem thêm",
-    "ThuGon": "Thu gọn",
-    "CreateNew": "Thêm mới",
-    "AlreadyExists": "đã tồn tại",
-    "NoResultsFound": "Không tìm thấy dữ liệu",
-    "ShowXResultsPerPage": "Hiển thị {0} kết quả/trang",
-    "PageXOfY": "Trang {0} trên {1}",
-    "EditTooltip": "Bấm để chỉnh sửa",
-    "PrevStep": "Bước trước",
-    "NextStep": "Bước kế tiếp",
-    "SaveAndBack": "Lưu và quay lại",
-    "SaveAndContinue": "Lưu và cập nhật",
-    "SaveAndNew": "Lưu và thêm tiếp",
-    "Deletes": "Xoá nhiều",
-    "View": "Xem",
-    "ViewDetail": "Xem chi tiết",
-    "ViewTooltip": "Bấm để xem chi tiết",
-    "ViewAll": "Xem tất cả",
-    "Export": "Xuất dữ liệu",
-    "ExportNotes": "để tải file mẫu import",
-    "Update": "Cập nhật",
-    "UpdateTooltip": "Bấm để cập nhật",
-    "Clone": "Nhân bản",
-    //#endregion
+        //#region 0.3. Common
+        "Sort": "Sắp xếp",
+        "Newest": "Mới nhất",
+        "Oldest": "Cũ nhất",
+        "Reload": "Tải lại",
+        "ViewDataAsTable": "Xem dữ liệu dạng bảng",
+        "ViewDataAsTreeTable": "Xem dữ liệu dạng cây",
+        "ThongTinChung": "Thông tin chung",
+        "ThongTinCoBan": "Thông tin cơ bản",
+        "ThongTinChiTiet": "Thông tin chi tiết",
+        "ThongTinThem": "Thông tin thêm",
+        "ThongTinKhac": "Thông tin khác",
+        "ThongTin": "Thông tin",
+        "From": "Từ",
+        "To": "Đến",
+        "And": "Và",
+        "Or": "Hoặc",
+        "XemThem": "Xem thêm",
+        "ThuGon": "Thu gọn",
+        "CreateNew": "Thêm mới",
+        "AlreadyExists": "đã tồn tại",
+        "NoResultsFound": "Không tìm thấy dữ liệu",
+        "ShowXResultsPerPage": "Hiển thị {0} kết quả/trang",
+        "PageXOfY": "Trang {0} trên {1}",
+        "EditTooltip": "Bấm để chỉnh sửa",
+        "PrevStep": "Bước trước",
+        "NextStep": "Bước kế tiếp",
+        "SaveAndBack": "Lưu và quay lại",
+        "SaveAndContinue": "Lưu và cập nhật",
+        "SaveAndNew": "Lưu và thêm tiếp",
+        "Deletes": "Xoá nhiều",
+        "View": "Xem",
+        "ViewDetail": "Xem chi tiết",
+        "ViewTooltip": "Bấm để xem chi tiết",
+        "ViewAll": "Xem tất cả",
+        "Export": "Xuất dữ liệu",
+        "ExportNotes": "để tải file mẫu import",
+        "Update": "Cập nhật",
+        "UpdateTooltip": "Bấm để cập nhật",
+        "Clone": "Nhân bản",
+        //#endregion
 
-    //#region 0.4. Messages
-    "CreatedSuccessfully": "Thêm mới thành công.",
-    "UpdatedSuccessfully": "Cập nhật thành công.",
-    "AreYouSureDelete": "Bạn có chắc muốn xoá dữ liệu này không?",
-    "AreYouSureDeletes": "Bạn có chắc muốn xóa những dữ liệu này không?",
-    "AreYouSureChanges": "Bạn có chắc muốn thay đổi vị trí này không?",
-    "DeletedSuccessfully": "Xoá thành công.",
-    "ImportXProcessStart": "Quá trình import {0} đã được bắt đầu.",
-    "ImportXUploadFailed": "Quá trình import {0} đã thất bại.",
-    //#endregion
+        //#region 0.4. Messages
+        "CreatedSuccessfully": "Thêm mới thành công.",
+        "UpdatedSuccessfully": "Cập nhật thành công.",
+        "AreYouSureDelete": "Bạn có chắc muốn xoá dữ liệu này không?",
+        "AreYouSureDeletes": "Bạn có chắc muốn xóa những dữ liệu này không?",
+        "AreYouSureChanges": "Bạn có chắc muốn thay đổi vị trí này không?",
+        "DeletedSuccessfully": "Xoá thành công.",
+        "ImportXProcessStart": "Quá trình import {0} đã được bắt đầu.",
+        "ImportXUploadFailed": "Quá trình import {0} đã thất bại.",
+        //#endregion
 
-    //#region 0.5. Validation Messages
-    "XNotExists": "Không tồn tại {0} với Id là '{1}' và Tên là '{2}'",
-    "PleaseDownloadNewestImportTemplate": "Hãy tải mẫu import mới nhất.",
-    "XAlreadyExists": "{0} đã tồn tại",
-    "XCannotExceedY": "{0} không được vượt quá {1} kí tự",
-    "InvalidDate": "Giá trị không hợp lệ",
-    "MustNotBeNegative": "không được âm",
-    "XMustNotBeNegative": "{0} không được âm",
-    "MustLessThan": "phải nhỏ hơn",
-    "XMustLessThanY": "{0} phải nhỏ hơn {1}",
-    "MustLessThanOrEqualTo": "phải nhỏ hơn hoặc bằng",
-    "XMustLessThanOrEqualToY": "{0} phải nhỏ hơn hoặc bằng {1}",
-    "MustGreaterThan": "phải lớn hơn",
-    "XMustGreaterThanY": "{0} phải lớn hơn {1}",
-    "MustGreaterThanOrEqualTo": "phải lớn hơn hoặc bằng",
-    "XMustGreaterThanOrEqualToY": "{0} phải lớn hơn hoặc bằng {1}",
-    //#endregion
+        //#region 0.5. Validation Messages
+        "XNotExists": "Không tồn tại {0} với Id là '{1}' và Tên là '{2}'",
+        "PleaseDownloadNewestImportTemplate": "Hãy tải mẫu import mới nhất.",
+        "XAlreadyExists": "{0} đã tồn tại",
+        "XCannotExceedY": "{0} không được vượt quá {1} kí tự",
+        "InvalidDate": "Giá trị không hợp lệ",
+        "MustNotBeNegative": "không được âm",
+        "XMustNotBeNegative": "{0} không được âm",
+        "MustLessThan": "phải nhỏ hơn",
+        "XMustLessThanY": "{0} phải nhỏ hơn {1}",
+        "MustLessThanOrEqualTo": "phải nhỏ hơn hoặc bằng",
+        "XMustLessThanOrEqualToY": "{0} phải nhỏ hơn hoặc bằng {1}",
+        "MustGreaterThan": "phải lớn hơn",
+        "XMustGreaterThanY": "{0} phải lớn hơn {1}",
+        "MustGreaterThanOrEqualTo": "phải lớn hơn hoặc bằng",
+        "XMustGreaterThanOrEqualToY": "{0} phải lớn hơn hoặc bằng {1}",
+        //#endregion
 
-    //#region 0.7. FileUpload Component
-    "AttachFiles": "Tập tin đính kèm",
-    "SelectFile": "Chọn tập tin",
-    "DragFile": "Kéo thả tệp",
-    "UploadFile_Success": "Tải tập tin lên thành công",
-    "UploadFile_Error": "Lỗi khi tải tập tin lên",
-    "UploadFile_FileType_Error": "Chỉ có thể chọn tập tin {0}. Xin vui lòng chọn lại!",
-    "UploadFile_InvalidType_Error": "Loại tập tin không hợp lệ. Xin vui lòng chọn lại!",
-    "UploadFile_SizeLimit_Error": "Chỉ có thể chọn tập tin dung lượng nhỏ hơn {0}MB. Xin vui lòng chọn lại!",
-    "PreviewFile": "Xem trước",
-    "PreviewFileTooltip": "Bấm để xem trước tập tin [{0}]",
-    "TenFile": "Tên tập tin",
-    "TenFilePlaceholder": "Nhập tên tập tin",
-    "TenFileTooltip": "Nhập tên tập tin",
-    "DungLuongFile": "Dung lượng tập tin",
-    "MoTaFile": "Mô tả tập tin",
-    "MoTaFilePlaceholder": "Nhập mô tả tập tin",
-    "MoTaFileTooltip": "Nhập mô tả tập tin",
-    "TrangThaiFile": "Trạng thái tập tin",
-    "TrangThaiFileTooltip": "Bấm để thay đổi trạng thái tập tin",
-    "UpdateFile_Success": "Cập nhật thông tin tập tin thành công",
-    "UpdateFile_Error": "Lỗi khi cập nhật thông tin tập tin",
-    "DeleteFileTooltip": "Bấm để xoá tập tin",
-    "AreYouSureDeleteFile": "Bạn có chắc muốn xóa file {0}?",
-    "DeleteFile_Success": "Xóa tập tin thành công",
-    "DeleteFile_Error": "Lỗi khi xoá tập tin",
-    "SelectImage": "Chọn ảnh",
-    "BrowseImageTooltip": "Có thể chọn tập tin JPG / JPEG / PNG với kích thước tối đa {0}MB",
-    "UploadImage": "Tải ảnh",
-    "RemoveImage": "Gỡ ảnh",
-    "AreYouSureRemoveImage": "Bạn có chắc muốn gỡ ảnh?",
-    "UploadImage_Success": "Tải ảnh lên thành công",
-    "UploadImage_Error": "Lỗi khi tải ảnh lên",
-    "UploadImage_FileType_Error": "Chỉ có thể chọn tập tin {0}. Xin vui lòng chọn lại!",
-    "UploadImage_InvalidType_Error": "Chỉ có thể chọn tập tin hình ảnh. Xin vui lòng chọn lại!",
-    "UploadImage_SizeLimit_Error": "Chỉ có thể chọn ảnh dung lượng nhỏ hơn {0}MB. Xin vui lòng chọn lại!",
-    //#endregion
+        //#region 0.7. FileUpload Component
+        "AttachFiles": "Tập tin đính kèm",
+        "SelectFile": "Chọn tập tin",
+        "DragFile": "Kéo thả tệp",
+        "UploadFile_Success": "Tải tập tin lên thành công",
+        "UploadFile_Error": "Lỗi khi tải tập tin lên",
+        "UploadFile_FileType_Error": "Chỉ có thể chọn tập tin {0}. Xin vui lòng chọn lại!",
+        "UploadFile_InvalidType_Error": "Loại tập tin không hợp lệ. Xin vui lòng chọn lại!",
+        "UploadFile_SizeLimit_Error": "Chỉ có thể chọn tập tin dung lượng nhỏ hơn {0}MB. Xin vui lòng chọn lại!",
+        "PreviewFile": "Xem trước",
+        "PreviewFileTooltip": "Bấm để xem trước tập tin [{0}]",
+        "TenFile": "Tên tập tin",
+        "TenFilePlaceholder": "Nhập tên tập tin",
+        "TenFileTooltip": "Nhập tên tập tin",
+        "DungLuongFile": "Dung lượng tập tin",
+        "MoTaFile": "Mô tả tập tin",
+        "MoTaFilePlaceholder": "Nhập mô tả tập tin",
+        "MoTaFileTooltip": "Nhập mô tả tập tin",
+        "TrangThaiFile": "Trạng thái tập tin",
+        "TrangThaiFileTooltip": "Bấm để thay đổi trạng thái tập tin",
+        "UpdateFile_Success": "Cập nhật thông tin tập tin thành công",
+        "UpdateFile_Error": "Lỗi khi cập nhật thông tin tập tin",
+        "DeleteFileTooltip": "Bấm để xoá tập tin",
+        "AreYouSureDeleteFile": "Bạn có chắc muốn xóa file {0}?",
+        "DeleteFile_Success": "Xóa tập tin thành công",
+        "DeleteFile_Error": "Lỗi khi xoá tập tin",
+        "SelectImage": "Chọn ảnh",
+        "BrowseImageTooltip": "Có thể chọn tập tin JPG / JPEG / PNG với kích thước tối đa {0}MB",
+        "UploadImage": "Tải ảnh",
+        "RemoveImage": "Gỡ ảnh",
+        "AreYouSureRemoveImage": "Bạn có chắc muốn gỡ ảnh?",
+        "UploadImage_Success": "Tải ảnh lên thành công",
+        "UploadImage_Error": "Lỗi khi tải ảnh lên",
+        "UploadImage_FileType_Error": "Chỉ có thể chọn tập tin {0}. Xin vui lòng chọn lại!",
+        "UploadImage_InvalidType_Error": "Chỉ có thể chọn tập tin hình ảnh. Xin vui lòng chọn lại!",
+        "UploadImage_SizeLimit_Error": "Chỉ có thể chọn ảnh dung lượng nhỏ hơn {0}MB. Xin vui lòng chọn lại!",
+        //#endregion
 
-    //#region 0.8. Other Components
-    "ExpandAll": "Mở tất cả",
-    "ExpandAllTooltip": "Bấm để mở rộng tất cả",
-    "CollapseAll": "Đóng tất cả",
-    "CollapseAllTooltip": "Bấm để đóng lại tất cả",
-    //#endregion
+        //#region 0.8. Other Components
+        "ExpandAll": "Mở tất cả",
+        "ExpandAllTooltip": "Bấm để mở rộng tất cả",
+        "CollapseAll": "Đóng tất cả",
+        "CollapseAllTooltip": "Bấm để đóng lại tất cả",
+        //#endregion
 
-    //#region 0.9. Quản trị hệ thống
-    "SystemAdministration": "Quản trị hệ thống",
-    "Menu:SystemAdministration": "Quản trị hệ thống",
-    "Permission:SystemAdministration": "Quản trị hệ thống",
+        //#region 0.9. Quản trị hệ thống
+        "SystemAdministration": "Quản trị hệ thống",
+        "Menu:SystemAdministration": "Quản trị hệ thống",
+        "Permission:SystemAdministration": "Quản trị hệ thống",
 
-    "NguoiDung": "Người dùng",
-    "Menu:NguoiDung": "Quản lý người dùng",
-    "Permission:NguoiDung": "Quản lý người dùng",
+        "NguoiDung": "Người dùng",
+        "Menu:NguoiDung": "Quản lý người dùng",
+        "Permission:NguoiDung": "Quản lý người dùng",
 
-    "VaiTro": "Vai trò",
-    "Menu:VaiTro": "Quản lý vai trò",
-    "Permission:VaiTro": "Quản lý vai trò",
+        "VaiTro": "Vai trò",
+        "Menu:VaiTro": "Quản lý vai trò",
+        "Permission:VaiTro": "Quản lý vai trò",
 
-    "CaiDat": "Cài đặt",
-    "Menu:CaiDat": "Cài đặt",
-    "Permission:CaiDat": "Cài đặt",
-    //#endregion
+        "CaiDat": "Cài đặt",
+        "Menu:CaiDat": "Cài đặt",
+        "Permission:CaiDat": "Cài đặt",
+        //#endregion
 
-    //#region 1. Danh mục
-    "DanhMucs": "Danh mục",
-    "Menu:DanhMucs": "Danh mục",
-    "Permission:DanhMucs": "Danh mục",
-    "STT": "STT",
-    "Id": "Id",
-    "Ten": "Tên",
-    "Ma": "Mã",
-    "MoTa": "Mô tả",
-    "SoThuTu": "Số thứ tự",
-    "GhiChu": "Ghi chú",
-    "NgayTao": "Ngày tạo",
-    "CreatorId": "Người tạo",
-    "NgayCapNhat": "Ngày cập nhật",
-    "LastModificationTime": "Ngày cập nhật",
-    "LastModifierId": "Người cập nhật",
-    "NgayXoa": "Ngày xoá",
-    "DeletionTime": "Ngày xoá",
-    "DeleterId": "Người xoá",
-    //#endregion
+        //#region 1. Danh mục
+        "DanhMucs": "Danh mục",
+        "Menu:DanhMucs": "Danh mục",
+        "Permission:DanhMucs": "Danh mục",
+        "STT": "STT",
+        "Id": "Id",
+        "Ten": "Tên",
+        "Ma": "Mã",
+        "MoTa": "Mô tả",
+        "SoThuTu": "Số thứ tự",
+        "GhiChu": "Ghi chú",
+        "TrangThai": "Trạng thái",
+        "NgayTao": "Ngày tạo",
+        "CreatorId": "Người tạo",
+        "NgayCapNhat": "Ngày cập nhật",
+        "LastModificationTime": "Ngày cập nhật",
+        "LastModifierId": "Người cập nhật",
+        "NgayXoa": "Ngày xoá",
+        "DeletionTime": "Ngày xoá",
+        "DeleterId": "Người xoá",
+        //#endregion
 
-    //#region 1.1. Danh mục Tinh/ thành phố
-    "DanhMucs.TinhThanhPho": "Tỉnh, thành phố",
-    "Menu:TinhThanhPho": "Tỉnh, thành phố",
-    "Permission:DanhMucs.TinhThanhPho": "Danh mục Tỉnh, thành phố",
-    "Permission:DanhMucs.TinhThanhPho.Create": "Thêm tỉnh, thành phố",
-    "Permission:DanhMucs.TinhThanhPho.Edit": "Sửa tỉnh, thành phố",
-    "Permission:DanhMucs.TinhThanhPho.Delete": "Xoá tỉnh, thành phố",
-    "TenTinhThanhPho": "Tên tỉnh, thành phố",
-    "MaTinhThanhPho": "Mã tỉnh, thành phố",
-    //#endregion
+        //#region 1.1. Danh mục Tinh/ thành phố
+        "DanhMucs.TinhThanhPho": "Tỉnh, thành phố",
+        "Menu:TinhThanhPho": "Tỉnh, thành phố",
+        "Permission:DanhMucs.TinhThanhPho": "Danh mục Tỉnh, thành phố",
+        "Permission:DanhMucs.TinhThanhPho.Create": "Thêm tỉnh, thành phố",
+        "Permission:DanhMucs.TinhThanhPho.Edit": "Sửa tỉnh, thành phố",
+        "Permission:DanhMucs.TinhThanhPho.Delete": "Xoá tỉnh, thành phố",
+        "TenTinhThanhPho": "Tên tỉnh, thành phố",
+        "MaTinhThanhPho": "Mã tỉnh, thành phố",
+        //#endregion
 
-    //#region 1.2. Danh mục Huyện/ quận
-    //#endregion
+        //#region 1.2. Danh mục Huyện/ quận
+        //#endregion
 
-    //#region 1.3. Danh mục Xã/ phường
-    "DanhMucs.XaPhuong": "Xã, phường",
-    "Menu:XaPhuong": "Xã, phường",
-    "Permission:DanhMucs.XaPhuong": "Danh mục Xã, phường",
-    "Permission:DanhMucs.XaPhuong.Create": "Thêm xã, phường",
-    "Permission:DanhMucs.XaPhuong.Edit": "Sửa xã, phường",
-    "Permission:DanhMucs.XaPhuong.Delete": "Xoá xã, phường",
-    "ThuocTinhThanhPho": "Thuộc tỉnh, thành phố",
-    "TenXaPhuong": "Tên xã, phường",
-    "MaXaPhuong": "Mã xã, phường",
-    //#endregion
+        //#region 1.3. Danh mục Xã/ phường
+        "DanhMucs.XaPhuong": "Xã, phường",
+        "Menu:XaPhuong": "Xã, phường",
+        "Permission:DanhMucs.XaPhuong": "Danh mục Xã, phường",
+        "Permission:DanhMucs.XaPhuong.Create": "Thêm xã, phường",
+        "Permission:DanhMucs.XaPhuong.Edit": "Sửa xã, phường",
+        "Permission:DanhMucs.XaPhuong.Delete": "Xoá xã, phường",
+        "ThuocTinhThanhPho": "Thuộc tỉnh, thành phố",
+        "TenXaPhuong": "Tên xã, phường",
+        "MaXaPhuong": "Mã xã, phường",
+        //#endregion
 
-    //#region 1.4. Danh mục Cấp cơ quan
-    "DanhMucs.CapCoQuan": "Cấp cơ quan",
-    "Menu:CapCoQuan": "Cấp cơ quan",
-    "Permission:DanhMucs.CapCoQuan": "Danh mục Cấp cơ quan",
-    "Permission:DanhMucs.CapCoQuan.Create": "Thêm cấp cơ quan",
-    "Permission:DanhMucs.CapCoQuan.Edit": "Sửa cấp cơ quan",
-    "Permission:DanhMucs.CapCoQuan.Delete": "Xoá cấp cơ quan",
-    "TenCapCoQuan": "Tên cấp cơ quan",
-    "MaCapCoQuan": "Mã cấp cơ quan",
-    //#endregion
+        //#region 1.4. Danh mục Cấp cơ quan
+        "DanhMucs.CapCoQuan": "Cấp cơ quan",
+        "Menu:CapCoQuan": "Cấp cơ quan",
+        "Permission:DanhMucs.CapCoQuan": "Danh mục Cấp cơ quan",
+        "Permission:DanhMucs.CapCoQuan.Create": "Thêm cấp cơ quan",
+        "Permission:DanhMucs.CapCoQuan.Edit": "Sửa cấp cơ quan",
+        "Permission:DanhMucs.CapCoQuan.Delete": "Xoá cấp cơ quan",
+        "TenCapCoQuan": "Tên cấp cơ quan",
+        "MaCapCoQuan": "Mã cấp cơ quan",
+        //#endregion
 
-    //#region 1.5. Danh mục Cơ quan tổ chức
-    "DanhMucs.ToChuc": "Cơ quan tổ chức",
-    "Menu:ToChuc": "Cơ quan tổ chức",
-    "Permission:DanhMucs.ToChuc": "Danh mục Cơ quan tổ chức",
-    "Permission:DanhMucs.ToChuc.Create": "Thêm cơ quan tổ chức",
-    "Permission:DanhMucs.ToChuc.Edit": "Sửa cơ quan tổ chức",
-    "Permission:DanhMucs.ToChuc.Delete": "Xoá cơ quan tổ chức",
-    "CoQuanToChucCapTren": "Cơ quan tổ chức cấp trên",
-    "ThuocToChuc": "Cơ quan tổ chức cấp trên",
-    "ThongTinToChuc": "Thông tin cơ quan tổ chức",
-    "TenToChuc": "Tên Cơ quan tổ chức",
-    "MaToChuc": "Mã Cơ quan tổ chức",
-    "MaSoThue": "Mã số thuế",
-    "DiaChiThuCongVu": "Địa chỉ thư công vụ",
-    "DienThoai": "Điện thoại",
-    "MaQuanHeNganSach": "Mã quan hệ ngân sách",
-    "ThuocCapCoQuan": "Thuộc cấp cơ quan",
-    "ThongTinDiaChi": "Thông tin địa chỉ",
-    "SoNha": "Số nhà, tên đường",
-    "CoQuanPhuTrach": "Cơ quan phụ trách"
-    //#endregion
+        //#region 1.5. Danh mục Cơ quan tổ chức
+        "DanhMucs.ToChuc": "Cơ quan tổ chức",
+        "Menu:ToChuc": "Cơ quan tổ chức",
+        "Permission:DanhMucs.ToChuc": "Danh mục Cơ quan tổ chức",
+        "Permission:DanhMucs.ToChuc.Create": "Thêm cơ quan tổ chức",
+        "Permission:DanhMucs.ToChuc.Edit": "Sửa cơ quan tổ chức",
+        "Permission:DanhMucs.ToChuc.Delete": "Xoá cơ quan tổ chức",
+        "CoQuanToChucCapTren": "Cơ quan tổ chức cấp trên",
+        "ThuocToChuc": "Cơ quan tổ chức cấp trên",
+        "ThongTinToChuc": "Thông tin cơ quan tổ chức",
+        "TenToChuc": "Tên Cơ quan tổ chức",
+        "MaToChuc": "Mã Cơ quan tổ chức",
+        "MaSoThue": "Mã số thuế",
+        "DiaChiThuCongVu": "Địa chỉ thư công vụ",
+        "DienThoai": "Điện thoại",
+        "MaQuanHeNganSach": "Mã quan hệ ngân sách",
+        "ThuocCapCoQuan": "Thuộc cấp cơ quan",
+        "ThongTinDiaChi": "Thông tin địa chỉ",
+        "SoNha": "Số nhà, tên đường",
+        "CoQuanPhuTrach": "Cơ quan phụ trách",
+        //#endregion
 
-    //#region 1.6. Danh mục Loại dịch vụ, thiết bị phần mềm
-    //#endregion
+        //#region 1.6. Danh mục Loại dịch vụ, thiết bị phần mềm
+        //#endregion
 
-    //#region 1.7. Danh mục Dịch vụ, thiết bị phần mềm
-    //#endregion
+        //#region 1.7. Danh mục Dịch vụ, thiết bị phần mềm
+        //#endregion
 
-    //#region 1.8. Danh mục Chức vụ
-    //#endregion
+        //#region 1.8. Danh mục Chức vụ
+        //#endregion
 
-    //#region 1.9. Danh mục Mạng/ hệ thống cấp CTS
-    //#endregion
+        //#region 1.9. Danh mục Mạng/ hệ thống cấp CTS
+        //#endregion
 
-    //#region 1.10. Danh mục Thuê bao cá nhân
-    //#endregion
+        //#region 1.10. Danh mục Thuê bao cá nhân
+        //#endregion
 
-    //#region 1.11. Danh mục Nơi cấp CCCD
-    //#endregion
+        //#region 1.11. Danh mục Nơi cấp CCCD
+        //#endregion
 
-    //#region 1.12. Danh mục Người tiếp nhận
-    //#endregion
+        //#region 1.12. Danh mục Người tiếp nhận
+        //#endregion
 
-    //#region 1.13. Danh mục Người được cấp CTS
-    //#endregion
+        //#region 1.13. Danh mục Người được cấp CTS
+        //#endregion
 
-    //#region 1.14. Danh mục Loại hồ sơ
-    //#endregion
+        //#region 1.14. Danh mục Loại hồ sơ
+        "DanhMucs.LoaiHoSo": "Loại hồ sơ",
+        "Menu:LoaiHoSo": "Loại hồ sơ",
+        "Permission:DanhMucs.LoaiHoSo": "Danh mục Loại hồ sơ",
+        "Permission:DanhMucs.LoaiHoSo.Create": "Thêm loại hồ sơ",
+        "Permission:DanhMucs.LoaiHoSo.Edit": "Sửa loại hồ sơ",
+        "Permission:DanhMucs.LoaiHoSo.Delete": "Xoá loại hồ sơ",
+        "ThongTinLoaiHoSo": "Thông tin loại hồ sơ",
+        "TenLoaiHoSo": "Tên Loại hồ sơ",
+        "MaLoaiHoSo": "Mã Loại hồ sơ",
+        "NewLoaiHoSo": "Thêm mới loại hồ sơ",
+        //#endregion
 
-    //#region 1.15. Danh mục Loại chứng thư số
-    //#endregion
+        //#region 1.15. Danh mục Loại chứng thư số
+        "DanhMucs.LoaiCTS": "Loại chứng thư số",
+        "Menu:LoaiCTS": "Loại chứng thư số",
+        "Permission:DanhMucs.LoaiCTS": "Danh mục Loại chứng thư số",
+        "Permission:DanhMucs.LoaiCTS.Create": "Thêm loại chứng thư số",
+        "Permission:DanhMucs.LoaiCTS.Edit": "Sửa loại chứng thư số",
+        "Permission:DanhMucs.LoaiCTS.Delete": "Xoá loại chứng thư số",
+        "ThongTinLoaiCTS": "Thông tin loại chứng thư số",
+        "TenLoaiCTS": "Tên Loại chứng thư số",
+        "MaLoaiCTS": "Mã Loại chứng thư số",
+        "NewLoaiCTS": "Thêm mới loại chứng thư số"
+        //#endregion
 
-    //#region 1.16. Danh mục Trích yếu
-    //#endregion
+        //#region 1.16. Danh mục Trích yếu
+        //#endregion
 
-    //#region 1.17. Danh mục Lực lượng
-    //#endregion
+        //#region 1.17. Danh mục Lực lượng
+        //#endregion
 
-    //#region 1.18. Danh mục Điều kiện cấp CTS theo lực lượng
-    //#endregion
+        //#region 1.18. Danh mục Điều kiện cấp CTS theo lực lượng
+        //#endregion
 
-    //#region 1.19. Danh mục Chứng thư số và thiết bị
-    //#endregion
-  }
+        //#region 1.19. Danh mục Chứng thư số và thiết bị
+        //#endregion
+    }
 }

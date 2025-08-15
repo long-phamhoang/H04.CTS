@@ -40,7 +40,7 @@ export class MainComponent implements OnInit, OnDestroy {
         { label: '::Menu:NoiCapCCCD', routerLink: '/main/danh-muc/noi-cap-cccd', }, // DCIM Trịnh Đức Thành
         { label: '::Menu:NguoiTiepNhan', routerLink: '/main/danh-muc/nguoi-tiep-nhan', }, // DCIM Trịnh Đức Thành
         { label: '::Menu:LoaiHoSo', routerLink: '/main/danh-muc/loai-ho-so', }, // TA Tạ Đức Hoàn
-        { label: '::Menu:LoaiChungThuSo', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // TA Tạ Đức Hoàn
+        { label: '::Menu:LoaiCTS', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // TA Tạ Đức Hoàn
         { label: '::Menu:MangHeThongCapCts', routerLink: '/main/danh-muc/mang-he-thong-cap-cts', }, // TA Trần Đức Minh
         { label: '::Menu:TrichYeu', routerLink: '/main/danh-muc/trich-yeu', }, // TA Trần Đức Minh,
         { label: '::Menu:LucLuong', routerLink: '/main/danh-muc/trich-yeu', }, // CA Nguyễn Công Tâm,

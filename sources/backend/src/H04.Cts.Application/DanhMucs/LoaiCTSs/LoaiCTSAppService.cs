@@ -63,6 +63,29 @@ namespace H04.Cts.DanhMucs.LoaiCTSs
             );
         }
 
+        public async Task<PagedResultDto<LoaiCTSDto>> GetListFilterData(LoaiCTSFilterDto input)
+        {
+            var queryable = await _repository.GetQueryableAsync();
+            if(!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                input.Keyword = input.Keyword.Trim().ToLower();
+                queryable = queryable.Where(x =>
+                    x.MaLoaiCTS.ToLower().Contains(input.Keyword)
+                    || x.TenLoaiCTS.ToLower().Contains(input.Keyword));
+            }
+            var query = queryable
+                .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "MaLoaiCTS" : input.Sorting)
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount);
+
+            var digitalTypes = await AsyncExecuter.ToListAsync(query);
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+            return new PagedResultDto<LoaiCTSDto>(
+                totalCount,
+                ObjectMapper.Map<List<LoaiCTS>, List<LoaiCTSDto>>(digitalTypes)
+            );
+        }
+
         [Authorize(CtsPermissions.DanhMucs.LoaiCTSDelete)]
         [HttpDelete("/api/app/loai-cts/soft-delete/{id}")]
         public async Task SoftDeleteAsync(long id)

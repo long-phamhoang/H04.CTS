@@ -18,10 +18,26 @@ function configureRoutes() {
       layout: eLayoutType.application,
     },
     {
-      path: '/main/danh-muc/to-chuc',
       name: '::Menu:DanhMucs',
       iconClass: 'fas fa-book',
-      order: 2,
+    },
+    {
+      path: '/main/danh-muc/to-chuc',
+      name: '::Menu:ToChuc',
+      parentName: '::Menu:DanhMucs',
+      layout: eLayoutType.empty,
+    },
+    {
+      path: '/main/danh-muc/loai-ho-so',
+      name: '::Menu:LoaiHoSo',
+      parentName: '::Menu:DanhMucs',
+      layout: eLayoutType.empty,
+    },
+    {
+      path: '/main/danh-muc/loai-chung-thu-so',
+      name: '::Menu:LoaiCTS',
+      parentName: '::Menu:DanhMucs',
+      layout: eLayoutType.empty,
     },
   ]);
 }
