@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -34,11 +35,56 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
 
         if (!string.IsNullOrWhiteSpace(input.Filter))
         {
-            var f = input.Filter.ToLower();
-            queryable = queryable.Where(x =>
-                ((x.TenLucLuong ?? "").ToLower().Contains(f)) ||
-                ((x.MaLucLuong ?? "").ToLower().Contains(f))
-            );
+            var raw = input.Filter.Trim();
+            try
+            {
+                using var doc = JsonDocument.Parse(raw);
+                var root = doc.RootElement;
+
+                if (root.ValueKind == JsonValueKind.Object)
+                {
+                    string ten = root.TryGetProperty("tenLucLuong", out var tenEl) ? (tenEl.GetString() ?? string.Empty).Trim() : string.Empty;
+                    string ma = root.TryGetProperty("maLucLuong", out var maEl) ? (maEl.GetString() ?? string.Empty).Trim() : string.Empty;
+                    string ttStr = root.TryGetProperty("trangThai", out var ttEl) ? (ttEl.ToString() ?? string.Empty).Trim() : string.Empty;
+
+                    if (!string.IsNullOrWhiteSpace(ten))
+                    {
+                        var tenLower = ten.ToLower();
+                        queryable = queryable.Where(x => ((x.TenLucLuong ?? string.Empty).ToLower()).Contains(tenLower));
+                    }
+                    if (!string.IsNullOrWhiteSpace(ma))
+                    {
+                        var maLower = ma.ToLower();
+                        queryable = queryable.Where(x => ((x.MaLucLuong ?? string.Empty).ToLower()).Contains(maLower));
+                    }
+                    if (!string.IsNullOrWhiteSpace(ttStr) && int.TryParse(ttStr, out var tt))
+                    {
+                        queryable = queryable.Where(x => ((int)x.TrangThai) == tt);
+                    }
+                }
+                else
+                {
+                    var f2 = (root.ValueKind == JsonValueKind.String || root.ValueKind == JsonValueKind.Number)
+                        ? (root.ToString() ?? string.Empty).Trim().ToLower()
+                        : raw.ToLower();
+
+                    if (!string.IsNullOrWhiteSpace(f2))
+                    {
+                        queryable = queryable.Where(x =>
+                            ((x.TenLucLuong ?? string.Empty).ToLower().Contains(f2)) ||
+                            ((x.MaLucLuong ?? string.Empty).ToLower().Contains(f2))
+                        );
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                var f = raw.ToLower();
+                queryable = queryable.Where(x =>
+                    ((x.TenLucLuong ?? string.Empty).ToLower().Contains(f)) ||
+                    ((x.MaLucLuong ?? string.Empty).ToLower().Contains(f))
+                );
+            }
         }
 
         var totalCount = await AsyncExecuter.CountAsync(queryable);

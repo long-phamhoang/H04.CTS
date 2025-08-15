@@ -1,6 +1,6 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ConfirmationService, Confirmation, ToasterService } from '@abp/ng.theme.shared';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -8,7 +8,9 @@ import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap
 import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, TrangThai } from '@app/proxy';
 import { ExportColumn } from '@app/shared/components/export-excel-dialog/export-excel-dialog.component';
 import { ImportColumn } from 'src/utilities/excel/excelImport';
-
+import { Subject } from 'rxjs';
+import { MenuItem } from 'primeng/api';
+import { Menu } from 'primeng/menu';
 @Component({
 	standalone: false,
 	selector: 'app-luc-luong',
@@ -20,7 +22,11 @@ import { ImportColumn } from 'src/utilities/excel/excelImport';
 	],
 })
 export class LucLuongComponent implements OnInit, OnDestroy {
+	@ViewChild('menu') menu: Menu;
 	lucLuong = { items: [], totalCount: 0 } as PagedResultDto<LucLuongDto>;
+
+  // multi-select state
+  selectedItems: LucLuongDto[] = [];
 
   // pagination state
   pageIndex = 0;
@@ -70,6 +76,8 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		},
 		{ field: 'ghiChu', header: 'Ghi chú' },
 	];
+	filterCodeSub: Subscription;
+	filterNameSub: Subscription;
 
 	get existingMaLucLuongValues(): string[] {
 		return (this.allItems || []).map(x => (x?.maLucLuong || '').toString());
@@ -81,7 +89,9 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		private fb: FormBuilder,
     private confirmation: ConfirmationService,
     private toast: ToasterService
-    ) { }
+    ) { 
+		
+		}
 
 		ngOnInit() {
 			const streamCreator = (query) => this.lucLuongService.getList(query);
@@ -95,7 +105,35 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 			this.list.maxResultCount = this.pageSize;
 			this.list.page = 0;
 			this.list.get();
+
+			// Setup debounced filter subscriptions
+			this.setupFilterSubscriptions();
 		}
+
+	private setupFilterSubscriptions() {
+		// Debounced filter for name
+		this.filterNameSub = new Subject<string>()
+			.pipe(
+				debounceTime(300),
+				distinctUntilChanged()
+			)
+			.subscribe(() => {
+				this.applyFilter();
+			});
+
+		// Debounced filter for code
+		this.filterCodeSub = new Subject<string>()
+			.pipe(
+				debounceTime(300),
+				distinctUntilChanged()
+			)
+			.subscribe(() => {
+				this.applyFilter();
+			});
+	}
+
+
+
 	getTrangThai(value: number | null | undefined): string {
 		return getTrangThaiLabel(value);
 	}
@@ -127,6 +165,34 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
+
+  deleteSelected() {
+    const ids = (this.selectedItems || []).map(x => x.id).filter(x => x != null);
+    if (!ids.length) { return; }
+    this.confirmation.warn(`Bạn có chắc chắn muốn xóa ${ids.length} bản ghi?`, 'Xác nhận').subscribe((status) => {
+      if (status === Confirmation.Status.confirm) {
+        // Xóa tuần tự để đơn giản xử lý lỗi
+        let ok = 0, fail = 0;
+        const doNext = (i: number) => {
+          if (i >= ids.length) {
+            this.list.get();
+            this.selectedItems = [];
+            const msg = fail === 0
+              ? `Đã xóa ${ok}/${ids.length} bản ghi`
+              : `Đã xóa ${ok}/${ids.length} bản ghi. Lỗi: ${fail}`;
+            this.toast.success(msg);
+            return;
+          }
+          const id = ids[i];
+          this.lucLuongService.delete(id).subscribe({
+            next: () => { ok++; doNext(i + 1); },
+            error: () => { fail++; doNext(i + 1); }
+          });
+        };
+        doNext(0);
+      }
+    });
+  }
 
 	buildForm() {
 		this.form = this.fb.group({
@@ -166,6 +232,13 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		if (this.maChangeSub) {
 			this.maChangeSub.unsubscribe();
+		}
+		
+		if (this.filterNameSub) {
+			this.filterNameSub.unsubscribe();
+		}
+		if (this.filterCodeSub) {
+			this.filterCodeSub.unsubscribe();
 		}
 	}
 
@@ -283,23 +356,71 @@ clearSearch() {
 
 	// Filter functionality
 	filterName: string = '';
-	filterStatus: string = '';
+	filterCode: string = '';
+	filterStatus: any = '';
+	showFilter: boolean = false;
 
+	// Filter methods
 	applyFilter() {
-		// Apply the filter logic here
-		// You can filter your data based on filterName and filterStatus
-		console.log('Filter applied:', { name: this.filterName, status: this.filterStatus });
+		// Build filter object
+		const filter: any = {};
+		
+		if (this.filterName?.trim()) {
+			filter.tenLucLuong = this.filterName.trim();
+			console.log("	filter.tenLucLuong",	filter.tenLucLuong)
+		}
+		
+		if (this.filterCode?.trim()) {
+			filter.maLucLuong = this.filterCode.trim();
+		}
+		
+		if (this.filterStatus) {
+			filter.trangThai = this.filterStatus;
+		}
+
+		// Apply filter to list service
+		this.list.filter = JSON.stringify(filter);
+		this.list.page = 0;
+		this.list.maxResultCount = this.pageSize;
+		this.list.get();
 	}
 
 	clearFilter() {
 		this.filterName = '';
+		this.filterCode = '';
 		this.filterStatus = '';
-		this.applyFilter();
+		this.list.filter = '';
+		this.list.page = 0;
+		this.list.maxResultCount = this.pageSize;
+		this.list.get();
 	}
-
-	showFilter: boolean = false;
 
 	toggleFilter() {
 		this.showFilter = !this.showFilter;
 	}
+
+	onSortChange(event: any) {
+	// Handle sort change
+	console.log('Sort changed:', event);
+	// You can implement the sorting logic here
+	// event will contain the sort field and direction
+	}
+	onSearchInput(event: any) {
+		const value = event.target.value;
+		this.searchValue = value;
+		this.onSearch({ query: value });
+	}
+	actionOptions = [
+		{ label: 'Sửa', icon: 'pi pi-pencil', value: 'edit' },
+		{ label: 'Xóa', icon: 'pi pi-trash', value: 'delete' }
+	];
+
+	onActionSelect(event: any, item: LucLuongDto) {
+		if (event.value === 'edit') {
+			this.edit(item.id);
+		} else if (event.value === 'delete') {
+			this.delete(item.id);
+		}
+	}
+
 }

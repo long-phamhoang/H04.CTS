@@ -1,90 +1,74 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <page-header title="::Cts.DanhMucs" description="::Cts.DanhMucs.LucLuong"></page-header>
+  <page-header
+    [title]="'::DanhMucs' | abpLocalization"
+    [description]="'::DanhMucs.LucLuong' | abpLocalization"
+  ></page-header>
 
   <div class="d-flex align-items-center" style="gap: 8px">
     <button
-      class="btn"
+      pButton
+      type="button"
+      icon="pi pi-download"
+      label="Xuất Excel"
       (click)="openExportDialog()"
-      style="
-        background-color: #005f99;
-        border-color: #005f99;
-        color: white;
-        border-radius: 4px;
-        padding: 4px 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        height: 24px;
-      "
-    >
-      <i class="pi pi-download" style="font-size: 12px"></i>
-      Xuất Excel
-    </button>
+      class="p-button-sm"
+      style="background-color: #005f99; border-color: #005f99"
+    ></button>
+
     <button
-      class="btn"
+      pButton
+      type="button"
+      icon="pi pi-upload"
+      label="Nhập Excel"
       (click)="openImportDialog()"
-      style="
-        background-color: #f0ad4e;
-        border-color: #f0ad4e;
-        color: white;
-        border-radius: 4px;
-        padding: 4px 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        height: 24px;
-      "
-    >
-      <i class="pi pi-upload" style="font-size: 12px"></i>
-      Nhập Excel
-    </button>
+      class="p-button-sm p-button-warning"
+    ></button>
+
     <button
-      class="btn"
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      label="Thêm mới"
       (click)="create()"
-      style="
-        background-color: #22c55e;
-        border-color: #22c55e;
-        color: white;
-        border-radius: 4px;
-        padding: 4px 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        height: 24px;
-        margin-right: 12px;
-      "
-    >
-      <i class="pi pi-plus" style="font-size: 12px"></i>
-      Thêm mới
-    </button>
+      class="p-button-sm p-button-success"
+      style="margin-right: 12px"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      icon="pi pi-trash"
+      label="Xóa đã chọn"
+      (click)="deleteSelected()"
+      class="p-button-sm p-button-danger"
+      [disabled]="!selectedItems?.length"
+    ></button>
   </div>
 </div>
 
 <div class="container-fluid">
   <div class="card">
     <div class="d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center" style="gap: 8px; padding: 5px 16px 5px 16px">
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
-          <p-autoComplete
-            #autoCompleteInput
+      <div class="d-flex align-items-center" style="gap: 8px; padding: 13px 16px 7px 16px">
+        <p-inputgroup style="width: 400px">
+          <p-inputgroup-addon>
+            <i class="pi pi-search"></i>
+          </p-inputgroup-addon>
+          <input
+            pInputText
             [(ngModel)]="searchValue"
-            [suggestions]="searchSuggestions"
-            (completeMethod)="onSearch($event)"
-            (onSelect)="onSelect($event)"
-            (onClear)="clearSearch()"
-            [forceSelection]="false"
-            [showClear]="true"
             placeholder="Tìm kiếm"
-            field="tenLucLuong"
-            [minLength]="0"
-            style="height: 38px; width: 100%"
-          >
-          </p-autoComplete>
-        </span>
-        <button class="btn btn-custom-filter" (click)="toggleFilter()">
-          <i class="pi pi-filter btn-icon"></i>
-        </button>
+            (input)="onSearchInput($event)"
+            style="height: 35px"
+          />
+        </p-inputgroup>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-filter"
+          (click)="toggleFilter()"
+          class="p-button-sm p-button-outlined"
+        ></button>
       </div>
     </div>
 
@@ -93,65 +77,77 @@
         <div class="col-md-4">
           <label class="form-label">Tên lực lượng</label>
           <input
+            pInputText
             type="text"
-            class="form-control"
             [(ngModel)]="filterName"
+            (ngModelChange)="applyFilter()"
             placeholder="Nhập tên lực lượng"
+            class="w-100"
           />
         </div>
         <div class="col-md-4">
           <label class="form-label">Mã lực lượng</label>
           <input
+            pInputText
             type="text"
-            class="form-control"
-            [(ngModel)]="filterName"
+            [(ngModel)]="filterCode"
+            (ngModelChange)="applyFilter()"
             placeholder="Nhập mã lực lượng"
+            class="w-100"
           />
         </div>
         <div class="col-md-4">
           <label class="form-label">Trạng thái</label>
-          <select class="form-select" [(ngModel)]="filterStatus">
-            <option value="">Tất cả</option>
-            <option *ngFor="let opt of trangThaiOptions" [value]="opt.value">
-              {{ opt.key }}
-            </option>
-          </select>
+          <p-dropdown
+            [options]="trangThaiOptions"
+            optionLabel="key"
+            optionValue="value"
+            [(ngModel)]="filterStatus"
+            (onChange)="applyFilter()"
+            [showClear]="true"
+            placeholder="Tất cả"
+            class="w-100"
+          ></p-dropdown>
         </div>
       </div>
     </div>
+
     <div class="card-body">
-      <table class="table table-sm table-hover">
-        <thead class="table-thead">
-          <tr class="table-header-row">
-            <th class="table-header" style="padding-left: 12px">#</th>
-            <th class="table-header">Mã</th>
-            <th class="table-header">Tên lực lượng</th>
-            <th class="table-header">Trạng thái</th>
-            <th class="table-header">Ghi chú</th>
-            <th class="table-header" style="width: 120px; text-align: right; padding-right: 12px">
-              Hành động
+      <p-table
+        [value]="displayItems"
+        dataKey="id"
+        [(selection)]="selectedItems"
+        showGridlines
+        styleClass="p-datatable-sm p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="padding-left: 12px; width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
+            <th style="width: 50px">#</th>
+            <th>Mã</th>
+            <th>Tên lực lượng</th>
+            <th style="width: 200px">Trạng thái</th>
+            <th>Ghi chú</th>
+            <th style="width: 100px; text-align: right; padding-right: 12px">Hành động</th>
           </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of displayItems; let i = index">
-            <td class="table-body" style="padding-left: 12px">
-              {{ pageIndex * pageSize + i + 1 }}
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+          <tr>
+            <td style="padding-left: 12px">
+              <p-tableCheckbox [value]="item"></p-tableCheckbox>
             </td>
-            <td class="table-body">{{ item.maLucLuong }}</td>
-            <td class="table-body">{{ item.tenLucLuong }}</td>
-            <td class="table-body">
-              <span
-                class="badge"
-                [ngClass]="{
-                  'bg-success': getTrangThaiSeverity(item.trangThai) === 'success',
-                  'bg-danger': getTrangThaiSeverity(item.trangThai) === 'danger',
-                  'bg-info': getTrangThaiSeverity(item.trangThai) === 'info'
-                }"
-                >{{ getTrangThai(item.trangThai) }}</span
-              >
+            <td>{{ pageIndex * pageSize + rowIndex + 1 }}</td>
+            <td>{{ item.maLucLuong }}</td>
+            <td>{{ item.tenLucLuong }}</td>
+            <td>
+              <p-tag
+                [value]="getTrangThai(item.trangThai)"
+                [severity]="getTrangThaiSeverity(item.trangThai)"
+              ></p-tag>
             </td>
-            <td class="table-body">{{ item.ghiChu }}</td>
+            <td>{{ item.ghiChu }}</td>
             <td class="text-end" style="padding-right: 12px">
               <div ngbDropdown class="d-inline-block">
                 <button
@@ -179,8 +175,9 @@
               </div>
             </td>
           </tr>
-        </tbody>
-      </table>
+        </ng-template>
+      </p-table>
+
       <div class="d-flex justify-content-end align-items-center">
         <span>
           <span class="pagination-text">Tổng cộng: {{ lucLuong.totalCount }}</span>
@@ -215,7 +212,7 @@
       <form [formGroup]="form" (ngSubmit)="save()">
         <div class="mb-3">
           <label class="form-label">Mã lực lượng<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" formControlName="maLucLuong" />
+          <input type="text" pInputText formControlName="maLucLuong" class="w-100" />
           <div
             class="text-danger mt-1"
             *ngIf="form?.get('maLucLuong')?.dirty && form?.get('maLucLuong')?.errors?.['maLucLuongDuplicated']"
@@ -225,29 +222,46 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Tên lực lượng<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" formControlName="tenLucLuong" />
+          <input type="text" pInputText formControlName="tenLucLuong" class="w-100" />
         </div>
         <div class="mb-3">
           <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
-          <select class="form-select" formControlName="trangThai">
-            <option *ngFor="let opt of trangThaiOptions" [ngValue]="opt.value">
-              {{ opt.key }}
-            </option>
-          </select>
+          <p-dropdown
+            [options]="trangThaiOptions"
+            optionLabel="key"
+            optionValue="value"
+            formControlName="trangThai"
+            placeholder="Chọn trạng thái"
+            [showClear]="true"
+            class="w-100"
+          ></p-dropdown>
         </div>
         <div class="mb-3">
           <label class="form-label">Ghi chú</label>
-          <textarea class="form-control" formControlName="ghiChu"></textarea>
+          <textarea
+            pInputTextarea
+            formControlName="ghiChu"
+            [autoResize]="true"
+            class="w-100"
+          ></textarea>
         </div>
       </form>
     </ng-template>
     <ng-template pTemplate="footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="isModalOpen = false">
-        Đóng
-      </button>
-      <button type="submit" class="btn btn-primary" (click)="save()" [disabled]="form?.invalid">
-        Lưu
-      </button>
+      <button
+        type="button"
+        pButton
+        label="Đóng"
+        class="p-button-outlined"
+        (click)="isModalOpen = false"
+      ></button>
+      <button
+        type="submit"
+        pButton
+        label="Lưu"
+        (click)="save()"
+        [disabled]="form?.invalid"
+      ></button>
     </ng-template>
   </p-dialog>
 

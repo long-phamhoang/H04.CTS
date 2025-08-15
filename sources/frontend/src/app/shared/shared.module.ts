@@ -37,6 +37,9 @@ import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { TextareaModule } from 'primeng/textarea';
+import { SplitButtonModule } from 'primeng/splitbutton';
 //#endregion
 //#region Extension Modules
 import { NgxValidateCoreModule } from '@ngx-validate/core';
@@ -73,6 +76,8 @@ const modules = [
   InputGroupModule,
   InputNumberModule,
   InputTextModule,
+  DropdownModule,
+  TextareaModule,
   MenuModule,
   MultiSelectModule,
   PaginatorModule,
@@ -87,6 +92,7 @@ const modules = [
   TagModule,
   TooltipModule,
   ButtonModule,
+  SplitButtonModule,
 
   // Extension Modules
   NgxValidateCoreModule,
