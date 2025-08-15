@@ -2225,7 +2225,7 @@ var luxon = (function (exports) {
     }
   }
 
-  // OBJECTS AND ARRAYS
+  // OBJECts AND ARRAYS
 
   function maybeArray(thing) {
     return Array.isArray(thing) ? thing : [thing];

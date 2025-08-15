@@ -1,4 +1,5 @@
 using AutoMapper;
+using H04.Cts.DanhMucs;
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 
@@ -13,5 +14,8 @@ public class CtsApplicationAutoMapperProfile : Profile
 
         CreateMap<CapCoQuan, CapCoQuanDto>().ReverseMap();
         CreateMap<CreateUpdateCapCoQuanDto, CapCoQuan>().ReverseMap();
+
+        CreateMap<CtsVaThietBi, CtsVaThietBiDto>().ReverseMap();
+        CreateMap<CreateUpdateCtsVaThietBiDto, CtsVaThietBi>().ReverseMap();
     }
 }

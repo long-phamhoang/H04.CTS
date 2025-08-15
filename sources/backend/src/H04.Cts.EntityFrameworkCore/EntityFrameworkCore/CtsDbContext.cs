@@ -46,7 +46,7 @@ public class CtsDbContext :
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
     public DbSet<CapCoQuan> CapCoQuans { get; set; }
-    public DbSet<CTSVaThietBi> CTSVaThietBis { get; set; }
+    public DbSet<CtsVaThietBi> CtsVaThietBis { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -73,7 +73,7 @@ public class CtsDbContext :
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
         builder.ApplyConfiguration(new CapCoQuanConfiguration());
-        builder.ApplyConfiguration(new CTSVaThietBiConfiguration());
+        builder.ApplyConfiguration(new CtsVaThietBiConfiguration());
         #endregion
     }
 }

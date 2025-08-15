@@ -5,16 +5,16 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace H04.Cts.EntityFrameworkCore.EntityConfigurations.DanhMucs;
 
-public class CTSVaThietBiConfiguration : IEntityTypeConfiguration<CTSVaThietBi>
+public class CtsVaThietBiConfiguration : IEntityTypeConfiguration<CtsVaThietBi>
 {
-    public void Configure(EntityTypeBuilder<CTSVaThietBi> builder)
+    public void Configure(EntityTypeBuilder<CtsVaThietBi> builder)
     {
-        builder.ToTable(CtsConsts.DbTablePrefix + "CTSVaThietBis", CtsConsts.DbSchema);
+        builder.ToTable(CtsConsts.DbTablePrefix + "CtsVaThietBis", CtsConsts.DbSchema);
         builder.ConfigureByConvention();
 
         #region Index
-        builder.HasIndex(x => new { x.SoHieuCTS }).IsUnique().HasFilter(@"""IsDeleted"" = false");
-        builder.HasIndex(x => new { x.TenCTS, x.CoQuanToChuc, x.TrangThai });
+        builder.HasIndex(x => new { x.SoHieuCts }).IsUnique().HasFilter(@"""IsDeleted"" = false");
+        builder.HasIndex(x => new { x.TenCts, x.ToChucId, x.TrangThai });
         #endregion
 
         #region Collection

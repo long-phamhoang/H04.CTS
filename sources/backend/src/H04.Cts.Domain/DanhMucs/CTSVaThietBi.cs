@@ -5,94 +5,66 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace H04.Cts.DanhMucs
 {
-    public class CTSVaThietBi : FullAuditedAggregateRoot<long>
+    public class CtsVaThietBi : FullAuditedAggregateRoot<long>
     {
-        [StringLength(CTSVaThietBiConst.TenCTSMaxLength)]
-        public virtual string? TenCTS { get; set; }
+        [StringLength(CtsVaThietBiConst.TenCtsMaxLength)]
+        public virtual string? TenCts { get; set; }
 
-        [StringLength(CTSVaThietBiConst.SoHieuCTSMaxLength)]
-        public virtual string? SoHieuCTS { get; set; }
+        [StringLength(CtsVaThietBiConst.SoHieuCtsMaxLength)]
+        public virtual string? SoHieuCts { get; set; }
 
-        [StringLength(CTSVaThietBiConst.DiaChiThuDienTuCongVuMaxLength)]
+        [StringLength(CtsVaThietBiConst.DiaChiThuDienTuCongVuMaxLength)]
         public virtual string? DiaChiThuDienTuCongVu { get; set; }
 
         public DateTime? NgayHieuLuc { get; set; }
         public DateTime? NgayHetHan { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CoQuanToChucMaxLength)]
-        public virtual string? CoQuanToChuc { get; set; }
+        public virtual long? ToChucId { get; set; }
 
-        [StringLength(CTSVaThietBiConst.LoaiCTSMaxLength)]
-        public virtual string? LoaiCTS { get; set; }
+        public virtual LoaiCts? LoaiCts { get; set; }
 
-        public virtual TrangThai TrangThai { get; set; }
+        public virtual TrangThai? TrangThai { get; set; }
 
-        [StringLength(CTSVaThietBiConst.HoSoMaxLength)]
+        [StringLength(CtsVaThietBiConst.HoSoMaxLength)]
         public virtual string? HoSo { get; set; }
 
-        [StringLength(CTSVaThietBiConst.VanBanMaxLength)]
+        [StringLength(CtsVaThietBiConst.VanBanMaxLength)]
         public virtual string? VanBan { get; set; }
 
-        [StringLength(CTSVaThietBiConst.HoSoThuHoiMaxLength)]
+        [StringLength(CtsVaThietBiConst.HoSoThuHoiMaxLength)]
         public virtual string? HoSoThuHoi { get; set; }
 
-        [StringLength(CTSVaThietBiConst.VanBanThuHoiMaxLength)]
+        [StringLength(CtsVaThietBiConst.VanBanThuHoiMaxLength)]
         public virtual string? VanBanThuHoi { get; set; }
 
-        [StringLength(CTSVaThietBiConst.NotesMaxLength)]
+        [StringLength(CtsVaThietBiConst.NotesMaxLength)]
         public virtual string? Notes { get; set; }
 
-        #region Cá nhân
-        [StringLength(CTSVaThietBiConst.CnTenMaxLength)]
-        public virtual string? CnTen { get; set; }
+        [StringLength(CtsVaThietBiConst.TenMaxLength)]
+        public virtual string? Ten { get; set; }
 
-        public DateTime? CnNgaySinh { get; set; }
+        public DateTime NgaySinh { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnDienThoaiMaxLength)]
-        public virtual string? CnSDT { get; set; }
+        [StringLength(CtsVaThietBiConst.DienThoaiMaxLength)]
+        public virtual string? SoDienThoai { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnCCCDMaxLength)]
-        public virtual string? CnCCCD { get; set; }
+        [StringLength(CtsVaThietBiConst.CCCDMaxLength)]
+        public virtual string? MaDinhDanh { get; set; }
 
-        public DateTime? CnNgayCap { get; set; }
+        public DateTime NgayCap { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnNoiCapMaxLength)]
-        public virtual string? CnNoiCap { get; set; }
+        public virtual long NoiCapId { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnChucVuMaxLength)]
-        public virtual string? CnChucVu { get; set; }
+        public virtual long? ChucVuId { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnDiaChiThuDienTuCongVuMaxLength)]
-        public virtual string? CnDiaChiThuDienTuCongVu { get; set; }
+        [StringLength(CtsVaThietBiConst.MaSoThueMaxLength)]
+        public virtual string? MaSoThue { get; set; }
 
-        [StringLength(CTSVaThietBiConst.CnTinhTPMaxLength)]
-        public virtual string? CnTinhTP { get; set; }
-        #endregion
+        public virtual long TinhThanhPhoId { get; set; }
 
-        #region Tổ chức
-        [StringLength(CTSVaThietBiConst.TcTenMaxLength)]
-        public virtual string? TcTen { get; set; }
+        public virtual long? PhuongXaId { get; set; }
 
-        [StringLength(CTSVaThietBiConst.TcMaDinhDanhMaxLength)]
-        public virtual string? TcMaDinhDanh { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcMaSoThueMaxLength)]
-        public virtual string? TcMaSoThue { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcDiaChiThuDienTuCongVuMaxLength)]
-        public virtual string? TcDiaChiThuDienTuCongVu { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcSDTMaxLength)]
-        public virtual string? TcSDT { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcTinhTPMaxLength)]
-        public virtual string? TcTinhTP { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcPhuongXaMaxLength)]
-        public virtual string? TcPhuongXa { get; set; }
-
-        [StringLength(CTSVaThietBiConst.TcMaQuanHeNganSachMaxLength)]
-        public virtual string? TcMaQuanHeNganSach { get; set; }
-        #endregion
+        [StringLength(CtsVaThietBiConst.MaQuanHeNganSachMaxLength)]
+        public virtual string? MaQuanHeNganSach { get; set; }
     }
 }

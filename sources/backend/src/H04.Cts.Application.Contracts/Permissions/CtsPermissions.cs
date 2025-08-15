@@ -19,5 +19,12 @@ public static class CtsPermissions
         public const string CapCoQuanEdit = CapCoQuan + ".Edit";
         public const string CapCoQuanDelete = CapCoQuan + ".Delete";
         #endregion
+
+        #region CtsVaThietBi
+        public const string CtsVaThietBi = GroupName + ".CtsVaThietBi";
+        public const string CtsVaThietBiCreate = CtsVaThietBi + ".Create";
+        public const string CtsVaThietBiEdit = CtsVaThietBi + ".Edit";
+        public const string CtsVaThietBiDelete = CtsVaThietBi + ".Delete";
+        #endregion
     }
 }

@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace H04.Cts.Migrations
 {
     [DbContext(typeof(CtsDbContext))]
-    [Migration("20250815074803_bang_ctsvathietbi_v1")]
-    partial class bang_ctsvathietbi_v1
+    [Migration("20250815120441_bang_cts_va_thiet_bi_v1")]
+    partial class bang_cts_va_thiet_bi_v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,7 +27,7 @@ namespace H04.Cts.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("H04.Cts.DanhMucs.CTSVaThietBi", b =>
+            modelBuilder.Entity("H04.Cts.DanhMucs.CtsVaThietBi", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,43 +35,8 @@ namespace H04.Cts.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CnCCCD")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("CnChucVu")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("CnDiaChiThuDienTuCongVu")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<DateTime?>("CnNgayCap")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("CnNgaySinh")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CnNoiCap")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<string>("CnSDT")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("CnTen")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("CnTinhTP")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("CoQuanToChuc")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                    b.Property<long?>("ChucVuId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -97,8 +62,8 @@ namespace H04.Cts.Migrations
                         .HasColumnName("DeletionTime");
 
                     b.Property<string>("DiaChiThuDienTuCongVu")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
@@ -127,9 +92,23 @@ namespace H04.Cts.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<string>("LoaiCTS")
+                    b.Property<int?>("LoaiCts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MaDinhDanh")
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
+
+                    b.Property<string>("MaQuanHeNganSach")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("MaSoThue")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTime>("NgayCap")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("NgayHetHan")
                         .HasColumnType("timestamp without time zone");
@@ -137,51 +116,42 @@ namespace H04.Cts.Migrations
                     b.Property<DateTime?>("NgayHieuLuc")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime>("NgaySinh")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long>("NoiCapId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Notes")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
-                    b.Property<string>("SoHieuCTS")
+                    b.Property<long?>("PhuongXaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SoDienThoai")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("SoHieuCts")
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
 
-                    b.Property<string>("TcDiaChiThuDienTuCongVu")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<string>("TcMaDinhDanh")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<string>("TcMaQuanHeNganSach")
+                    b.Property<string>("Ten")
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<string>("TcMaSoThue")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<string>("TcPhuongXa")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("TcSDT")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("TcTen")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("TcTinhTP")
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("TenCTS")
+                    b.Property<string>("TenCts")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<int>("TrangThai")
+                    b.Property<long>("TinhThanhPhoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ToChucId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TrangThai")
                         .HasColumnType("integer");
 
                     b.Property<string>("VanBan")
@@ -194,13 +164,13 @@ namespace H04.Cts.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SoHieuCTS")
+                    b.HasIndex("SoHieuCts")
                         .IsUnique()
                         .HasFilter("\"IsDeleted\" = false");
 
-                    b.HasIndex("TenCTS", "CoQuanToChuc", "TrangThai");
+                    b.HasIndex("TenCts", "ToChucId", "TrangThai");
 
-                    b.ToTable("AppCTSVaThietBis", (string)null);
+                    b.ToTable("AppCtsVaThietBis", (string)null);
                 });
 
             modelBuilder.Entity("H04.Cts.Entities.DanhMucs.CapCoQuan", b =>
