@@ -54,5 +54,11 @@ export class ToChucService {
     },
     { apiName: this.apiName,...config });
 
+  getToChucDropdown = (config?: Partial<Rest.Config>) =>
+    this.restService.request<any, ToChucDto[]>({
+      method: 'GET',
+      url: '/api/app/to-chuc/to-chuc-for-drop-down',
+    },
+    { apiName: this.apiName, ...config });
   constructor(private restService: RestService) {}
 }

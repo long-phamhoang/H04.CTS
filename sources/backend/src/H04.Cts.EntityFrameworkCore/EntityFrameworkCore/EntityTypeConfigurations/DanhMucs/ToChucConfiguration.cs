@@ -26,7 +26,7 @@ public class ToChucConfiguration : IEntityTypeConfiguration<ToChuc>
 
         #region Collection
         builder.HasMany(x => x.ToChucCapDuois).WithOne(x => x.ToChucCapTrenFk).HasForeignKey(x => x.ToChucCapTrenId);
-        // builder.HasMany(x => x.ThueBaoCaNhans).WithOne(x => x.CoQuanChuQuanFk).HasForeignKey(x => x.CoQuanChuQuanId);
+        builder.HasMany(x => x.ThueBaoCaNhans).WithOne(x => x.ToChucFk).HasForeignKey(x => x.ToChucId);
         // builder.HasMany(x => x.ThietBiDichVuPhanMems).WithOne(x => x.CoQuanChuQuanFk).HasForeignKey(x => x.CoQuanChuQuanId);
         // builder.HasMany(x => x.NguoiTiepNhans).WithOne(x => x.CoQuanNopHoSoFk).HasForeignKey(x => x.CoQuanNopHoSoId);
         #endregion

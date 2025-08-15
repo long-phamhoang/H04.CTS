@@ -1,3 +1,4 @@
+using H04.Cts.DanhMucs.ChucVucs.Dtos;
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.Permissions;
@@ -74,5 +75,20 @@ public class ToChucAppService : ApplicationService, IToChucAppService
     {
         var entity = await _repository.GetAsync(id);
         await _repository.HardDeleteAsync(entity);
+    }
+
+    [AllowAnonymous]
+    public async Task<List<ToChucDto>> GetToChucForDropDown()
+    {
+        var queryable = await _repository.GetQueryableAsync();
+
+
+        return queryable
+            .Where(x => x.TrangThai == Utilities.TrangThai.HoatDong && !x.IsDeleted)
+            .Select(x => new ToChucDto
+            {
+                Id = x.Id,
+                TenToChuc = x.TenToChuc
+            }).ToList();
     }
 }

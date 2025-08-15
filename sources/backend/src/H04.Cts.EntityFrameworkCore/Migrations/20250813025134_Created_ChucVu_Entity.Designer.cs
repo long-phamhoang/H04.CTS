@@ -3,6 +3,7 @@ using System;
 using H04.Cts.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace H04.Cts.Migrations
 {
     [DbContext(typeof(CtsDbContext))]
-    partial class CtsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250813025134_Created_ChucVu_Entity")]
+    partial class Created_ChucVu_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,109 +229,6 @@ namespace H04.Cts.Migrations
                     b.HasIndex("XaPhuongId");
 
                     b.ToTable("AppToChucs", (string)null);
-                });
-
-            modelBuilder.Entity("ThueBaoCaNhan", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ChucVuId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid?>("DeleterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("DeleterId");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("DeletionTime");
-
-                    b.Property<string>("DiaChiThuDienTuCongVu")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<string>("HoTen")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("IsDeleted");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<DateTime>("NgayCap")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("NgaySinh")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("NoiCap")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("PhuongXa")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("SoDinhDanhCaNhan")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<long?>("TinhThanhPho")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ToChucId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChucVuId");
-
-                    b.HasIndex("PhuongXa");
-
-                    b.HasIndex("SoDinhDanhCaNhan")
-                        .IsUnique();
-
-                    b.HasIndex("TinhThanhPho");
-
-                    b.HasIndex("ToChucId");
-
-                    b.ToTable("AppThueBaoCaNhans", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2077,25 +1977,6 @@ namespace H04.Cts.Migrations
                     b.Navigation("ToChucCapTrenFk");
                 });
 
-            modelBuilder.Entity("ThueBaoCaNhan", b =>
-                {
-                    b.HasOne("H04.Cts.DanhMucs.ChucVu", "ChucVuFk")
-                        .WithMany("ThueBaoCaNhans")
-                        .HasForeignKey("ChucVuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("H04.Cts.Entities.DanhMucs.ToChuc", "ToChucFk")
-                        .WithMany("ThueBaoCaNhans")
-                        .HasForeignKey("ToChucId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChucVuFk");
-
-                    b.Navigation("ToChucFk");
-                });
-
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -2238,15 +2119,8 @@ namespace H04.Cts.Migrations
                         .HasForeignKey("AuthorizationId");
                 });
 
-            modelBuilder.Entity("H04.Cts.DanhMucs.ChucVu", b =>
-                {
-                    b.Navigation("ThueBaoCaNhans");
-                });
-
             modelBuilder.Entity("H04.Cts.Entities.DanhMucs.ToChuc", b =>
                 {
-                    b.Navigation("ThueBaoCaNhans");
-
                     b.Navigation("ToChucCapDuois");
                 });
 
