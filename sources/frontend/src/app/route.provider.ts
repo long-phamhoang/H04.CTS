@@ -18,9 +18,7 @@ function configureRoutes() {
       layout: eLayoutType.application,
     },
     {
-      path: '/main/danh-muc/to-chuc',
       name: '::Menu:DanhMucs',
-      iconClass: 'fas fa-book',
       order: 2,
     },
     {
@@ -28,6 +26,15 @@ function configureRoutes() {
       name: '::Menu:DanhMucs:LucLuong',
       parentName: '::Menu:DanhMucs',
       iconClass: 'fas fa-book',
+      order: 1,
+      layout: eLayoutType.empty,
+    },
+    {
+      path: '/main/danh-muc/dk-cts-luc-luong',
+      name: '::Menu:DanhMucs:DKCtsLucLuong',
+      parentName: '::Menu:DanhMucs',
+      iconClass: 'fas fa-book',
+      order: 3,
       layout: eLayoutType.empty,
     },
   ]);

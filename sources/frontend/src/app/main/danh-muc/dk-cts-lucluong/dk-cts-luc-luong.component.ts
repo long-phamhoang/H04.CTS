@@ -33,6 +33,22 @@ export class DKCtsLucLuongComponent implements OnInit {
 
 	private maChangeSub: Subscription | null = null;
 
+	// Add these properties to your component class
+	searchValue: string = '';
+	searchSuggestions: any[] = [];
+	showFilter: boolean = false;
+	filterName: string = '';
+	filterMa: string = '';
+	filterStatus: string = '';
+	pageSize: number = 10;
+	pageIndex: number = 0;
+	exportVisible: boolean = false;
+	showImport: boolean = false;
+	exportData: any[] = [];
+	exportColumns: any[] = [];
+	importColumns: any[] = [];
+	existingMaDieuKienValues: string[] = [];
+
 	constructor(
         public readonly list: ListService,
         private dkService: DieuKienCapCTSTheoLLService,
@@ -155,6 +171,56 @@ export class DKCtsLucLuongComponent implements OnInit {
         if (!id) return '';
         const found = this.lucLuongOptions.find(x => x.id === id);
         return found?.tenLucLuong || '';
+    }
+    // Add these methods to your component class
+    onSearch(event: any) {
+      // Implement search logic
+    }
+
+    onSelect(event: any) {
+      // Implement select logic
+    }
+
+    clearSearch() {
+      this.searchValue = '';
+    }
+
+    toggleFilter() {
+      this.showFilter = !this.showFilter;
+    }
+
+    applyFilter() {
+      // Apply filter logic
+    }
+
+    clearFilter() {
+      this.filterName = '';
+      this.filterMa = '';
+      this.filterStatus = '';
+      this.applyFilter();
+    }
+
+    onPageChange(event: any) {
+      this.pageIndex = event.page;
+      this.pageSize = event.rows;
+      // Reload data
+    }
+
+    openExportDialog() {
+      this.exportVisible = true;
+    }
+
+    openImportDialog() {
+      this.showImport = true;
+    }
+
+    onExported() {
+      this.exportVisible = false;
+    }
+
+    onImported(data: any) {
+      this.showImport = false;
+      // Handle imported data
     }
 }
 

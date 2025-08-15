@@ -280,4 +280,26 @@ clearSearch() {
 		};
 		doNext(0);
 	}
+
+	// Filter functionality
+	filterName: string = '';
+	filterStatus: string = '';
+
+	applyFilter() {
+		// Apply the filter logic here
+		// You can filter your data based on filterName and filterStatus
+		console.log('Filter applied:', { name: this.filterName, status: this.filterStatus });
+	}
+
+	clearFilter() {
+		this.filterName = '';
+		this.filterStatus = '';
+		this.applyFilter();
+	}
+
+	showFilter: boolean = false;
+
+	toggleFilter() {
+		this.showFilter = !this.showFilter;
+	}
 }
