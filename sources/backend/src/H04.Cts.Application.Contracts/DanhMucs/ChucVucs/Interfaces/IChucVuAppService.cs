@@ -13,6 +13,7 @@ namespace H04.Cts.DanhMucs.ChucVucs.Interfaces
     public interface IChucVuAppService : ICrudAppService<ChucVuDto, long, GetListChucVuInput, CreateUpdateChucVuDto>
     {
         Task<List<ChucVuDto>> GetChucVuForDropDown();
+        Task<bool> IsMaChucVuUniqueAsync(string maChucVu);
 
     }
 }

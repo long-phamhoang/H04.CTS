@@ -1,35 +1,35 @@
 <page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.ThueBaoCaNhan' | abpLocalization">
 </page-header>
 
-<div class="card">
-  <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">{{ '::Menu:ThueBaoCaNhan' | abpLocalization }}</h5>
-    <button *abpPermission="'Cts.DanhMucs.ThueBaoCaNhan.Create'" class="btn btn-primary" (click)="createthueBaoCaNhan()"
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0 fw-bold">{{ '::Menu:ThueBaoCaNhan' | abpLocalization }}</h5>
+    <button *abpPermission="'Cts.DanhMucs.ThueBaoCaNhan.Create'" class="btn btn-success" (click)="createthueBaoCaNhan()"
       title="{{ '::CreateNew' | abpLocalization }}">
       <i class="fa fa-plus me-1"></i> {{ '::CreateNew' | abpLocalization }}
     </button>
   </div>
 
-  <div class="card-body p-0">
-    <div class="input-group p-3">
-      <input type="text" class="form-control" placeholder="{{ '::Search' | abpLocalization }}" [(ngModel)]="filterInput"
-        (keydown.enter)="onSearchChange()" />
-      <button class="btn btn-outline-secondary" type="button" (click)="onSearchChange()">
-        <i class="fa fa-search"></i>
-      </button>
+  <div class="card-body p-3">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="{{ '::Search' | abpLocalization }}"
+            [(ngModel)]="filterInput" (keydown.enter)="onSearchChange()" />
+          <button class="btn btn-outline-primary" type="button" (click)="onSearchChange()">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </div>
     </div>
+
     <p-table #dataTable [value]="thueBaoCaNhans.items" [rows]="pageSize" [lazy]="true"
-      (onLazyLoad)="onPageChange($event)" [loading]="true" class="p-datatable-sm p-datatable-gridlines">
+      (onLazyLoad)="onPageChange($event)" [loading]="false"
+      class="p-datatable-sm p-datatable-gridlines p-datatable-striped custom-header-table">
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 50px;">#</th>
-
-          <th pSortableColumn="hoTen" >
-                <div class="flex items-center gap-2">
-                    {{ '::HoTen' | abpLocalization }}
-                    <p-sortIcon field="hoTen" />
-                </div>
-            </th>
+          <th pSortableColumn="hoTen">{{ '::HoTen' | abpLocalization }} <p-sortIcon field="hoTen" /></th>
           <th>{{ '::NgaySinh' | abpLocalization }}</th>
           <th>{{ '::SoDinhDanhCaNhan' | abpLocalization }}</th>
           <th>{{ '::ToChuc' | abpLocalization }}</th>
@@ -50,7 +50,7 @@
           <td>{{ row.diaChiThuDienTuCongVu }}</td>
           <td>
             <div ngbDropdown container="body" class="d-inline-block">
-              <button class="btn btn-primary btn-sm dropdown-toggle" ngbDropdownToggle>
+              <button class="btn btn-outline-primary btn-sm dropdown-toggle" ngbDropdownToggle>
                 <i class="fa fa-cog me-1"></i>
               </button>
               <div ngbDropdownMenu>
@@ -69,12 +69,15 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5" class="text-center py-3">{{ '::NoDataFound' | abpLocalization }}</td>
+          <td colspan="8" class="text-center py-3 text-muted">
+            {{ '::NoDataFound' | abpLocalization }}
+          </td>
         </tr>
       </ng-template>
     </p-table>
-    <div class="d-flex justify-content-between align-items-center p-2">
-      <div>Tổng cộng: {{ thueBaoCaNhans.totalCount || 0 }}</div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted">Tổng cộng: {{ thueBaoCaNhans.totalCount || 0 }}</div>
       <p-paginator [rows]="pageSize" [first]="page * pageSize" [totalRecords]="thueBaoCaNhans.totalCount || 0"
         [rowsPerPageOptions]="[5, 10, 20, 50]" (onPageChange)="onPageChange($event)">
       </p-paginator>
@@ -82,104 +85,81 @@
   </div>
 </div>
 
+
 <!-- Modal -->
-<abp-modal [(visible)]="isModalOpen" size="xl">
-  <ng-template #abpHeader>
-    <h3 class="modal-title">
-      {{ selectedThueBaoCaNhan?.id ? ('::Edit' | abpLocalization) : ('::NewThueBaoCaNhan' | abpLocalization) }}
-    </h3>
-  </ng-template>
+<p-dialog [(visible)]="isModalOpen" [modal]="true" [style]="{width: '800px'}" 
+          [header]="selectedThueBaoCaNhan?.id ? ('::Edit' | abpLocalization) : ('::CreateNew' | abpLocalization)"
+          [closable]="false">
 
-  <ng-template #abpBody>
-    <form [formGroup]="form" (ngSubmit)="save()" class="needs-validation" novalidate>
+  <form [formGroup]="form" class="needs-validation" (ngSubmit)="save()" novalidate>
+
+    <!-- Thông tin cá nhân -->
+    <div class="border rounded p-3 mb-4">
+      <h6 class="fw-bold border-bottom pb-2 mb-3">1. {{ '::ThongTinCaNhan' | abpLocalization }}</h6>
       <div class="row g-3">
-
-        <!-- Họ tên -->
         <div class="col-md-6">
-          <label for="hoTen" class="form-label">{{ '::HoTen' | abpLocalization }}</label>
-          <input type="text" id="hoTen" class="form-control" formControlName="hoTen" required maxlength="100"
-            placeholder="{{ '::HoTen' | abpLocalization }}"
-            [class.is-invalid]="form.controls.hoTen.invalid && form.controls.hoTen.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+          <label class="form-label">{{ '::HoTen' | abpLocalization }} <span class="text-danger">*</span></label>
+          <input #hoTenInput formControlName="hoTen" type="text" class="form-control" required />
         </div>
 
-        <!-- Ngày sinh -->
         <div class="col-md-6">
-          <label for="ngaySinh" class="form-label">{{ '::NgaySinh' | abpLocalization }}</label>
-          <input type="date" id="ngaySinh" class="form-control" formControlName="ngaySinh" required
-            [class.is-invalid]="form.controls.ngaySinh.invalid && form.controls.ngaySinh.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+          <label class="form-label">{{ '::NgaySinh' | abpLocalization }} <span class="text-danger">*</span></label>
+          <input formControlName="ngaySinh" type="date" class="form-control" required />
         </div>
 
-        <!-- Số định danh cá nhân -->
-        <div class="col-md-6">
-          <label for="soDinhDanhCaNhan" class="form-label">{{ '::SoDinhDanhCaNhan' | abpLocalization }}</label>
-          <input type="text" id="soDinhDanhCaNhan" class="form-control" formControlName="soDinhDanhCaNhan" required
-            maxlength="20" placeholder="{{ '::SoDinhDanhCaNhan' | abpLocalization }}"
-            [class.is-invalid]="form.controls.soDinhDanhCaNhan.invalid && form.controls.soDinhDanhCaNhan.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+        <div class="col-md-4">
+          <label class="form-label">{{ '::SoDinhDanhCaNhan' | abpLocalization }} <span
+              class="text-danger">*</span></label>
+          <input formControlName="soDinhDanhCaNhan" type="text" class="form-control" required />
         </div>
 
-        <!-- Nơi cấp -->
-        <div class="col-md-6">
-          <label for="noiCap" class="form-label">{{ '::NoiCap' | abpLocalization }}</label>
-          <input type="text" id="noiCap" class="form-control" formControlName="noiCap" required maxlength="100"
-            placeholder="{{ '::NoiCap' | abpLocalization }}"
-            [class.is-invalid]="form.controls.noiCap.invalid && form.controls.noiCap.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+        <div class="col-md-4">
+          <label class="form-label">{{ '::NgayCap' | abpLocalization }} <span class="text-danger">*</span></label>
+          <input formControlName="ngayCap" type="date" class="form-control" required />
         </div>
 
-        <!-- Ngày cấp -->
-        <div class="col-md-6">
-          <label for="ngayCap" class="form-label">{{ '::NgayCap' | abpLocalization }}</label>
-          <input type="date" id="ngayCap" class="form-control" formControlName="ngayCap" required
-            [class.is-invalid]="form.controls.ngayCap.invalid && form.controls.ngayCap.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+        <div class="col-md-4">
+          <label class="form-label">{{ '::NoiCap' | abpLocalization }} <span class="text-danger">*</span></label>
+          <input formControlName="noiCap" type="text" class="form-control" required />
         </div>
+      </div>
+    </div>
 
-        <!-- Tổ chức -->
+    <!-- Cơ quan chủ quản -->
+    <div class="border rounded p-3 mb-3">
+      <h6 class="fw-bold border-bottom pb-2 mb-3">2. {{ '::CoQuanChuQuan' | abpLocalization }}</h6>
+      <div class="row g-3">
         <div class="col-md-6">
-          <label for="toChucId" class="form-label">{{ '::ToChuc' | abpLocalization }}</label>
-          <select id="toChucId" class="form-select" formControlName="toChucId" required
-            [class.is-invalid]="form.controls.toChucId.invalid && form.controls.toChucId.touched">
-            <option value="" disabled>{{ '::SelectToChuc' | abpLocalization }}</option>
+          <label class="form-label">{{ '::ToChuc' | abpLocalization }} <span class="text-danger">*</span></label>
+          <select formControlName="toChucId" class="form-select" required>
+            <option value="">{{ '::SelectToChuc' | abpLocalization }}</option>
             <option *ngFor="let item of toChucOptions" [value]="item.id">{{ item.name }}</option>
           </select>
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
         </div>
 
-        <!-- Chức vụ -->
         <div class="col-md-6">
-          <label for="chucVuId" class="form-label">{{ '::ChucVu' | abpLocalization }}</label>
-          <select id="chucVuId" class="form-select" formControlName="chucVuId" required
-            [class.is-invalid]="form.controls.chucVuId.invalid && form.controls.chucVuId.touched">
-            <option value="" disabled>{{ '::SelectChucVu' | abpLocalization }}</option>
+          <label class="form-label">{{ '::ChucVu' | abpLocalization }} <span class="text-danger">*</span></label>
+          <select formControlName="chucVuId" class="form-select" required>
+            <option value="">{{ '::SelectChucVu' | abpLocalization }}</option>
             <option *ngFor="let item of chucVuOptions" [value]="item.id">{{ item.name }}</option>
           </select>
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
         </div>
 
-        <!-- Email công vụ -->
-        <div class="col-md-6">
-          <label for="diaChiThuDienTuCongVu" class="form-label">{{ '::EmailCongVu' | abpLocalization }}</label>
-          <input type="email" id="diaChiThuDienTuCongVu" class="form-control" formControlName="diaChiThuDienTuCongVu"
-            required maxlength="100" placeholder="{{ '::EmailCongVu' | abpLocalization }}"
-            [class.is-invalid]="form.controls.diaChiThuDienTuCongVu.invalid && form.controls.diaChiThuDienTuCongVu.touched" />
-          <div class="invalid-feedback">{{ '::ValidationRequired' | abpLocalization }}</div>
+        <div class="col-md-4">
+          <label class="form-label">{{ '::DiaChiThuDienTuCongVu' | abpLocalization }} <span
+              class="text-danger">*</span></label>
+          <input formControlName="diaChiThuDienTuCongVu" type="email" class="form-control" required />
         </div>
 
-        <!-- Tỉnh / thành phố -->
-        <div class="col-md-6">
-          <label for="tinhThanhPho" class="form-label">{{ '::TinhThanhPho' | abpLocalization }}</label>
-          <select id="tinhThanhPho" class="form-select" formControlName="tinhThanhPho"
-            (change)="onTinhThanhPhoChange($event.target.value)">
+        <div class="col-md-4">
+          <label class="form-label">{{ '::TinhThanhPho' | abpLocalization }} <span
+              class="text-danger">*</span></label>
+          <select formControlName="tinhThanhPho" class="form-select" (change)="onTinhThanhPhoChange($event.target.value)">
             <option value="">{{ '::SelectTinhThanhPho' | abpLocalization }}</option>
             <option *ngFor="let item of tinhThanhPhoOptions" [value]="item.id">{{ item.name }}</option>
           </select>
         </div>
-
-        <!-- Phường / xã -->
-        <div class="col-md-6">
+        <div class="col-md-4">
           <label for="phuongXa" class="form-label">{{ '::PhuongXa' | abpLocalization }}</label>
           <select id="phuongXa" class="form-select" formControlName="phuongXa">
             <option value="">{{ '::SelectPhuongXa' | abpLocalization }}</option>
@@ -187,15 +167,15 @@
           </select>
         </div>
       </div>
-    </form>
-  </ng-template>
+    </div>
 
-  <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
-      {{ '::Close' | abpLocalization }}
-    </button>
-    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
-      <i class="fa fa-check me-1"></i> {{ '::Save' | abpLocalization }}
-    </button>
-  </ng-template>
-</abp-modal>
+    <div class="d-flex justify-content-end mt-3">
+      <button type="button" class="btn btn-danger me-2" (click)="isModalOpen = false">
+        <i class="fa fa-times me-1"></i> {{ '::Close' | abpLocalization }}
+      </button>
+      <button type="submit" class="btn btn-success" [disabled]="form.invalid">
+        <i class="fa fa-check me-1"></i> {{ '::Save' | abpLocalization }}
+      </button>
+    </div>
+  </form>
+</p-dialog>

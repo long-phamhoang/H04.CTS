@@ -275,7 +275,9 @@
         "SelectTinhThanhPho": "Chọn tỉnh / thành phố",
         "SelectPhuongXa": "Chọn phường / xã",
         "ToChuc": "Tổ chức",
-        "ChucVu": "Chức vụ"
+        "ChucVu": "Chức vụ",
+        "ThongTinCaNhan": "Thông tin cá nhân",
+        "CoQuanChuQuan" :  "Cơ quan chủ quản"
 
         //#endregion
 

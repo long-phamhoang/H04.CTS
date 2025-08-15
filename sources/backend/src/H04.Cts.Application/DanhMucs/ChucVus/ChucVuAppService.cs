@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace H04.Cts.DanhMucs.ChucVus
 {
@@ -39,8 +40,8 @@ namespace H04.Cts.DanhMucs.ChucVus
             if (!string.IsNullOrWhiteSpace(input.FilterInput))
             {
                 queryable = queryable.Where(x =>
-                    x.TenChucVu.Contains(input.FilterInput) ||
-                    x.MaChucVu.Contains(input.FilterInput));
+                    x.TenChucVu.ToLower().Contains(input.FilterInput.ToLower()) ||
+                    x.MaChucVu.ToLower().Contains(input.FilterInput.ToLower()));
             }
 
             // Sắp xếp
@@ -88,6 +89,23 @@ namespace H04.Cts.DanhMucs.ChucVus
         {
             var entity = await _repository.GetAsync(id);
             await _repository.HardDeleteAsync(entity);
+        }
+
+        [AllowAnonymous]
+        public async Task<bool> IsMaChucVuUniqueAsync(string maChucVu)
+        {
+            if (string.IsNullOrWhiteSpace(maChucVu))
+                return false;
+
+            maChucVu = maChucVu.Trim().ToUpper();
+
+            var queryable = await _repository.GetQueryableAsync();
+
+            var list = await queryable
+                .Where(e => e.MaChucVu.ToUpper() == maChucVu)
+                .ToListAsync(); // Dùng ToListAsync thay vì AnyAsync
+
+            return !list.Any();
         }
 
         [AllowAnonymous]

@@ -35,6 +35,7 @@ import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
 //#endregion
 //#region Extension Modules
 import { NgxValidateCoreModule } from '@ngx-validate/core';
@@ -80,6 +81,7 @@ const modules = [
   TabViewModule,
   TagModule,
   TooltipModule,
+  DropdownModule,
 
   // Extension Modules
   NgxValidateCoreModule,

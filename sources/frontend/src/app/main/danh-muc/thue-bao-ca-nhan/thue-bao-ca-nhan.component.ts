@@ -5,6 +5,7 @@ import { ChucVuService, ThueBaoCaNhanDto, ToChucService } from '@app/proxy';
 import { ThueBaoCaNhanService } from '@app/proxy/services/thue-bao-ca-nhan.service';
 import { PROVINCES_MOCK } from '@app/proxy/mock-data-location';
 import { Table } from 'primeng/table';
+
 @Component({
   selector: 'app-chuc-vu',
   templateUrl: './thue-bao-ca-nhan.component.html',
@@ -13,10 +14,12 @@ import { Table } from 'primeng/table';
 })
 export class ThueBaoCaNhanComponent implements OnInit {
   @ViewChild('dataTable', { static: true }) dataTable: Table;
+  @ViewChild('hoTenInput') hoTenInput: any;
   thueBaoCaNhans = { items: [], totalCount: 0 };
 
   selectedThueBaoCaNhan = {} as ThueBaoCaNhanDto;
   form: FormGroup;
+
   isModalOpen = false;
   filterInput = '';
   chucVuOptions = [];
@@ -33,7 +36,21 @@ export class ThueBaoCaNhanComponent implements OnInit {
     private confirmation: ConfirmationService,
     private _chucVuService: ChucVuService,
     private _toChucService: ToChucService
-  ) {}
+  ) {
+    // Khởi tạo form rỗng tránh lỗi undefined
+    this.form = this.fb.group({
+      hoTen: [''],
+      ngaySinh: [''],
+      soDinhDanhCaNhan: [''],
+      noiCap: [''],
+      ngayCap: [''],
+      toChucId: [''],
+      chucVuId: [''],
+      diaChiThuDienTuCongVu: [''],
+      tinhThanhPho: [null],
+      phuongXa: [null],
+    });
+  }
 
   ngOnInit() {
     this.loadData();
@@ -90,6 +107,7 @@ export class ThueBaoCaNhanComponent implements OnInit {
     const selected = PROVINCES_MOCK.find(p => p.id === +tinhId);
     this.phuongXaOptions = selected?.communes ?? [];
   }
+
   onSearchChange() {
     this.page = 0; // Reset to first page on search
     this.loadData();
@@ -113,6 +131,9 @@ export class ThueBaoCaNhanComponent implements OnInit {
     this.selectedThueBaoCaNhan = {} as ThueBaoCaNhanDto;
     this.buildForm();
     this.isModalOpen = true;
+    setTimeout(() => {
+      this.hoTenInput?.nativeElement?.focus();
+    }, 100);
   }
 
   editThueBaoCaNhan(id: number) {
