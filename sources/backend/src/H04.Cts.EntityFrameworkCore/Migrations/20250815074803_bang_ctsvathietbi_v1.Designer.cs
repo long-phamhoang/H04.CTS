@@ -3,6 +3,7 @@ using System;
 using H04.Cts.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace H04.Cts.Migrations
 {
     [DbContext(typeof(CtsDbContext))]
-    partial class CtsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250815074803_bang_ctsvathietbi_v1")]
+    partial class bang_ctsvathietbi_v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

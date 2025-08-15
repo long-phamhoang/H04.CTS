@@ -1,3 +1,4 @@
+using H04.Cts.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.EntityFrameworkCore.EntityConfigurations.DanhMucs;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ public class CtsDbContext :
     #region 1. DanhMucs
     public DbSet<ToChuc> ToChucs { get; set; }
     public DbSet<CapCoQuan> CapCoQuans { get; set; }
+    public DbSet<CTSVaThietBi> CTSVaThietBis { get; set; }
     #endregion
 
     public CtsDbContext(DbContextOptions<CtsDbContext> options)
@@ -71,6 +73,7 @@ public class CtsDbContext :
         #region 1. DanhMucs
         builder.ApplyConfiguration(new ToChucConfiguration());
         builder.ApplyConfiguration(new CapCoQuanConfiguration());
+        builder.ApplyConfiguration(new CTSVaThietBiConfiguration());
         #endregion
     }
 }
