@@ -73,4 +73,42 @@ public class LoaiThietBiDichVuPhanMemAppService : ApplicationService, ILoaiThiet
         var entity = await _repository.GetAsync(id);
         await _repository.HardDeleteAsync(entity);
     }
+
+    public async Task<bool> CheckExistsMaSoAsync(string maSo)
+    {
+        if(string.IsNullOrEmpty(maSo))
+        {
+            return false;
+        }
+        return await _repository.AnyAsync(x => x.MaLoaiThietBiDichVuPhanMem!.ToLower().Equals(maSo.ToLower()));
+    }
+
+    public async Task<IList<long>> BulkDeleteAsync(IEnumerable<long> ids)
+    {
+        var failedIds = new List<long>();
+        var entities = await _repository.GetListAsync(x => ids.Contains(x.Id));
+
+        // Thêm Id không tồn tại vào danh sách lỗi
+        var foundIds = entities.Select(x => x.Id).ToList();
+        failedIds.AddRange(ids.Where(x => !foundIds.Contains(x)));
+        try
+        {
+            await _repository.DeleteManyAsync(entities, autoSave: true); 
+        }
+        catch (Exception)
+        {
+            // Xảy ra exception khi DeleteMany sẽ xử lý xóa lần lượt
+            foreach (var entity in entities) {
+                try
+                {
+                    await _repository.DeleteAsync(entity, autoSave: true); // commit DB ngay khi xóa 
+                }
+                catch (Exception)
+                {
+                    failedIds.Add(entity.Id);
+                }
+            }
+        }
+        return failedIds;
+    }
 }
