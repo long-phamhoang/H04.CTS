@@ -240,6 +240,14 @@
     "ThongTinDiaChi": "Thông tin địa chỉ",
     "SoNha": "Số nhà, tên đường",
     "CoQuanPhuTrach": "Cơ quan phụ trách",
+    "DateIssueRequired": "Ngày cấp là bắt buộc",
+    "PositionRequired": "Chức vụ là bắt buộc",
+    "PhoneRequired": "Điện thoại là bắt buộc",
+    "ProvinceRequired": "Tỉnh, thành phố là bắt buộc",
+    "WardRequired": "Phường, xã là bắt buộc",
+    "SubmissionAddressRequired": "Địa chỉ tiếp nhận là bắt buộc",
+    "FullNameRequired": "Họ tên là bắt buộc",
+    "CCCDRequired": "Số định danh cá nhân là bắt buộc",
     //#endregion
 
     //#region 1.6. Danh mục Loại dịch vụ, thiết bị phần mềm

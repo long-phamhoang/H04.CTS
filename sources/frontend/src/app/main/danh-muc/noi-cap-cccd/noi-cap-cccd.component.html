@@ -1,14 +1,21 @@
-<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.NoiCapCCCD' | abpLocalization">
+<page-header [title]="'::DanhMucs' | abpLocalization" [description]="'::DanhMucs.ChucVu' | abpLocalization">
+  <div>
+    <button id="export" type="button" class="btn btn-info btn-xs">
+      <i class="pi pi-download"></i>
+      <span class="ms-2">Xuất dữ liệu</span>
+    </button>
+    <button id="upload" type="button" class="btn btn-warning btn-xs">
+      <i class="pi pi-upload"></i>
+      <span class="ms-2">Upload tài liệu</span>
+    </button>
+    <button id="create" type="button" class="btn btn-success btn-xs" (click)="createNoiCapCCCD()">
+      <i class="pi pi-plus"></i>
+      <span class="ms-2">{{ '::CreateNew' | abpLocalization }}</span>
+    </button>
+  </div>
 </page-header>
 
 <div class="card">
-  <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">{{ '::Menu:NoiCapCCCD' | abpLocalization }}</h5>
-    <button id="create" class="btn btn-primary" (click)="createNoiCapCCCD()"
-      title="{{ '::CreateNew' | abpLocalization }}">
-      <i class="fa fa-plus me-1"></i> {{ '::CreateNew' | abpLocalization }}
-    </button>
-  </div>
 
   <div class="card-body custom-border m-3">
     <div class="input-group mb-3" style="width: 300px;">
