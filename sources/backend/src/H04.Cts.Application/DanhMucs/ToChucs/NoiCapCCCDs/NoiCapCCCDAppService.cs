@@ -43,7 +43,7 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
 
-        // Keyword filter across short text fields (<=256)
+        // Only use keyword filter for all searchable fields
         if (!string.IsNullOrWhiteSpace(input.Keyword))
         {
             var keyword = input.Keyword.Trim();
@@ -56,44 +56,6 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
                 (x.Note != null && x.Note.Contains(keyword))
             );
         }
-
-        // Filters
-        if (!string.IsNullOrWhiteSpace(input.Name))
-        {
-            queryable = queryable.Where(x => x.Name.Contains(input.Name));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Code))
-        {
-            queryable = queryable.Where(x => x.Code.Contains(input.Code));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Abbreviation))
-        {
-            queryable = queryable.Where(x => x.Abbreviation.Contains(input.Abbreviation));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Address))
-        {
-            queryable = queryable.Where(x => x.Address.Contains(input.Address));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Province))
-        {
-            queryable = queryable.Where(x => x.Province.Contains(input.Province));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Note))
-        {
-            queryable = queryable.Where(x => x.Note.Contains(input.Note));
-        }
-
-        if (input.IsActive.HasValue)
-        {
-            queryable = queryable.Where(x => x.IsActive == input.IsActive.Value);
-        }
-
-        // Intentionally not exposing deleted records in list
 
         var query = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)

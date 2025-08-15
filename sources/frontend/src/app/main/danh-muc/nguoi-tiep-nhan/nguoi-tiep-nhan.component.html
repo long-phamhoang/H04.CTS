@@ -49,42 +49,44 @@
             {{ '::MaNguoiTiepNhan' | abpLocalization }}
             <p-sortIcon field="CCCD"></p-sortIcon>
           </th>
-          <th>
+          <th pSortableColumn="OrganizationName">
             {{ '::TenCoQuan' | abpLocalization }}
+            <p-sortIcon field="OrganizationName"></p-sortIcon>
           </th>
           <th pSortableColumn="DateOfIssue">
             {{ '::NgayCapCCCD' | abpLocalization }}
             <p-sortIcon field="DateOfIssue"></p-sortIcon>
           </th>
-          <th>
-            {{ '::CapCoQuanId' | abpLocalization }}
+          <th pSortableColumn="NoiCapCCCDName">
+            {{ '::NoiCapCCCDName' | abpLocalization }}
+            <p-sortIcon field="NoiCapCCCDName"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Position">
-            {{ '::NoiCapCCCDId' | abpLocalization }}
+            {{ '::Position' | abpLocalization }}
             <p-sortIcon field="Position"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Phone">
-            {{ '::NgayCapCCCD' | abpLocalization }}
+            {{ '::Phone' | abpLocalization }}
             <p-sortIcon field="Phone"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Email">
-            {{ '::CapCoQuanId' | abpLocalization }}
+            {{ '::Email' | abpLocalization }}
             <p-sortIcon field="Email"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="SubmissionAddress">
-            {{ '::NoiCapCCCDId' | abpLocalization }}
+            {{ '::SubmissionAddress' | abpLocalization }}
             <p-sortIcon field="SubmissionAddress"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Province">
-            {{ '::NgayCapCCCD' | abpLocalization }}
+            {{ '::Province' | abpLocalization }}
             <p-sortIcon field="Province"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="Ward">
-            {{ '::NgayHetHanCCCD' | abpLocalization }}
+            {{ '::Ward' | abpLocalization }}
             <p-sortIcon field="Ward"></p-sortIcon>
           </th>
           <th class="col-large-only" pSortableColumn="IsDefault">
-            {{ '::NgaySinh' | abpLocalization }}
+            {{ '::IsDefault' | abpLocalization }}
             <p-sortIcon field="IsDefault"></p-sortIcon>
           </th>
         </tr>

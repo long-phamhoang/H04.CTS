@@ -271,9 +271,15 @@
     "TenNguoiTiepNhan": "Tên người tiếp nhận",
     "MaNguoiTiepNhan": "Mã người tiếp nhận",
     "TenCoQuan": "Tên cơ quan",
-    "CapCoQuanId": "Cấp cơ quan",
+    "CapCoQuanId": "Cơ quan cấp",
     "NoiCapCCCDId": "Nơi cấp CCCD",
-    "NgayCapCCCD": "Ngày cấp CCCD"
+    "NgayCapCCCD": "Ngày cấp CCCD",
+    "NoiCapCCCDName": "Nơi cấp CCCD",
+    "Position": "Chức vụ",
+    "Phone": "Điện thoại",
+    "Email": "Email",
+    "SubmissionAddress": "Địa chỉ thư công vụ",
+    "Ward": "Quận, huyện"
     //#endregion
 
     //#region 1.13. Danh mục Người được cấp CTS

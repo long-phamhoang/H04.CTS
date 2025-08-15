@@ -72,16 +72,49 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
     public async Task<PagedResultDto<NguoiTiepNhanDto>> GetListAsync(GetNguoiTiepNhanListDto input)
     {
         var queryable = await _repository.GetQueryableAsync();
-
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
 
-        // Keyword filter across short text fields (<=256)
+        // Only use keyword filter for all searchable fields
         if (!string.IsNullOrWhiteSpace(input.Keyword))
         {
             var keyword = input.Keyword.Trim();
 
-            queryable = queryable.Where(x =>
+            // Search in related tables by name fields FIRST
+            var searchOrgQueryable = await _organizationRepository.GetQueryableAsync();
+            var searchNoiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
+
+            // Debug: Check what's in the related tables
+            var allOrgs = searchOrgQueryable.ToList();
+            var allNoiCaps = searchNoiCapQueryable.ToList();
+
+            var matchingOrgIds = searchOrgQueryable
+                .Where(org => org.TenToChuc != null && org.TenToChuc.ToLower().Contains(keyword.ToLower()))
+                .Select(org => org.Id)
+                .ToList();
+
+            var matchingNoiCapIds = searchNoiCapQueryable
+                .Where(issuing => issuing.Name != null && issuing.Name.ToLower().Contains(keyword.ToLower()))
+                .Select(issuing => issuing.Id)
+                .ToList();
+
+            // Create a new queryable for search conditions
+            var searchQueryable = queryable;
+            var hasForeignKeyMatches = false;
+
+            // Add conditions for foreign key matches
+            if (matchingOrgIds.Any() || matchingNoiCapIds.Any())
+            {
+                hasForeignKeyMatches = true;
+                
+                searchQueryable = searchQueryable.Where(x =>
+                    (x.OrganizationId.HasValue && matchingOrgIds.Contains(x.OrganizationId.Value)) ||
+                    (x.NoiCapCCCDId.HasValue && matchingNoiCapIds.Contains(x.NoiCapCCCDId.Value))
+                );
+            }
+
+            // Add conditions for main field search
+            var mainFieldQueryable = queryable.Where(x =>
                 (x.FullName != null && x.FullName.Contains(keyword)) ||
                 (x.CCCD != null && x.CCCD.Contains(keyword)) ||
                 (x.Position != null && x.Position.Contains(keyword)) ||
@@ -91,74 +124,28 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 (x.Province != null && x.Province.Contains(keyword)) ||
                 (x.Ward != null && x.Ward.Contains(keyword))
             );
-        }
 
-        // Filters
-        if (input.OrganizationId.HasValue)
-        {
-            queryable = queryable.Where(x => x.OrganizationId == input.OrganizationId);
-        }
+            // Combine both search results using UNION (OR logic)
+            List<long> combinedIds;
+            
+            if (hasForeignKeyMatches)
+            {
+                // If we have foreign key matches, combine both results
+                combinedIds = searchQueryable.Select(x => x.Id)
+                    .Union(mainFieldQueryable.Select(x => x.Id))
+                    .ToList();
+            }
+            else
+            {
+                // If no foreign key matches, only use main field results
+                combinedIds = mainFieldQueryable.Select(x => x.Id).ToList();
+            }
 
-        if (!string.IsNullOrWhiteSpace(input.FullName))
-        {
-            queryable = queryable.Where(x => x.FullName.Contains(input.FullName));
+            // Apply the combined search
+            queryable = queryable.Where(x => combinedIds.Contains(x.Id));
         }
-
-        if (!string.IsNullOrWhiteSpace(input.CCCD))
-        {
-            queryable = queryable.Where(x => x.CCCD == input.CCCD);
-        }
-
-        if (input.DateOfIssue.HasValue)
-        {
-            var date = input.DateOfIssue.Value.Date;
-            queryable = queryable.Where(x => x.DateOfIssue.Date == date);
-        }
-
-        if (input.NoiCapCCCDId.HasValue)
-        {
-            queryable = queryable.Where(x => x.NoiCapCCCDId == input.NoiCapCCCDId.Value);
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Position))
-        {
-            queryable = queryable.Where(x => x.Position.Contains(input.Position));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Phone))
-        {
-            queryable = queryable.Where(x => x.Phone.Contains(input.Phone));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Email))
-        {
-            queryable = queryable.Where(x => x.Email != null && x.Email.Contains(input.Email));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.SubmissionAddress))
-        {
-            queryable = queryable.Where(x => x.SubmissionAddress.Contains(input.SubmissionAddress));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Province))
-        {
-            queryable = queryable.Where(x => x.Province.Contains(input.Province));
-        }
-
-        if (!string.IsNullOrWhiteSpace(input.Ward))
-        {
-            queryable = queryable.Where(x => x.Ward != null && x.Ward.Contains(input.Ward));
-        }
-
-        if (input.IsDefault.HasValue)
-        {
-            queryable = queryable.Where(x => x.IsDefault == input.IsDefault.Value);
-        }
-
-        // Intentionally not exposing deleted records in list
 
         var ordered = queryable
-            .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "FullName" : input.Sorting)
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
@@ -191,6 +178,35 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                            DeletedBy = x.DeletedBy,
                            DeletedAt = x.DeletedAt
                        };
+
+        // Handle sorting for joined fields after the join
+        if (!string.IsNullOrWhiteSpace(input.Sorting))
+        {
+            switch (input.Sorting.ToLower())
+            {
+                case "organizationname":
+                    dtoQuery = dtoQuery.OrderBy(x => x.OrganizationName ?? string.Empty);
+                    break;
+                case "organizationname desc":
+                    dtoQuery = dtoQuery.OrderByDescending(x => x.OrganizationName ?? string.Empty);
+                    break;
+                case "noicapcccdname":
+                    dtoQuery = dtoQuery.OrderBy(x => x.NoiCapCCCDName ?? string.Empty);
+                    break;
+                case "noicapcccdname desc":
+                    dtoQuery = dtoQuery.OrderByDescending(x => x.NoiCapCCCDName ?? string.Empty);
+                    break;
+                default:
+                    // For other fields, use the original sorting
+                    dtoQuery = dtoQuery.OrderBy(input.Sorting);
+                    break;
+            }
+        }
+        else
+        {
+            // Default sorting
+            dtoQuery = dtoQuery.OrderBy(x => x.FullName ?? string.Empty);
+        }
 
         var nguoiTiepNhans = await AsyncExecuter.ToListAsync(dtoQuery);
         var totalCount = await AsyncExecuter.CountAsync(queryable);
