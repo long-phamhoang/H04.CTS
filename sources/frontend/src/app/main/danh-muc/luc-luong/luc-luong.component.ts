@@ -1,6 +1,6 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { ConfirmationService, Confirmation, ToasterService } from '@abp/ng.theme.shared';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ToasterService } from '@abp/ng.theme.shared';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { ImportColumn } from 'src/utilities/excel/excelImport';
 import { Subject } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
+import { ConfirmationService } from 'primeng/api';
+
 @Component({
 	standalone: false,
 	selector: 'app-luc-luong',
@@ -23,7 +25,11 @@ import { Menu } from 'primeng/menu';
 })
 export class LucLuongComponent implements OnInit, OnDestroy {
 	@ViewChild('menu') menu: Menu;
+	@ViewChild('searchInput', { static: false }) searchInput: ElementRef;
+
 	lucLuong = { items: [], totalCount: 0 } as PagedResultDto<LucLuongDto>;
+
+	showDeleteButton = false;
 
   // multi-select state
   selectedItems: LucLuongDto[] = [];
@@ -42,11 +48,13 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 
 	private maChangeSub: Subscription | null = null;
 
-	// Autocomplete + filtered view
+	// Autocomplete
 	allItems: LucLuongDto[] = [];
 	displayItems: LucLuongDto[] = [];
 	searchValue: any = '';
 	searchSuggestions: LucLuongDto[] = [];
+	formChanged = false;
+	originalFormData: any = null;
 
 	// Export
 	exportVisible = false;
@@ -87,9 +95,9 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		public readonly list: ListService,
 		private lucLuongService: LucLuongService,
 		private fb: FormBuilder,
-    private confirmation: ConfirmationService,
-    private toast: ToasterService
-    ) { 
+		private confirmationService: ConfirmationService,
+		private toast: ToasterService
+	) { 
 		
 		}
 
@@ -110,8 +118,18 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 			this.setupFilterSubscriptions();
 		}
 
+
+		ngAfterViewInit() {
+			// Focus vào search input khi component khởi tạo
+			setTimeout(() => {
+				if (this.searchInput) {
+					this.searchInput.nativeElement.focus();
+				}
+			}, 100);
+		}		
+
 	private setupFilterSubscriptions() {
-		// Debounced filter for name
+		// Debounced 
 		this.filterNameSub = new Subject<string>()
 			.pipe(
 				debounceTime(300),
@@ -121,7 +139,7 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 				this.applyFilter();
 			});
 
-		// Debounced filter for code
+		
 		this.filterCodeSub = new Subject<string>()
 			.pipe(
 				debounceTime(300),
@@ -159,9 +177,18 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 	}
 
 	delete(id: number) {
-		this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
-			if (status === Confirmation.Status.confirm) {
-				this.lucLuongService.delete(id).subscribe(() => this.list.get());
+		this.confirmationService.confirm({
+			message: 'Bạn có chắc chắn muốn xóa bản ghi này?',
+			header: 'Xác nhận xóa',
+			icon: 'pi pi-exclamation-triangle',
+			accept: () => {
+				this.lucLuongService.delete(id).subscribe(() => {
+					this.list.get();
+					this.toast.success('Xóa thành công');
+				});
+			},
+			reject: () => {
+				// Không làm gì khi từ chối
 			}
 		});
 	}
@@ -169,8 +196,12 @@ export class LucLuongComponent implements OnInit, OnDestroy {
   deleteSelected() {
     const ids = (this.selectedItems || []).map(x => x.id).filter(x => x != null);
     if (!ids.length) { return; }
-    this.confirmation.warn(`Bạn có chắc chắn muốn xóa ${ids.length} bản ghi?`, 'Xác nhận').subscribe((status) => {
-      if (status === Confirmation.Status.confirm) {
+    
+    this.confirmationService.confirm({
+      message: `Bạn có chắc chắn muốn xóa ${ids.length} bản ghi?`,
+      header: 'Xác nhận xóa',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
         // Xóa tuần tự để đơn giản xử lý lỗi
         let ok = 0, fail = 0;
         const doNext = (i: number) => {
@@ -190,6 +221,9 @@ export class LucLuongComponent implements OnInit, OnDestroy {
           });
         };
         doNext(0);
+      },
+      reject: () => {
+        // Không làm gì khi từ chối
       }
     });
   }
@@ -202,6 +236,14 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 			ghiChu: [this.selectedLucLuong.ghiChu || ''],
 		});
 
+				// Lưu trữ dữ liệu ban đầu để so sánh
+				this.originalFormData = this.form.value;
+				this.formChanged = false;
+		
+				// Theo dõi thay đổi form
+				this.form.valueChanges.subscribe(() => {
+					this.checkFormChanges();
+				});
 		//check debounce mã 
 		const maCtrl = this.form.get('maLucLuong');
 		if (this.maChangeSub) {
@@ -296,6 +338,34 @@ clearSearch() {
 			},
 		});
 	}
+
+	onFormSubmit() {
+    if (this.selectedLucLuong?.id) {
+      this.save();
+    } else {
+      this.saveAndContinue();
+    }
+  }
+
+  saveAndContinue() {
+    if (!this.form || this.form.invalid) return;
+
+    const config = { skipHandleError: true };
+    this.lucLuongService.create(this.form.value, config).subscribe({
+      next: () => {
+        this.list.get();
+        this.toast.success('Lưu thành công, tiếp tục thêm mới');
+        // reset form for next entry
+        this.selectedLucLuong = {} as LucLuongDto;
+        this.form.reset();
+        this.buildForm();
+      },
+      error: (err) => {
+        const message = err?.error?.error?.message || 'Có lỗi xảy ra';
+        this.toast.warn(message);
+      },
+    });
+  }
 
 	// Export
 	openExportDialog() {
@@ -422,5 +492,38 @@ clearSearch() {
 			this.delete(item.id);
 		}
 	}
+
+	private checkFormChanges() {
+		if (!this.form || !this.originalFormData) {
+			this.formChanged = false;
+			return;
+		}
+
+		const currentValue = this.form.value;
+		this.formChanged = JSON.stringify(currentValue) !== JSON.stringify(this.originalFormData);
+	}
+
+
+	functionMenuItems: MenuItem[] = [
+    {
+      label: 'Xuất excel',
+      icon: 'pi pi-file-excel',
+      command: () => this.openExportDialog()
+    },
+    {
+      label: 'Nhập excel',
+      icon: 'pi pi-plus',
+      command: () => this.openImportDialog()
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'bấm vào đây để tải file mẫu import.',
+      icon: 'pi pi-download',
+      // command: () => this.downloadTemplate(),
+      styleClass: 'text-primary'
+    }
+  ];
 
 }

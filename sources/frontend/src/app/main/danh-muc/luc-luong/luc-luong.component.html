@@ -6,23 +6,27 @@
 
   <div class="d-flex align-items-center" style="gap: 8px">
     <button
+      *ngIf="selectedItems?.length > 0"
       pButton
       type="button"
-      icon="pi pi-download"
-      label="Xuất Excel"
-      (click)="openExportDialog()"
-      class="p-button-sm"
-      style="background-color: #005f99; border-color: #005f99"
+      icon="pi pi-trash"
+      label="Xóa đã chọn"
+      (click)="deleteSelected()"
+      class="p-button-sm p-button-danger"
     ></button>
 
+    <p-menu #menu [popup]="true" [model]="functionMenuItems"></p-menu>
     <button
       pButton
       type="button"
-      icon="pi pi-upload"
-      label="Nhập Excel"
-      (click)="openImportDialog()"
-      class="p-button-sm p-button-warning"
-    ></button>
+      (click)="menu.toggle($event)"
+      class="p-button-sm"
+      style="height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 12px"
+    >
+      <i class="pi pi-file-excel"></i>
+      <span>Xuất dữ liệu</span>
+      <i class="pi pi-arrow-down" style="font-size: 10px"></i>
+    </button>
 
     <button
       pButton
@@ -32,16 +36,6 @@
       (click)="create()"
       class="p-button-sm p-button-success"
       style="margin-right: 12px"
-    ></button>
-
-    <button
-      pButton
-      type="button"
-      icon="pi pi-trash"
-      label="Xóa đã chọn"
-      (click)="deleteSelected()"
-      class="p-button-sm p-button-danger"
-      [disabled]="!selectedItems?.length"
     ></button>
   </div>
 </div>
@@ -60,6 +54,7 @@
             placeholder="Tìm kiếm"
             (input)="onSearchInput($event)"
             style="height: 35px"
+            #searchInput
           />
         </p-inputgroup>
         <button
@@ -125,10 +120,10 @@
             <th style="padding-left: 12px; width: 3rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th style="width: 50px">#</th>
-            <th>Mã</th>
-            <th>Tên lực lượng</th>
-            <th style="width: 200px">Trạng thái</th>
+            <th style="width: 3%">#</th>
+            <th style="width: 20%">Mã</th>
+            <th style="width: 25%">Tên lực lượng</th>
+            <th style="width: 11%">Trạng thái</th>
             <th>Ghi chú</th>
             <th style="width: 100px; text-align: right; padding-right: 12px">Hành động</th>
           </tr>
@@ -147,7 +142,22 @@
                 [severity]="getTrangThaiSeverity(item.trangThai)"
               ></p-tag>
             </td>
-            <td>{{ item.ghiChu }}</td>
+            <td
+              style="
+                word-wrap: break-word;
+                word-break: break-word;
+                max-width: 200px;
+                white-space: normal;
+              "
+              [pTooltip]="item.ghiChu?.length > 128 ? item.ghiChu : null"
+              tooltipPosition="top"
+              [showDelay]="500"
+              [hideDelay]="0"
+            >
+              {{
+                item.ghiChu?.length > 128 ? (item.ghiChu | slice : 0 : 128) + '...' : item.ghiChu
+              }}
+            </td>
             <td class="text-end" style="padding-right: 12px">
               <div ngbDropdown class="d-inline-block">
                 <button
@@ -209,7 +219,7 @@
       <span *ngIf="selectedLucLuong?.id" class="fw-bold">Sửa lực lượng</span>
     </ng-template>
     <ng-template pTemplate="content">
-      <form [formGroup]="form" (ngSubmit)="save()">
+      <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
         <div class="mb-3">
           <label class="form-label">Mã lực lượng<span class="text-danger">*</span></label>
           <input type="text" pInputText formControlName="maLucLuong" class="w-100" />
@@ -251,16 +261,26 @@
       <button
         type="button"
         pButton
+        label="Lưu"
+        (click)="save()"
+        [disabled]="form?.invalid || !formChanged"
+      ></button>
+
+      <button
+        *ngIf="!selectedLucLuong?.id"
+        type="submit"
+        pButton
+        label="Lưu và tiếp tục"
+        (click)="saveAndContinue()"
+        [disabled]="form?.invalid || !formChanged"
+        class="p-button-success"
+      ></button>
+      <button
+        type="button"
+        pButton
         label="Đóng"
         class="p-button-outlined"
         (click)="isModalOpen = false"
-      ></button>
-      <button
-        type="submit"
-        pButton
-        label="Lưu"
-        (click)="save()"
-        [disabled]="form?.invalid"
       ></button>
     </ng-template>
   </p-dialog>
@@ -284,4 +304,12 @@
     [existingValues]="existingMaLucLuongValues"
     (imported)="onImported($event)"
   ></app-import-excel-dialog>
+
+  <p-confirmDialog
+    acceptLabel="Đồng ý"
+    rejectLabel="Hủy"
+    acceptIcon="pi pi-check"
+    rejectIcon="pi pi-times"
+  >
+  </p-confirmDialog>
 </div>
