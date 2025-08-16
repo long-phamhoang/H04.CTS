@@ -160,8 +160,7 @@
 
         <div class="col-12">
           <label for="nguoiTiepNhan-fullName" class="form-label">Họ tên <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-fullName" class="form-control" formControlName="fullName" maxlength="100" placeholder="Họ tên" [class.is-invalid]="form?.controls?.fullName?.invalid && form?.controls?.fullName?.touched" />
-          <div class="invalid-feedback">{{ '::FullNameRequired' | abpLocalization }}</div>
+          <input type="text" id="nguoiTiepNhan-fullName" class="form-control" formControlName="fullName" maxlength="100" placeholder="Họ tên" />
         </div>
 
         <div class="col-12 d-flex align-items-center">
@@ -170,16 +169,25 @@
           </p-toggleSwitch>
         </div>
 
-        <div class="col-md-4">
-          <label for="nguoiTiepNhan-cccd" class="form-label">Số định danh cá nhân <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-cccd" class="form-control" formControlName="cccd" maxlength="20" placeholder="Số định danh cá nhân" [class.is-invalid]="form?.controls?.cccd?.invalid && form?.controls?.cccd?.touched" />
-          <div class="invalid-feedback">{{ '::CCCDRequired' | abpLocalization }}</div>
-        </div>
+        <div class="col-md-4 cccd-validation">
+           <label for="nguoiTiepNhan-cccd" class="form-label">Số định danh cá nhân <span class="text-danger">*</span></label>
+           <input 
+             type="text" 
+             id="nguoiTiepNhan-cccd" 
+             class="form-control" 
+             formControlName="cccd" 
+             maxlength="20" 
+             placeholder="Số định danh cá nhân" 
+             (input)="onCccdInput($event)"
+           />
+           <div class="invalid-feedback" *ngIf="cccdExists">
+             Số định danh cá nhân đã tồn tại trong hệ thống
+           </div>
+         </div>
         <div class="col-md-4">
           <label for="nguoiTiepNhan-dateOfIssue" class="form-label">Ngày cấp <span class="text-danger">*</span></label>
             <input type="date" id="nguoiTiepNhan-dateOfIssue" class="form-control" formControlName="dateOfIssue" required
             [class.is-invalid]="form?.controls?.dateOfIssue?.invalid && form?.controls?.dateOfIssue?.touched" />
-          <div class="invalid-feedback">{{ '::DateIssueRequired' | abpLocalization }}</div>
         </div>
         <div class="col-md-4">
           <label for="nguoiTiepNhan-noiCapCCCDId" class="form-label">Nơi cấp </label>
@@ -192,13 +200,11 @@
         <div class="col-md-4">
           <label for="nguoiTiepNhan-position" class="form-label">Chức vụ <span class="text-danger">*</span> </label>
           <input type="text" id="nguoiTiepNhan-position" class="form-control" formControlName="position" required
-           maxlength="100" placeholder="Chức vụ" [class.is-invalid]="form?.controls?.position?.invalid && form?.controls?.position?.touched" />
-          <div class="invalid-feedback">{{ '::PositionRequired' | abpLocalization }}</div>
+           maxlength="100" placeholder="Chức vụ" />
         </div>
         <div class="col-md-4">
           <label for="nguoiTiepNhan-phone" class="form-label">Điện thoại <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-phone" class="form-control" formControlName="phone" maxlength="20" placeholder="Điện thoại" [class.is-invalid]="form?.controls?.phone?.invalid && form?.controls?.phone?.touched" />
-          <div class="invalid-feedback">{{ '::PhoneRequired' | abpLocalization }}</div>
+          <input type="text" id="nguoiTiepNhan-phone" class="form-control" formControlName="phone" maxlength="20" placeholder="Điện thoại" />
         </div>
         <div class="col-md-4">
           <label for="nguoiTiepNhan-email" class="form-label">Địa chỉ thư điện tử công vụ</label>
@@ -207,19 +213,16 @@
 
         <div class="col-md-4">
           <label for="nguoiTiepNhan-province" class="form-label">Tỉnh, thành phố <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-province" class="form-control" formControlName="province" maxlength="100" placeholder="Tỉnh, thành phố" [class.is-invalid]="form?.controls?.province?.invalid && form?.controls?.province?.touched" />
-          <div class="invalid-feedback">{{ '::ProvinceRequired' | abpLocalization }}</div>
+          <input type="text" id="nguoiTiepNhan-province" class="form-control" formControlName="province" maxlength="100" placeholder="Tỉnh, thành phố" />
         </div>
         <div class="col-md-4">
           <label for="nguoiTiepNhan-ward" class="form-label">Phường, xã <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-ward" class="form-control" formControlName="ward" maxlength="100" placeholder="Phường, xã" [class.is-invalid]="form?.controls?.ward?.invalid && form?.controls?.ward?.touched" />
-          <div class="invalid-feedback">{{ '::WardRequired' | abpLocalization }}</div>
+          <input type="text" id="nguoiTiepNhan-ward" class="form-control" formControlName="ward" maxlength="100" placeholder="Phường, xã" />
         </div>
 
         <div class="col-md-4">
           <label for="nguoiTiepNhan-submissionAddress" class="form-label">Địa chỉ tiếp nhận <span class="text-danger">*</span></label>
-          <input type="text" id="nguoiTiepNhan-submissionAddress" class="form-control" formControlName="submissionAddress" maxlength="200" placeholder="Địa chỉ tiếp nhận" [class.is-invalid]="form?.controls?.submissionAddress?.invalid && form?.controls?.submissionAddress?.touched" />
-          <div class="invalid-feedback">{{ '::SubmissionAddressRequired' | abpLocalization }}</div>
+          <input type="text" id="nguoiTiepNhan-submissionAddress" class="form-control" formControlName="submissionAddress" maxlength="200" placeholder="Địa chỉ tiếp nhận" />
         </div>
       </div>
     </form>

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -80,13 +81,9 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         {
             var keyword = input.Keyword.Trim();
 
-            // Search in related tables by name fields FIRST
+            // Search in related tables by name fields
             var searchOrgQueryable = await _organizationRepository.GetQueryableAsync();
             var searchNoiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
-
-            // Debug: Check what's in the related tables
-            var allOrgs = searchOrgQueryable.ToList();
-            var allNoiCaps = searchNoiCapQueryable.ToList();
 
             var matchingOrgIds = searchOrgQueryable
                 .Where(org => !org.IsDeleted && org.TenToChuc != null && org.TenToChuc.ToLower().Contains(keyword.ToLower()))
@@ -98,22 +95,7 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 .Select(issuing => issuing.Id)
                 .ToList();
 
-            // Create a new queryable for search conditions
-            var searchQueryable = queryable;
-            var hasForeignKeyMatches = false;
-
-            // Add conditions for foreign key matches
-            if (matchingOrgIds.Any() || matchingNoiCapIds.Any())
-            {
-                hasForeignKeyMatches = true;
-                
-                searchQueryable = searchQueryable.Where(x =>
-                    (x.OrganizationId.HasValue && matchingOrgIds.Contains(x.OrganizationId.Value)) ||
-                    (x.NoiCapCCCDId.HasValue && matchingNoiCapIds.Contains(x.NoiCapCCCDId.Value))
-                );
-            }
-
-            // Add conditions for main field search
+            // Search in main fields
             var mainFieldQueryable = queryable.Where(x =>
                 (x.FullName != null && x.FullName.Contains(keyword)) ||
                 (x.CCCD != null && x.CCCD.Contains(keyword)) ||
@@ -125,21 +107,13 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 (x.Ward != null && x.Ward.Contains(keyword))
             );
 
-            // Combine both search results using UNION (OR logic)
-            List<long> combinedIds;
-            
-            if (hasForeignKeyMatches)
-            {
-                // If we have foreign key matches, combine both results
-                combinedIds = searchQueryable.Select(x => x.Id)
-                    .Union(mainFieldQueryable.Select(x => x.Id))
-                    .ToList();
-            }
-            else
-            {
-                // If no foreign key matches, only use main field results
-                combinedIds = mainFieldQueryable.Select(x => x.Id).ToList();
-            }
+            // Combine search results
+            var combinedIds = mainFieldQueryable.Select(x => x.Id)
+                .Union(queryable.Where(x => 
+                    (x.OrganizationId.HasValue && matchingOrgIds.Contains(x.OrganizationId.Value)) ||
+                    (x.NoiCapCCCDId.HasValue && matchingNoiCapIds.Contains(x.NoiCapCCCDId.Value))
+                ).Select(x => x.Id))
+                .ToList();
 
             // Apply the combined search
             queryable = queryable.Where(x => combinedIds.Contains(x.Id));
@@ -241,7 +215,7 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             throw new UserFriendlyException("CCCD không được để trống.");
         }
 
-        var exists = await _repository.AnyAsync(x => x.CCCD == normalizedCccd);
+        var exists = await _repository.AnyAsync(x => x.CCCD == normalizedCccd && !x.IsDeleted);
         if (exists)
         {
             throw new UserFriendlyException($"CCCD '{normalizedCccd}' đã tồn tại.");
@@ -281,7 +255,7 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             throw new UserFriendlyException("CCCD không được để trống.");
         }
 
-        var duplicate = await _repository.AnyAsync(x => x.Id != id && x.CCCD == normalizedCccd);
+        var duplicate = await _repository.AnyAsync(x => x.Id != id && x.CCCD == normalizedCccd && !x.IsDeleted);
         if (duplicate)
         {
             throw new UserFriendlyException($"CCCD '{normalizedCccd}' đã tồn tại.");
@@ -296,7 +270,36 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
     public async Task DeleteAsync(long id)
     {
         var nguoiTiepNhan = await _repository.GetAsync(id);
+        if (nguoiTiepNhan.IsDeleted)
+        {
+            throw new UserFriendlyException("Bản ghi đã bị xóa trước đó.");
+        }
+        
         nguoiTiepNhan.IsDeleted = true;
         await _repository.UpdateAsync(nguoiTiepNhan);
+    }
+
+    public async Task<bool> CheckExistAsync(CheckExistDto input)
+    {
+        if (string.IsNullOrWhiteSpace(input?.Field) || string.IsNullOrWhiteSpace(input?.Value))
+        {
+            return false;
+        }
+
+        var queryable = await _repository.GetQueryableAsync();
+        
+        // Exclude soft-deleted records
+        queryable = queryable.Where(x => !x.IsDeleted);
+        
+        // Sử dụng switch case thay vì reflection để tương thích với EF Core
+        var result = input.Field.ToLower() switch
+        {
+            "cccd" => await AsyncExecuter.AnyAsync(queryable, x => x.CCCD == input.Value),
+            "phone" => await AsyncExecuter.AnyAsync(queryable, x => x.Phone == input.Value),
+            "email" => await AsyncExecuter.AnyAsync(queryable, x => x.Email == input.Value),
+            _ => false // Trả về false nếu field không hợp lệ
+        };
+        
+        return result;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using H04.Cts.Dtos.DanhMucs;
@@ -12,5 +13,5 @@ public interface INguoiTiepNhanAppService :
         GetNguoiTiepNhanListDto, //Used for paging/sorting/filtering
         CreateUpdateNguoiTiepNhanDto> //Used to create/update a book
 {
-
+    Task<bool> CheckExistAsync(CheckExistDto input);
 }

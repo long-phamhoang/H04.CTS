@@ -1,9 +1,10 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NguoiTiepNhanDto, NguoiTiepNhanService, trangThaiOptions, NoiCapCCCDService, NoiCapCCCDDto, ToChucService, ToChucDto } from '@app/proxy';
+import { Subject, debounceTime, takeUntil, distinctUntilChanged } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -15,7 +16,7 @@ import { NguoiTiepNhanDto, NguoiTiepNhanService, trangThaiOptions, NoiCapCCCDSer
     { provide: NgbDateAdapter, useClass: NgbDateNativeAdapter }
   ],
 })
-export class NguoiTiepNhanComponent implements OnInit {
+export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
   nguoiTiepNhan = { items: [], totalCount: 0 } as PagedResultDto<NguoiTiepNhanDto>;
 
   selectedNguoiTiepNhan = {} as NguoiTiepNhanDto; // declare selectedNguoiTiepNhan
@@ -33,6 +34,11 @@ export class NguoiTiepNhanComponent implements OnInit {
 
   keyword: string = '';
 
+  // CCCD validation properties
+  private cccdCheckSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+  cccdExists = false;
+
   constructor(
     public readonly list: ListService,
     private nguoiTiepNhanService: NguoiTiepNhanService,
@@ -49,6 +55,9 @@ export class NguoiTiepNhanComponent implements OnInit {
     // Initialize form first
     this.buildForm();
 
+    // Setup CCCD validation with debounce
+    this.setupCccdValidation();
+
     // Load NoiCapCCCD options for select
     this.noiCapCCCDService
       .getList({ skipCount: 0, maxResultCount: 1000, sorting: 'name' })
@@ -62,6 +71,66 @@ export class NguoiTiepNhanComponent implements OnInit {
       .subscribe(res => {
         this.organizations = res.items ?? [];
       });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupCccdValidation() {
+    this.cccdCheckSubject
+      .pipe(
+        debounceTime(500), // Wait 500ms after user stops typing
+        distinctUntilChanged(), // Only emit if value changed
+        takeUntil(this.destroy$)
+      )
+      .subscribe(cccd => {
+        if (cccd && cccd.length >= 3) { // Only check if CCCD has at least 3 characters
+          this.checkCccdExists(cccd);
+        } else {
+          this.cccdExists = false;
+        }
+      });
+  }
+
+  private checkCccdExists(cccd: string) {
+    // Skip check if editing existing record with same CCCD
+    if (this.selectedNguoiTiepNhan.id && this.selectedNguoiTiepNhan.cccd === cccd) {
+      this.cccdExists = false;
+      return;
+    }
+
+    this.nguoiTiepNhanService.checkExist({ field: 'cccd', value: cccd })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exists) => {
+          this.cccdExists = exists;
+          
+          // Update form validation
+          const cccdControl = this.form.get('cccd');
+          if (cccdControl) {
+            if (exists) {
+              cccdControl.setErrors({ ...cccdControl.errors, cccdExists: true });
+            } else {
+              // Remove cccdExists error but keep other validations
+              const errors = cccdControl.errors;
+              if (errors) {
+                delete errors.cccdExists;
+                cccdControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+              }
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking CCCD:', error);
+        }
+      });
+  }
+
+  onCccdInput(event: any) {
+    const cccd = event.target.value;
+    this.cccdCheckSubject.next(cccd);
   }
 
 	loadNguoiTiepNhan(event: any) {
@@ -118,6 +187,9 @@ export class NguoiTiepNhanComponent implements OnInit {
       return `${year}-${month}-${day}`;
     };
 
+    // Reset CCCD validation state
+    this.cccdExists = false;
+
     this.form = this.fb.group({
       organizationId: [this.selectedNguoiTiepNhan.organizationId || null],
       fullName: [this.selectedNguoiTiepNhan.fullName || '', Validators.required],
@@ -136,7 +208,7 @@ export class NguoiTiepNhanComponent implements OnInit {
 
   // change the save method
   save() {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.cccdExists) {
       this.logFormErrors();
       return;
     }
@@ -194,6 +266,9 @@ export class NguoiTiepNhanComponent implements OnInit {
   // Helper method to debug form validation
   logFormErrors() {
     console.log('Form is invalid. Current errors:');
+    if (this.cccdExists) {
+      console.log('CCCD already exists in the system');
+    }
     Object.keys(this.form.controls).forEach(key => {
       const control = this.form.get(key);
       if (control?.invalid) {
@@ -206,6 +281,14 @@ export class NguoiTiepNhanComponent implements OnInit {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return field ? field.invalid && field.touched : false;
+  }
+
+  // Helper method to check if CCCD field is invalid (including duplicate check)
+  isCccdInvalid(): boolean {
+    const cccdControl = this.form.get('cccd');
+    if (!cccdControl) return false;
+    
+    return (cccdControl.invalid && cccdControl.touched) || this.cccdExists;
   }
 
   closeModal() {

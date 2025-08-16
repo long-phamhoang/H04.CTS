@@ -52,5 +52,13 @@ export class NguoiTiepNhanService {
     },
     { apiName: this.apiName,...config });
 
+  checkExist = (input: { field: string; value: string }, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, boolean>({
+      method: 'POST',
+      url: '/api/app/nguoi-tiep-nhan/check-exist',
+      body: input,
+    },
+    { apiName: this.apiName,...config });
+
   constructor(private restService: RestService) {}
 }
