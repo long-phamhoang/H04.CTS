@@ -29,23 +29,24 @@ export class MainComponent implements OnInit, OnDestroy {
     },
     {
       label: '::Menu:DanhMucs', items: [
+        { label: '::Menu:DanhMucChung', disabled: true, },
         { label: '::Menu:TinhThanhPho', routerLink: '/main/danh-muc/tinh-thanh-pho', }, // DCIM Lê Thế Kỳ
         { label: '::Menu:XaPhuong', routerLink: '/main/danh-muc/xa-phuong', }, // DCIM Lê Thế Kỳ
-        { label: '::Menu:CapCoQuan', routerLink: '/main/danh-muc/cap-co-quan', }, // TA Nguyễn Quang Phước
-        { label: '::Menu:ToChuc', routerLink: '/main/danh-muc/to-chuc', },
-        { label: '::Menu:LoaiThietBiDichVuPhanMem', routerLink: '/main/danh-muc/loai-thiet-bi-dich-vu-phan-mem', }, // TA Dương Xuân Lộc
-        { label: '::Menu:ThietBiDichVuPhanMem', routerLink: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', }, // TA Dương Xuân Lộc
-        { label: '::Menu:ChucVu', routerLink: '/main/danh-muc/chuc-vu', }, // CA Phạm Ngọc Thuỷ
-        { label: '::Menu:ThueBaoCaNhan', routerLink: '/main/danh-muc/thue-bao-ca-nhan', }, // CA Phạm Ngọc Thuỷ
-        { label: '::Menu:NoiCapCCCD', routerLink: '/main/danh-muc/noi-cap-cccd', }, // DCIM Trịnh Đức Thành
-        { label: '::Menu:NguoiTiepNhan', routerLink: '/main/danh-muc/nguoi-tiep-nhan', }, // DCIM Trịnh Đức Thành
-        { label: '::Menu:LoaiHoSo', routerLink: '/main/danh-muc/loai-ho-so', }, // TA Tạ Đức Hoàn
-        { label: '::Menu:LoaiChungThuSo', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // TA Tạ Đức Hoàn
         { label: '::Menu:MangHeThongCapCts', routerLink: '/main/danh-muc/mang-he-thong-cap-cts', }, // TA Trần Đức Minh
+        { label: '::Menu:CapCoQuan', routerLink: '/main/danh-muc/cap-co-quan', }, // TA Nguyễn Quang Phước
+        { label: '::Menu:LoaiThietBiDichVuPhanMem', routerLink: '/main/danh-muc/loai-thiet-bi-dich-vu-phan-mem', }, // TA Dương Xuân Lộc
+        { label: '::Menu:ChucVu', routerLink: '/main/danh-muc/chuc-vu', }, // CA Phạm Ngọc Thuỷ
+        { label: '::Menu:NoiCapCCCD', routerLink: '/main/danh-muc/noi-cap-cccd', }, // DCIM Trịnh Đức Thành
+        { label: '::Menu:LoaiChungThuSo', routerLink: '/main/danh-muc/loai-chung-thu-so', }, // TA Tạ Đức Hoàn
+        { label: '::Menu:LoaiHoSo', routerLink: '/main/danh-muc/loai-ho-so', }, // TA Tạ Đức Hoàn
         { label: '::Menu:TrichYeu', routerLink: '/main/danh-muc/trich-yeu', }, // TA Trần Đức Minh,
-        { label: '::Menu:LucLuong', routerLink: '/main/danh-muc/trich-yeu', }, // CA Nguyễn Công Tâm
-        { label: '::Menu:DieuKienCapCTSTheoLL', routerLink: '/main/danh-muc/dieu-kien-cap-cts-theo-luc-luong', }, // CA Nguyễn Công Tâm
-        { label: '::Menu:LoaiThietBi', routerLink: '/main/danh-muc/loai-thiet-bi', },
+        { label: '::Menu:LucLuong', routerLink: '/main/danh-muc/luc-luong', }, // CA Nguyễn Công Tâm
+        { label: '::Menu:DieuKienCapCtsTheoLucLuong', routerLink: '/main/danh-muc/dieu-kien-cap-cts-theo-luc-luong', }, // CA Nguyễn Công Tâm
+        { label: '::Menu:DanhMucNghiepVu', disabled: true, },
+        { label: '::Menu:ToChuc', routerLink: '/main/danh-muc/to-chuc', },
+        { label: '::Menu:ThietBiDichVuPhanMem', routerLink: '/main/danh-muc/thiet-bi-dich-vu-phan-mem', }, // TA Dương Xuân Lộc
+        { label: '::Menu:ThueBaoCaNhan', routerLink: '/main/danh-muc/thue-bao-ca-nhan', }, // CA Phạm Ngọc Thuỷ
+        { label: '::Menu:NguoiTiepNhan', routerLink: '/main/danh-muc/nguoi-tiep-nhan', }, // DCIM Trịnh Đức Thành
         { label: '::Menu:ChungThuSoVaThietBi', routerLink: '/main/danh-muc/chung-thu-so-va-thiet-bi', }, // TA Nguyễn Quang Phước
       ]
     },
