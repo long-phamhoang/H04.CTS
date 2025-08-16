@@ -12,6 +12,7 @@ import { Subject } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ConfirmationService } from 'primeng/api';
+import { ImportExcelDialogComponent } from '@app/shared/components/import-excel-dialog/import-excel-dialog.component';
 
 @Component({
 	standalone: false,
@@ -26,6 +27,9 @@ import { ConfirmationService } from 'primeng/api';
 export class LucLuongComponent implements OnInit, OnDestroy {
 	@ViewChild('menu') menu: Menu;
 	@ViewChild('searchInput', { static: false }) searchInput: ElementRef;
+	  
+  @ViewChild(ImportExcelDialogComponent) importDialog: ImportExcelDialogComponent;
+  
 
 	lucLuong = { items: [], totalCount: 0 } as PagedResultDto<LucLuongDto>;
 
@@ -522,6 +526,13 @@ clearSearch() {
 	}
 
 
+	downloadTemplate() {
+    if (this.importDialog) {
+      this.importDialog.downloadTemplate();
+    }
+  }
+
+
 	functionMenuItems: MenuItem[] = [
     {
       label: 'Xuất excel',
@@ -536,12 +547,11 @@ clearSearch() {
     {
       separator: true
     },
-    {
-      label: 'bấm vào đây để tải file mẫu import.',
-      icon: 'pi pi-download',
-      // command: () => this.downloadTemplate(),
-      styleClass: 'text-primary'
-    }
+		{
+			label: 'bấm vào đây để tải file mẫu import.',
+			icon: 'pi pi-download',
+			command: () => this.downloadTemplate()
+	}
   ];
 
 }
