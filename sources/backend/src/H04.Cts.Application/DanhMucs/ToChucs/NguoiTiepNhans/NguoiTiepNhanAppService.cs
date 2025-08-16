@@ -30,49 +30,46 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
     public async Task<NguoiTiepNhanDto> GetAsync(long id)
     {
-        var nguoiTiepNhanQueryable = await _repository.GetQueryableAsync();
-        var orgQueryable = await _organizationRepository.GetQueryableAsync();
-        var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
+        var queryable = await _repository
+            .WithDetailsAsync(x => x.OrganizationFk, x => x.NoiCapCCCDFk);
+            
+        var nguoiTiepNhan = await AsyncExecuter.FirstOrDefaultAsync(queryable, x => x.Id == id && !x.IsDeleted);
 
-        var dtoQuery = from x in nguoiTiepNhanQueryable
-                       join org in orgQueryable.Where(o => !o.IsDeleted) on x.OrganizationId equals org.Id into orgJoin
-                       from org in orgJoin.DefaultIfEmpty()
-                       join issuing in noiCapQueryable.Where(n => !n.IsDeleted) on x.NoiCapCCCDId equals issuing.Id into issuingJoin
-                       from issuing in issuingJoin.DefaultIfEmpty()
-                       where x.Id == id && !x.IsDeleted
-                       select new NguoiTiepNhanDto
-                       {
-                           Id = x.Id,
-                           OrganizationId = x.OrganizationId,
-                           OrganizationName = org != null ? org.TenToChuc : null,
-                           FullName = x.FullName,
-                           CCCD = x.CCCD,
-                           DateOfIssue = x.DateOfIssue,
-                           NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
-                           NoiCapCCCDName = issuing != null ? issuing.Name : null,
-                           Position = x.Position,
-                           Phone = x.Phone,
-                           Email = x.Email,
-                           SubmissionAddress = x.SubmissionAddress,
-                           Province = x.Province,
-                           Ward = x.Ward,
-                           IsDefault = x.IsDefault,
-                           IsDeleted = x.IsDeleted,
-                           DeletedBy = x.DeletedBy,
-                           DeletedAt = x.DeletedAt
-                       };
-
-        var dto = await AsyncExecuter.FirstOrDefaultAsync(dtoQuery);
-        if (dto == null)
+        if (nguoiTiepNhan == null)
         {
             throw new EntityNotFoundException(typeof(NguoiTiepNhan), id);
         }
-        return dto;
+
+        // Map to DTO using navigation properties
+        return new NguoiTiepNhanDto
+        {
+            Id = nguoiTiepNhan.Id,
+            OrganizationId = nguoiTiepNhan.OrganizationId,
+            OrganizationName = nguoiTiepNhan.OrganizationFk?.TenToChuc ?? string.Empty,
+            FullName = nguoiTiepNhan.FullName ?? string.Empty,
+            CCCD = nguoiTiepNhan.CCCD ?? string.Empty,
+            DateOfIssue = nguoiTiepNhan.DateOfIssue,
+            NoiCapCCCDId = nguoiTiepNhan.NoiCapCCCDId ?? 0,
+            NoiCapCCCDName = nguoiTiepNhan.NoiCapCCCDFk?.Name ?? string.Empty,
+            Position = nguoiTiepNhan.Position ?? string.Empty,
+            Phone = nguoiTiepNhan.Phone ?? string.Empty,
+            Email = nguoiTiepNhan.Email ?? string.Empty,
+            SubmissionAddress = nguoiTiepNhan.SubmissionAddress ?? string.Empty,
+            Province = nguoiTiepNhan.Province ?? string.Empty,
+            Ward = nguoiTiepNhan.Ward ?? string.Empty,
+            IsDefault = nguoiTiepNhan.IsDefault,
+            IsDeleted = nguoiTiepNhan.IsDeleted,
+            DeletedBy = nguoiTiepNhan.DeletedBy ?? string.Empty,
+            DeletedAt = nguoiTiepNhan.DeletedAt
+        };
     }
 
     public async Task<PagedResultDto<NguoiTiepNhanDto>> GetListAsync(GetNguoiTiepNhanListDto input)
     {
-        var queryable = await _repository.GetQueryableAsync();
+        // Use WithDetailsAsync from the beginning to load related entities
+        var queryable = await _repository
+            .WithDetailsAsync(x => x.OrganizationFk, x => x.NoiCapCCCDFk);
+            
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
 
@@ -81,22 +78,8 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         {
             var keyword = input.Keyword.Trim();
 
-            // Search in related tables by name fields
-            var searchOrgQueryable = await _organizationRepository.GetQueryableAsync();
-            var searchNoiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
-
-            var matchingOrgIds = searchOrgQueryable
-                .Where(org => !org.IsDeleted && org.TenToChuc != null && org.TenToChuc.ToLower().Contains(keyword.ToLower()))
-                .Select(org => org.Id)
-                .ToList();
-
-            var matchingNoiCapIds = searchNoiCapQueryable
-                .Where(issuing => !issuing.IsDeleted && issuing.Name != null && issuing.Name.ToLower().Contains(keyword.ToLower()))
-                .Select(issuing => issuing.Id)
-                .ToList();
-
-            // Search in main fields
-            var mainFieldQueryable = queryable.Where(x =>
+            // Search in main fields and related entities using navigation properties
+            queryable = queryable.Where(x =>
                 (x.FullName != null && x.FullName.Contains(keyword)) ||
                 (x.CCCD != null && x.CCCD.Contains(keyword)) ||
                 (x.Position != null && x.Position.Contains(keyword)) ||
@@ -104,88 +87,75 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 (x.Email != null && x.Email.Contains(keyword)) ||
                 (x.SubmissionAddress != null && x.SubmissionAddress.Contains(keyword)) ||
                 (x.Province != null && x.Province.Contains(keyword)) ||
-                (x.Ward != null && x.Ward.Contains(keyword))
+                (x.Ward != null && x.Ward.Contains(keyword)) ||
+                // Search in related entities using navigation properties
+                (x.OrganizationFk != null && !x.OrganizationFk.IsDeleted && x.OrganizationFk.TenToChuc != null && x.OrganizationFk.TenToChuc.Contains(keyword)) ||
+                (x.NoiCapCCCDFk != null && !x.NoiCapCCCDFk.IsDeleted && x.NoiCapCCCDFk.Name != null && x.NoiCapCCCDFk.Name.Contains(keyword))
             );
-
-            // Combine search results
-            var combinedIds = mainFieldQueryable.Select(x => x.Id)
-                .Union(queryable.Where(x => 
-                    (x.OrganizationId.HasValue && matchingOrgIds.Contains(x.OrganizationId.Value)) ||
-                    (x.NoiCapCCCDId.HasValue && matchingNoiCapIds.Contains(x.NoiCapCCCDId.Value))
-                ).Select(x => x.Id))
-                .ToList();
-
-            // Apply the combined search
-            queryable = queryable.Where(x => combinedIds.Contains(x.Id));
         }
 
+        // Apply pagination
+        var totalCount = await AsyncExecuter.CountAsync(queryable);
         var ordered = queryable
             .Skip(input.SkipCount)
             .Take(input.MaxResultCount);
 
-        var orgQueryable = await _organizationRepository.GetQueryableAsync();
-        var noiCapQueryable = await _noiCapCCCDRepository.GetQueryableAsync();
-
-        var dtoQuery = from x in ordered
-                       join org in orgQueryable.Where(o => !o.IsDeleted) on x.OrganizationId equals org.Id into orgJoin
-                       from org in orgJoin.DefaultIfEmpty()
-                       join issuing in noiCapQueryable.Where(n => !n.IsDeleted) on x.NoiCapCCCDId equals issuing.Id into issuingJoin
-                       from issuing in issuingJoin.DefaultIfEmpty()
-                       select new NguoiTiepNhanDto
-                       {
-                           Id = x.Id,
-                           OrganizationId = x.OrganizationId,
-                           OrganizationName = org != null ? org.TenToChuc : null,
-                           FullName = x.FullName,
-                           CCCD = x.CCCD,
-                           DateOfIssue = x.DateOfIssue,
-                           NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
-                           NoiCapCCCDName = issuing != null ? issuing.Name : null,
-                           Position = x.Position,
-                           Phone = x.Phone,
-                           Email = x.Email,
-                           SubmissionAddress = x.SubmissionAddress,
-                           Province = x.Province,
-                           Ward = x.Ward,
-                           IsDefault = x.IsDefault,
-                           IsDeleted = x.IsDeleted,
-                           DeletedBy = x.DeletedBy,
-                           DeletedAt = x.DeletedAt
-                       };
-
-        // Handle sorting for joined fields after the join
+        // Handle sorting for joined fields
         if (!string.IsNullOrWhiteSpace(input.Sorting))
         {
             switch (input.Sorting.ToLower())
             {
                 case "organizationname":
-                    dtoQuery = dtoQuery.OrderBy(x => x.OrganizationName ?? string.Empty);
+                    ordered = ordered.OrderBy(x => x.OrganizationFk != null ? x.OrganizationFk.TenToChuc : string.Empty);
                     break;
                 case "organizationname desc":
-                    dtoQuery = dtoQuery.OrderByDescending(x => x.OrganizationName ?? string.Empty);
+                    ordered = ordered.OrderByDescending(x => x.OrganizationFk != null ? x.OrganizationFk.TenToChuc : string.Empty);
                     break;
                 case "noicapcccdname":
-                    dtoQuery = dtoQuery.OrderBy(x => x.NoiCapCCCDName ?? string.Empty);
+                    ordered = ordered.OrderBy(x => x.NoiCapCCCDFk != null ? x.NoiCapCCCDFk.Name : string.Empty);
                     break;
                 case "noicapcccdname desc":
-                    dtoQuery = dtoQuery.OrderByDescending(x => x.NoiCapCCCDName ?? string.Empty);
+                    ordered = ordered.OrderByDescending(x => x.NoiCapCCCDFk != null ? x.NoiCapCCCDFk.Name : string.Empty);
                     break;
                 default:
                     // For other fields, use the original sorting
-                    dtoQuery = dtoQuery.OrderBy(input.Sorting);
+                    ordered = ordered.OrderBy(input.Sorting);
                     break;
             }
         }
         else
         {
             // Default sorting
-            dtoQuery = dtoQuery.OrderBy(x => x.FullName ?? string.Empty);
+            ordered = ordered.OrderBy(x => x.FullName ?? string.Empty);
         }
 
-        var nguoiTiepNhans = await AsyncExecuter.ToListAsync(dtoQuery);
-        var totalCount = await AsyncExecuter.CountAsync(queryable);
+        // Execute the query
+        var nguoiTiepNhans = await AsyncExecuter.ToListAsync(ordered);
 
-        return new PagedResultDto<NguoiTiepNhanDto>(totalCount, nguoiTiepNhans);
+        // Map to DTOs using navigation properties
+        var dtos = nguoiTiepNhans.Select(x => new NguoiTiepNhanDto
+        {
+            Id = x.Id,
+            OrganizationId = x.OrganizationId,
+            OrganizationName = x.OrganizationFk?.TenToChuc ?? string.Empty,
+            FullName = x.FullName ?? string.Empty,
+            CCCD = x.CCCD ?? string.Empty,
+            DateOfIssue = x.DateOfIssue,
+            NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
+            NoiCapCCCDName = x.NoiCapCCCDFk?.Name ?? string.Empty,
+            Position = x.Position ?? string.Empty,
+            Phone = x.Phone ?? string.Empty,
+            Email = x.Email ?? string.Empty,
+            SubmissionAddress = x.SubmissionAddress ?? string.Empty,
+            Province = x.Province ?? string.Empty,
+            Ward = x.Ward ?? string.Empty,
+            IsDefault = x.IsDefault,
+            IsDeleted = x.IsDeleted,
+            DeletedBy = x.DeletedBy ?? string.Empty,
+            DeletedAt = x.DeletedAt
+        }).ToList();
+
+        return new PagedResultDto<NguoiTiepNhanDto>(totalCount, dtos);
     }
 
     public async Task<NguoiTiepNhanDto> CreateAsync(CreateUpdateNguoiTiepNhanDto input)
