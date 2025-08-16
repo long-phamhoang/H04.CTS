@@ -181,6 +181,15 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 			message: 'Bạn có chắc chắn muốn xóa bản ghi này?',
 			header: 'Xác nhận xóa',
 			icon: 'pi pi-exclamation-triangle',
+			rejectButtonProps: {
+				label: 'Cancel',
+				severity: 'secondary',
+				outlined: true,
+		},
+			acceptButtonProps: {
+				label: 'Delete',
+				severity: 'danger',
+				},
 			accept: () => {
 				this.lucLuongService.delete(id).subscribe(() => {
 					this.list.get();
@@ -201,6 +210,15 @@ export class LucLuongComponent implements OnInit, OnDestroy {
       message: `Bạn có chắc chắn muốn xóa ${ids.length} bản ghi?`,
       header: 'Xác nhận xóa',
       icon: 'pi pi-exclamation-triangle',
+			rejectButtonProps: {
+				label: 'Cancel',
+				severity: 'secondary',
+				outlined: true,
+		},
+			acceptButtonProps: {
+				label: 'Delete',
+				severity: 'danger',
+				},
       accept: () => {
         // Xóa tuần tự để đơn giản xử lý lỗi
         let ok = 0, fail = 0;
