@@ -27,6 +27,7 @@ import { ImportExcelDialogComponent } from '@app/shared/components/import-excel-
 export class LucLuongComponent implements OnInit, OnDestroy {
 	@ViewChild('menu') menu: Menu;
 	@ViewChild('searchInput', { static: false }) searchInput: ElementRef;
+	@ViewChild('firstInput') firstInput: ElementRef;
 	  
   @ViewChild(ImportExcelDialogComponent) importDialog: ImportExcelDialogComponent;
   
@@ -51,6 +52,13 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 	isModalOpen = false;
 
 	private maChangeSub: Subscription | null = null;
+
+	//Thêm options cho filter với tùy chọn "Tất cả"
+	filterTrangThaiOptions = [
+		{ value: null, key: 'Tất cả' },
+		...trangThaiOptions
+	];
+
 
 	// Autocomplete
 	allItems: LucLuongDto[] = [];
@@ -120,6 +128,14 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 
 			// Setup debounced filter subscriptions
 			this.setupFilterSubscriptions();
+
+			this.filterNameChanged$
+				.pipe(debounceTime(500))
+				.subscribe((value) => {
+					if (!value || value.length >= 3) {
+						this.applyFilter();
+					}
+				});
 		}
 
 
@@ -136,7 +152,7 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		// Debounced 
 		this.filterNameSub = new Subject<string>()
 			.pipe(
-				debounceTime(300),
+				debounceTime(500),
 				distinctUntilChanged()
 			)
 			.subscribe(() => {
@@ -146,7 +162,7 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		
 		this.filterCodeSub = new Subject<string>()
 			.pipe(
-				debounceTime(300),
+				debounceTime(500),
 				distinctUntilChanged()
 			)
 			.subscribe(() => {
@@ -169,14 +185,14 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 	create() {
 		this.selectedLucLuong = {} as LucLuongDto;
 		this.buildForm();
-		this.isModalOpen = true;
+		this.openModal();
 	}
 
 	edit(id: number) {
 		this.lucLuongService.get(id).subscribe((entity) => {
 			this.selectedLucLuong = entity;
 			this.buildForm();
-			this.isModalOpen = true;
+			this.openModal();
 		});
 	}
 
@@ -249,12 +265,11 @@ export class LucLuongComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 	buildForm() {
 		this.form = this.fb.group({
 			tenLucLuong: [this.selectedLucLuong.tenLucLuong || '', Validators.required],
 			maLucLuong: [this.selectedLucLuong.maLucLuong || '', Validators.required],
-			trangThai: [this.selectedLucLuong.trangThai || null, Validators.required],
+			trangThai: [this.selectedLucLuong.trangThai || TrangThai.HoatDong, Validators.required],
 			ghiChu: [this.selectedLucLuong.ghiChu || ''],
 		});
 
@@ -377,10 +392,14 @@ clearSearch() {
       next: () => {
         this.list.get();
         this.toast.success('Lưu thành công, tiếp tục thêm mới');
-        // reset form for next entry
-        this.selectedLucLuong = {} as LucLuongDto;
-        this.form.reset();
-        this.buildForm();
+				// Lưu trạng thái hiện tại để giữ nguyên khi tạo mới
+				const currentTrangThai = this.form.get('trangThai').value;
+				this.selectedLucLuong = {} as LucLuongDto;
+				this.form.reset();
+				// Thiết lập lại form với trạng thái đã lưu
+				this.buildForm();
+				// Giữ nguyên trạng thái vừa lưu
+				this.form.patchValue({ trangThai: currentTrangThai });
       },
       error: (err) => {
         const message = err?.error?.error?.message || 'Có lỗi xảy ra';
@@ -465,8 +484,8 @@ clearSearch() {
 		if (this.filterCode?.trim()) {
 			filter.maLucLuong = this.filterCode.trim();
 		}
-		
-		if (this.filterStatus) {
+		// Chỉ thêm filter trạng thái nếu không phải "Tất cả" (null)
+		if (this.filterStatus !== null && this.filterStatus !== undefined) {
 			filter.trangThai = this.filterStatus;
 		}
 
@@ -548,10 +567,24 @@ clearSearch() {
       separator: true
     },
 		{
-			label: 'bấm vào đây để tải file mẫu import.',
+			label: 'Tải mẫu',
 			icon: 'pi pi-download',
 			command: () => this.downloadTemplate()
 	}
   ];
+
+	filterNameChanged$ = new Subject<string>();
+
+	// Hàm này sẽ được gọi khi input thay đổi
+	onFilterNameChange(value: string) {
+		this.filterNameChanged$.next(value);
+	}
+
+	openModal() {
+		this.isModalOpen = true;
+		setTimeout(() => {
+			this.firstInput?.nativeElement?.focus();
+		}, 200); // Đợi modal render xong, có thể chỉnh thời gian nếu cần
+	}
 
 }

@@ -75,7 +75,7 @@
             pInputText
             type="text"
             [(ngModel)]="filterName"
-            (ngModelChange)="applyFilter()"
+            (ngModelChange)="onFilterNameChange($event)"
             placeholder="Nhập tên lực lượng"
             class="w-100"
           />
@@ -86,7 +86,7 @@
             pInputText
             type="text"
             [(ngModel)]="filterCode"
-            (ngModelChange)="applyFilter()"
+            (ngModelChange)="onFilterNameChange($event)"
             placeholder="Nhập mã lực lượng"
             class="w-100"
           />
@@ -94,12 +94,12 @@
         <div class="col-md-4">
           <label class="form-label">Trạng thái</label>
           <p-dropdown
-            [options]="trangThaiOptions"
+            [options]="filterTrangThaiOptions"
             optionLabel="key"
             optionValue="value"
             [(ngModel)]="filterStatus"
             (onChange)="applyFilter()"
-            [showClear]="true"
+            [showClear]="false"
             placeholder="Tất cả"
             class="w-100"
           ></p-dropdown>
@@ -121,24 +121,22 @@
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
             <th style="width: 3%" class="table-header">#</th>
-            <th style="width: 20%" class="table-header">Mã</th>
-            <th style="width: 25%" class="table-header">Tên lực lượng</th>
-            <th style="width: 11%" class="table-header">Trạng thái</th>
-            <th class="table-header">Ghi chú</th>
-            <th class="table-header" style="width: 100px; text-align: right; padding-right: 12px">
-              Hành động
-            </th>
+            <th style="width: 20%; text-align: left" class="table-header">Mã</th>
+            <th style="width: 25%; text-align: left" class="table-header">Tên lực lượng</th>
+            <th class="table-header" style="width: 160px">Trạng thái</th>
+            <th class="table-header" style="text-align: left">Ghi chú</th>
+            <th class="table-header" style="width: 100px; text-align: right">Hành động</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
           <tr>
-            <td style="padding-left: 12px">
+            <td style="text-align: center">
               <p-tableCheckbox [value]="item"></p-tableCheckbox>
             </td>
-            <td>{{ pageIndex * pageSize + rowIndex + 1 }}</td>
+            <td style="text-align: center">{{ pageIndex * pageSize + rowIndex + 1 }}</td>
             <td>{{ item.maLucLuong }}</td>
             <td>{{ item.tenLucLuong }}</td>
-            <td>
+            <td style="text-align: center">
               <p-tag
                 [value]="getTrangThai(item.trangThai)"
                 [severity]="getTrangThaiSeverity(item.trangThai)"
@@ -160,7 +158,7 @@
                 item.ghiChu?.length > 128 ? (item.ghiChu | slice : 0 : 128) + '...' : item.ghiChu
               }}
             </td>
-            <td class="text-end" style="padding-right: 12px">
+            <td class="text-end" style="text-align: center">
               <div ngbDropdown class="d-inline-block">
                 <button
                   class="btn"
@@ -224,7 +222,7 @@
       <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
         <div class="mb-3">
           <label class="form-label">Mã lực lượng<span class="text-danger">*</span></label>
-          <input type="text" pInputText formControlName="maLucLuong" class="w-100" />
+          <input #firstInput pInputText type="text" formControlName="maLucLuong" class="w-100" />
           <div
             class="text-danger mt-1"
             *ngIf="form?.get('maLucLuong')?.dirty && form?.get('maLucLuong')?.errors?.['maLucLuongDuplicated']"
@@ -244,7 +242,7 @@
             optionValue="value"
             formControlName="trangThai"
             placeholder="Chọn trạng thái"
-            [showClear]="true"
+            [showClear]="false"
             class="w-100"
           ></p-dropdown>
         </div>
@@ -265,7 +263,7 @@
         pButton
         label="Lưu"
         (click)="save()"
-        [disabled]="form?.invalid || !formChanged"
+        [disabled]="form?.invalid"
       ></button>
 
       <button

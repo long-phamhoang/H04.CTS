@@ -25,6 +25,14 @@ export class ExportExcelDialogComponent implements OnInit, OnChanges {
   fileName = '';
   sheetName = '';
   selectedFields: string[] = [];
+  
+  // Tạo options cho multiselect
+  get columnOptions() {
+    return this.columns.map(col => ({
+      label: col.header || col.field,
+      value: col.field
+    }));
+  }
 
   ngOnInit() {
     this.initializeValues();
