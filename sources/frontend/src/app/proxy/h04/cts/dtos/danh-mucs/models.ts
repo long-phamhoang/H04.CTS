@@ -2,7 +2,7 @@ import type { TrangThai } from '../../utilities/trang-thai.enum';
 import type { AuditedEntityDto, PagedAndSortedResultRequestDto } from '@abp/ng.core';
 
 export interface CreateUpdateNguoiTiepNhanDto {
-  organizationId?: number;
+  organizationIds?: number[];
   fullName?: string;
   cccd: string;
   dateOfIssue: string;
@@ -45,7 +45,7 @@ export interface CreateUpdateToChucDto {
 
 export interface GetNguoiTiepNhanListDto extends PagedAndSortedResultRequestDto {
   keyword?: string;
-  organizationId?: number;
+  organizationIds?: number[];
   fullName?: string;
   cccd?: string;
   dateOfIssue?: string;
@@ -74,8 +74,8 @@ export interface GetNoiCapCCCDListDto extends PagedAndSortedResultRequestDto {
 }
 
 export interface NguoiTiepNhanDto extends AuditedEntityDto<number> {
-  organizationId?: number;
-  organizationName?: string;
+  organizationIds?: number[];
+  organizationNames?: string[];
   fullName?: string;
   cccd?: string;
   dateOfIssue?: string;

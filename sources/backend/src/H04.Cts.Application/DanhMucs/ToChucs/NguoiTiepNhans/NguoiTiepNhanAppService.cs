@@ -31,7 +31,7 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
     public async Task<NguoiTiepNhanDto> GetAsync(long id)
     {
         var queryable = await _repository
-            .WithDetailsAsync(x => x.OrganizationFk, x => x.NoiCapCCCDFk);
+            .WithDetailsAsync(x => x.Organizations, x => x.NoiCapCCCDFk);
             
         var nguoiTiepNhan = await AsyncExecuter.FirstOrDefaultAsync(queryable, x => x.Id == id && !x.IsDeleted);
 
@@ -41,34 +41,14 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         }
 
         // Map to DTO using navigation properties
-        return new NguoiTiepNhanDto
-        {
-            Id = nguoiTiepNhan.Id,
-            OrganizationId = nguoiTiepNhan.OrganizationId,
-            OrganizationName = nguoiTiepNhan.OrganizationFk?.TenToChuc ?? string.Empty,
-            FullName = nguoiTiepNhan.FullName ?? string.Empty,
-            CCCD = nguoiTiepNhan.CCCD ?? string.Empty,
-            DateOfIssue = nguoiTiepNhan.DateOfIssue,
-            NoiCapCCCDId = nguoiTiepNhan.NoiCapCCCDId ?? 0,
-            NoiCapCCCDName = nguoiTiepNhan.NoiCapCCCDFk?.Name ?? string.Empty,
-            Position = nguoiTiepNhan.Position ?? string.Empty,
-            Phone = nguoiTiepNhan.Phone ?? string.Empty,
-            Email = nguoiTiepNhan.Email ?? string.Empty,
-            SubmissionAddress = nguoiTiepNhan.SubmissionAddress ?? string.Empty,
-            Province = nguoiTiepNhan.Province ?? string.Empty,
-            Ward = nguoiTiepNhan.Ward ?? string.Empty,
-            IsDefault = nguoiTiepNhan.IsDefault,
-            IsDeleted = nguoiTiepNhan.IsDeleted,
-            DeletedBy = nguoiTiepNhan.DeletedBy ?? string.Empty,
-            DeletedAt = nguoiTiepNhan.DeletedAt
-        };
+        return ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(nguoiTiepNhan);
     }
 
     public async Task<PagedResultDto<NguoiTiepNhanDto>> GetListAsync(GetNguoiTiepNhanListDto input)
     {
         // Use WithDetailsAsync from the beginning to load related entities
         var queryable = await _repository
-            .WithDetailsAsync(x => x.OrganizationFk, x => x.NoiCapCCCDFk);
+            .WithDetailsAsync(x => x.Organizations, x => x.NoiCapCCCDFk);
             
         // Exclude soft-deleted records by default
         queryable = queryable.Where(x => !x.IsDeleted);
@@ -89,9 +69,16 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 (x.Province != null && x.Province.Contains(keyword)) ||
                 (x.Ward != null && x.Ward.Contains(keyword)) ||
                 // Search in related entities using navigation properties
-                (x.OrganizationFk != null && !x.OrganizationFk.IsDeleted && x.OrganizationFk.TenToChuc != null && x.OrganizationFk.TenToChuc.Contains(keyword)) ||
+                (x.Organizations.Any(o => !o.IsDeleted && o.TenToChuc != null && o.TenToChuc.Contains(keyword))) ||
                 (x.NoiCapCCCDFk != null && !x.NoiCapCCCDFk.IsDeleted && x.NoiCapCCCDFk.Name != null && x.NoiCapCCCDFk.Name.Contains(keyword))
             );
+        }
+
+        // Filter by organization ids if provided
+        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
+        {
+            var orgIdSet = input.OrganizationIds.Distinct().ToArray();
+            queryable = queryable.Where(x => x.Organizations.Any(o => orgIdSet.Contains(o.Id)));
         }
 
         // Apply pagination
@@ -106,10 +93,10 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             switch (input.Sorting.ToLower())
             {
                 case "organizationname":
-                    ordered = ordered.OrderBy(x => x.OrganizationFk != null ? x.OrganizationFk.TenToChuc : string.Empty);
+                    ordered = ordered.OrderBy(x => x.Organizations.Select(o => o.TenToChuc ?? string.Empty).FirstOrDefault());
                     break;
                 case "organizationname desc":
-                    ordered = ordered.OrderByDescending(x => x.OrganizationFk != null ? x.OrganizationFk.TenToChuc : string.Empty);
+                    ordered = ordered.OrderByDescending(x => x.Organizations.Select(o => o.TenToChuc ?? string.Empty).FirstOrDefault());
                     break;
                 case "noicapcccdname":
                     ordered = ordered.OrderBy(x => x.NoiCapCCCDFk != null ? x.NoiCapCCCDFk.Name : string.Empty);
@@ -131,42 +118,20 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
         // Execute the query
         var nguoiTiepNhans = await AsyncExecuter.ToListAsync(ordered);
-
-        // Map to DTOs using navigation properties
-        var dtos = nguoiTiepNhans.Select(x => new NguoiTiepNhanDto
-        {
-            Id = x.Id,
-            OrganizationId = x.OrganizationId,
-            OrganizationName = x.OrganizationFk?.TenToChuc ?? string.Empty,
-            FullName = x.FullName ?? string.Empty,
-            CCCD = x.CCCD ?? string.Empty,
-            DateOfIssue = x.DateOfIssue,
-            NoiCapCCCDId = x.NoiCapCCCDId ?? 0,
-            NoiCapCCCDName = x.NoiCapCCCDFk?.Name ?? string.Empty,
-            Position = x.Position ?? string.Empty,
-            Phone = x.Phone ?? string.Empty,
-            Email = x.Email ?? string.Empty,
-            SubmissionAddress = x.SubmissionAddress ?? string.Empty,
-            Province = x.Province ?? string.Empty,
-            Ward = x.Ward ?? string.Empty,
-            IsDefault = x.IsDefault,
-            IsDeleted = x.IsDeleted,
-            DeletedBy = x.DeletedBy ?? string.Empty,
-            DeletedAt = x.DeletedAt
-        }).ToList();
+        var dtos = nguoiTiepNhans.Select(x => ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(x)).ToList();
 
         return new PagedResultDto<NguoiTiepNhanDto>(totalCount, dtos);
     }
 
     public async Task<NguoiTiepNhanDto> CreateAsync(CreateUpdateNguoiTiepNhanDto input)
     {
-        // Optional validations when IDs are provided
-        if (input.OrganizationId.HasValue)
+        // Validate organizations if provided
+        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
         {
-            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value && !x.IsDeleted);
-            if (!organizationExists)
+            var validCount = await _organizationRepository.CountAsync(x => input.OrganizationIds.Contains(x.Id) && !x.IsDeleted);
+            if (validCount != input.OrganizationIds.Distinct().Count())
             {
-                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId} hoặc tổ chức đã bị xóa.");
+                throw new UserFriendlyException("Một hoặc nhiều tổ chức không tồn tại hoặc đã bị xóa.");
             }
         }
 
@@ -193,19 +158,28 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
         var nguoiTiepNhan = ObjectMapper.Map<CreateUpdateNguoiTiepNhanDto, NguoiTiepNhan>(input);
         nguoiTiepNhan.CCCD = normalizedCccd;
+        // Set many-to-many organizations
+        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
+        {
+            var organizations = await _organizationRepository.GetListAsync(x => input.OrganizationIds.Contains(x.Id) && !x.IsDeleted);
+            foreach (var org in organizations)
+            {
+                nguoiTiepNhan.Organizations.Add(org);
+            }
+        }
         await _repository.InsertAsync(nguoiTiepNhan);
         return ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(nguoiTiepNhan);
     }
 
     public async Task<NguoiTiepNhanDto> UpdateAsync(long id, CreateUpdateNguoiTiepNhanDto input)
     {
-        // Optional validations when IDs are provided
-        if (input.OrganizationId.HasValue)
+        // Validate organizations if provided
+        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
         {
-            var organizationExists = await _organizationRepository.AnyAsync(x => x.Id == input.OrganizationId.Value && !x.IsDeleted);
-            if (!organizationExists)
+            var validCount = await _organizationRepository.CountAsync(x => input.OrganizationIds.Contains(x.Id) && !x.IsDeleted);
+            if (validCount != input.OrganizationIds.Distinct().Count())
             {
-                throw new UserFriendlyException($"Không tìm thấy tổ chức với Id = {input.OrganizationId} hoặc tổ chức đã bị xóa.");
+                throw new UserFriendlyException("Một hoặc nhiều tổ chức không tồn tại hoặc đã bị xóa.");
             }
         }
 
@@ -233,6 +207,16 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
         ObjectMapper.Map(input, nguoiTiepNhan);
         nguoiTiepNhan.CCCD = normalizedCccd;
+        // Update many-to-many organizations
+        nguoiTiepNhan.Organizations.Clear();
+        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
+        {
+            var organizations = await _organizationRepository.GetListAsync(x => input.OrganizationIds.Contains(x.Id) && !x.IsDeleted);
+            foreach (var org in organizations)
+            {
+                nguoiTiepNhan.Organizations.Add(org);
+            }
+        }
         await _repository.UpdateAsync(nguoiTiepNhan);
         return ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(nguoiTiepNhan);
     }

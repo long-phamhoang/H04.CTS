@@ -1,4 +1,5 @@
 using H04.Cts.Entities.DanhMucs;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Volo.Abp.EntityFrameworkCore.Modeling;
@@ -13,7 +14,6 @@ public class NguoiTiepNhanConfiguration : IEntityTypeConfiguration<NguoiTiepNhan
         builder.ConfigureByConvention();
 
         #region Index
-        builder.HasIndex(x => new { x.OrganizationId });
         builder.HasIndex(x => new { x.FullName });
         builder.HasIndex(x => new { x.CCCD });
         builder.HasIndex(x => new { x.DateOfIssue });
@@ -28,5 +28,31 @@ public class NguoiTiepNhanConfiguration : IEntityTypeConfiguration<NguoiTiepNhan
             .WithMany()
             .HasForeignKey(r => r.NoiCapCCCDId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasMany(x => x.Organizations)
+            .WithMany(x => x.NguoiTiepNhans)
+            .UsingEntity<Dictionary<string, object>>(
+                "AppOrganizationNguoiTiepNhan",
+                j => j
+                    .HasOne<ToChuc>()
+                    .WithMany()
+                    .HasForeignKey("OrganizationId")
+                    .HasConstraintName("FK_AppOrganizationNguoiTiepNhan_ToChuc_OrganizationId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<NguoiTiepNhan>()
+                    .WithMany()
+                    .HasForeignKey("NguoiTiepNhanId")
+                    .HasConstraintName("FK_AppOrganizationNguoiTiepNhan_NguoiTiepNhan_NguoiTiepNhanId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.ToTable(CtsConsts.DbTablePrefix + "OrganizationNguoiTiepNhans", CtsConsts.DbSchema);
+                    j.HasKey("OrganizationId", "NguoiTiepNhanId");
+                    j.HasIndex("OrganizationId");
+                    j.HasIndex("NguoiTiepNhanId");
+                }
+            );
     }
 }

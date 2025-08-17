@@ -39,7 +39,7 @@ export class NguoiTiepNhanService {
     this.restService.request<any, PagedResultDto<NguoiTiepNhanDto>>({
       method: 'GET',
       url: '/api/app/nguoi-tiep-nhan',
-      params: { keyword: input.keyword, organizationId: input.organizationId, fullName: input.fullName, cccd: input.cccd, dateOfIssue: input.dateOfIssue, noiCapCCCDId: input.noiCapCCCDId, position: input.position, phone: input.phone, email: input.email, submissionAddress: input.submissionAddress, province: input.province, ward: input.ward, isDefault: input.isDefault, isDeleted: input.isDeleted, deletedBy: input.deletedBy, deletedAt: input.deletedAt, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
+      params: { keyword: input.keyword, organizationIds: input.organizationIds, fullName: input.fullName, cccd: input.cccd, dateOfIssue: input.dateOfIssue, noiCapCCCDId: input.noiCapCCCDId, position: input.position, phone: input.phone, email: input.email, submissionAddress: input.submissionAddress, province: input.province, ward: input.ward, isDefault: input.isDefault, isDeleted: input.isDeleted, deletedBy: input.deletedBy, deletedAt: input.deletedAt, sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
   

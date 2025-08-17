@@ -68,6 +68,6 @@ public class ToChuc : FullAuditedAggregateRoot<long>
     public ICollection<ToChuc> ToChucCapDuois { get; set; } = new HashSet<ToChuc>();
     // public ICollection<ThietBiDichVuPhanMem> ThietBiDichVuPhanMems { get; set; } = new HashSet<ThietBiDichVuPhanMem>();
     // public ICollection<ThueBaoCaNhan> ThueBaoCaNhans { get; set; } = new HashSet<ThueBaoCaNhan>();
-    // public ICollection<NguoiTiepNhan> NguoiTiepNhans { get; set; } = new HashSet<NguoiTiepNhan>();
+    public ICollection<NguoiTiepNhan> NguoiTiepNhans { get; set; } = new HashSet<NguoiTiepNhan>();
 
 }

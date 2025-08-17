@@ -5,9 +5,9 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class NguoiTiepNhanDto : AuditedEntityDto<long>
 {
-    public long? OrganizationId { get; set; }
+    public long[] OrganizationIds { get; set; }
 
-    public string OrganizationName { get; set; }
+    public string[] OrganizationNames { get; set; }
 
     public string FullName { get; set; }
 

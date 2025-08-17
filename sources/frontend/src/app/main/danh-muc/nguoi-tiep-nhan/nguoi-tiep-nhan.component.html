@@ -93,7 +93,14 @@
           <td>{{ row.phone }}</td>
           <td>{{ row.email }}</td>
           <td>{{ row.submissionAddress }}</td>
-          <td class="col-large-only">{{ row.organizationName }}</td>
+          <td class="col-large-only">
+            <ng-container *ngIf="row.organizationNames?.length; else noOrg">
+              <span class="badge rounded-pill bg-light text-dark me-1" *ngFor="let name of row.organizationNames">{{ name }}</span>
+            </ng-container>
+            <ng-template #noOrg>
+              <span class="text-muted">--</span>
+            </ng-template>
+          </td>
           <td class="col-large-only">{{ row.dateOfIssue }}</td>
           <td class="col-large-only">{{ row.noiCapCCCDName }}</td>
           <td class="col-large-only">{{ row.province }}</td>
@@ -153,9 +160,15 @@
       <div class="row g-3">
         <div class="col-12">
           <div class="mb-2 fw-bold">Thông tin cơ quan nộp hồ sơ</div>
-          <div class="d-flex flex-wrap gap-2">
-            <span *ngFor="let org of organizations" class="btn btn-outline-primary btn-sm" [class.active]="form?.value?.organizationId === org.id" (click)="form?.patchValue({ organizationId: org.id })">{{ org.tenToChuc }}</span>
-          </div>
+          <p-multiSelect
+            [options]="organizations"
+            defaultLabel="-- Chọn cơ quan --"
+            optionLabel="tenToChuc"
+            optionValue="id"
+            [filter]="true"
+            display="chip"
+            formControlName="organizationIds">
+          </p-multiSelect>
         </div>
 
         <div class="col-12">

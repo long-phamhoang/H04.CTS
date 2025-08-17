@@ -7,7 +7,7 @@ public class GetNguoiTiepNhanListDto : PagedAndSortedResultRequestDto
 {   
     public string? Keyword { get; set; }
 
-    public long? OrganizationId { get; set; }
+    public long[]? OrganizationIds { get; set; }
 
     public string? FullName { get; set; }
 

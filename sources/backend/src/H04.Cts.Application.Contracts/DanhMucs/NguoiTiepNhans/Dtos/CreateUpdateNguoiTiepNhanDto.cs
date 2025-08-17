@@ -5,7 +5,7 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class CreateUpdateNguoiTiepNhanDto
 {
-    public long? OrganizationId { get; set; }
+    public long[] OrganizationIds { get; set; } = Array.Empty<long>();
 
     public string FullName { get; set; } = string.Empty;
 

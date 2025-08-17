@@ -191,7 +191,7 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
     this.cccdExists = false;
 
     this.form = this.fb.group({
-      organizationId: [this.selectedNguoiTiepNhan.organizationId || null],
+      organizationIds: [this.selectedNguoiTiepNhan.organizationIds || []],
       fullName: [this.selectedNguoiTiepNhan.fullName || '', Validators.required],
       cccd: [this.selectedNguoiTiepNhan.cccd || null, Validators.required],
       dateOfIssue: [formatDateToInput(this.selectedNguoiTiepNhan.dateOfIssue) || null, Validators.required],
@@ -204,6 +204,13 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
       ward: [this.selectedNguoiTiepNhan.ward || null, Validators.required],
       isDefault: [this.selectedNguoiTiepNhan.isDefault ?? false],
     });
+  }
+
+  toggleOrganization(orgId: number) {
+    const current: number[] = Array.isArray(this.form?.value?.organizationIds) ? this.form.value.organizationIds : [];
+    const existsIndex = current.indexOf(orgId);
+    const updated = existsIndex >= 0 ? current.filter((x: number) => x !== orgId) : [...current, orgId];
+    this.form?.patchValue({ organizationIds: updated });
   }
 
   // change the save method
@@ -243,9 +250,9 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
       isDefault: typeof raw.isDefault === 'string' ? raw.isDefault === 'true' : !!raw.isDefault,
     };
 
-    // Only include organizationId if it has a value
-    if (raw.organizationId !== null && raw.organizationId !== undefined && raw.organizationId !== '') {
-      dto.organizationId = toNullableNumber(raw.organizationId);
+    // Only include organizationIds if array has values
+    if (Array.isArray(raw.organizationIds) && raw.organizationIds.length > 0) {
+      dto.organizationIds = raw.organizationIds.map((x: any) => Number(x)).filter((x: any) => !Number.isNaN(x));
     }
 
     // Only include noiCapCCCDId if it has a value
@@ -317,9 +324,9 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
       isDefault: newValue,
     };
 
-    // Only include organizationId if it has a value
-    if (row.organizationId !== null && row.organizationId !== undefined) {
-      updateDto.organizationId = row.organizationId;
+    // Only include organizationIds if it has values
+    if (Array.isArray(row.organizationIds) && row.organizationIds.length > 0) {
+      updateDto.organizationIds = row.organizationIds;
     }
 
     // Only include noiCapCCCDId if it has a value
