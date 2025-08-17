@@ -18,9 +18,14 @@ public class CtsApplicationAutoMapperProfile : Profile
         CreateMap<CreateUpdateNoiCapCCCDDto, NoiCapCCCD>();
 
         // Receiver
+        CreateMap<ToChuc, OrganizationSummaryDto>()
+            .ForMember(d => d.Name, opt => opt.MapFrom(s => s.TenToChuc ?? string.Empty));
+
+        CreateMap<NoiCapCCCD, NoiCapCCCDSummaryDto>();
+
         CreateMap<NguoiTiepNhan, NguoiTiepNhanDto>()
-            .ForMember(d => d.OrganizationIds, opt => opt.MapFrom(s => s.Organizations != null ? s.Organizations.Select(o => o.Id).ToArray() : Array.Empty<long>()))
-            .ForMember(d => d.OrganizationNames, opt => opt.MapFrom(s => s.Organizations != null ? s.Organizations.Select(o => o.TenToChuc ?? string.Empty).ToArray() : Array.Empty<string>()));
+            .ForMember(d => d.Organizations, opt => opt.MapFrom(s => s.Organizations))
+            .ForMember(d => d.NoiCapCCCD, opt => opt.MapFrom(s => s.NoiCapCCCDFk));
         CreateMap<CreateUpdateNguoiTiepNhanDto, NguoiTiepNhan>()
             .ForMember(d => d.Organizations, opt => opt.Ignore());
     }

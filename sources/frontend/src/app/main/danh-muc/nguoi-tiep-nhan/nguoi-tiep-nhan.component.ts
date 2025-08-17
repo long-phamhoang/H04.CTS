@@ -34,6 +34,20 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
 
   keyword: string = '';
 
+  // List filters
+  filterOrganizationIds: number[] = [];
+  filterFullName?: string;
+  filterCccd?: string;
+  filterDateOfIssue?: string; // yyyy-MM-dd
+  filterNoiCapCCCDId?: number;
+  filterPosition?: string;
+  filterPhone?: string;
+  filterEmail?: string;
+  filterSubmissionAddress?: string;
+  filterProvince?: string;
+  filterWard?: string;
+  filterIsDefault?: boolean; // undefined means all
+
   // CCCD validation properties
   private cccdCheckSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -147,11 +161,48 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
 		const rows = event?.rows ?? this.pageSize;
 		const sorting = event?.sorting;
 		this.nguoiTiepNhanService
-			.getList({ keyword: this.keyword, skipCount: first, maxResultCount: rows, sorting })
+			.getList({
+				keyword: this.keyword || undefined,
+				organizationIds: this.filterOrganizationIds && this.filterOrganizationIds.length > 0 ? this.filterOrganizationIds : undefined,
+				fullName: this.filterFullName || undefined,
+				cccd: this.filterCccd || undefined,
+				dateOfIssue: this.filterDateOfIssue || undefined,
+				noiCapCCCDId: this.filterNoiCapCCCDId || undefined,
+				position: this.filterPosition || undefined,
+				phone: this.filterPhone || undefined,
+				email: this.filterEmail || undefined,
+				submissionAddress: this.filterSubmissionAddress || undefined,
+				province: this.filterProvince || undefined,
+				ward: this.filterWard || undefined,
+				isDefault: this.filterIsDefault,
+				skipCount: first,
+				maxResultCount: rows,
+				sorting,
+			})
 			.subscribe((response) => (this.nguoiTiepNhan = response));
 	}
 
   onSearch() {
+    this.reload({ first: 0, rows: this.pageSize });
+  }
+
+  applyFilters() {
+    this.reload({ first: 0, rows: this.pageSize });
+  }
+
+  clearFilters() {
+    this.filterOrganizationIds = [];
+    this.filterFullName = undefined;
+    this.filterCccd = undefined;
+    this.filterDateOfIssue = undefined;
+    this.filterNoiCapCCCDId = undefined;
+    this.filterPosition = undefined;
+    this.filterPhone = undefined;
+    this.filterEmail = undefined;
+    this.filterSubmissionAddress = undefined;
+    this.filterProvince = undefined;
+    this.filterWard = undefined;
+    this.filterIsDefault = undefined;
     this.reload({ first: 0, rows: this.pageSize });
   }
 
@@ -191,11 +242,15 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
     this.cccdExists = false;
 
     this.form = this.fb.group({
-      organizationIds: [this.selectedNguoiTiepNhan.organizationIds || []],
+      organizationIds: [
+        Array.isArray(this.selectedNguoiTiepNhan.organizations)
+          ? this.selectedNguoiTiepNhan.organizations.map(o => o.id)
+          : []
+      ],
       fullName: [this.selectedNguoiTiepNhan.fullName || '', Validators.required],
       cccd: [this.selectedNguoiTiepNhan.cccd || null, Validators.required],
       dateOfIssue: [formatDateToInput(this.selectedNguoiTiepNhan.dateOfIssue) || null, Validators.required],
-      noiCapCCCDId: [this.selectedNguoiTiepNhan.noiCapCCCDId || null, Validators.required],
+      noiCapCCCDId: [this.selectedNguoiTiepNhan.noiCapCCCD?.id || null, Validators.required],
       position: [this.selectedNguoiTiepNhan.position || null, Validators.required],
       phone: [this.selectedNguoiTiepNhan.phone || null, Validators.required],
       email: [this.selectedNguoiTiepNhan.email || null, Validators.required],
@@ -324,14 +379,14 @@ export class NguoiTiepNhanComponent implements OnInit, OnDestroy {
       isDefault: newValue,
     };
 
-    // Only include organizationIds if it has values
-    if (Array.isArray(row.organizationIds) && row.organizationIds.length > 0) {
-      updateDto.organizationIds = row.organizationIds;
+    // Only include organizationIds if it has values (derive from organizations list)
+    if (Array.isArray(row.organizations) && row.organizations.length > 0) {
+      updateDto.organizationIds = row.organizations.map(o => o.id);
     }
 
     // Only include noiCapCCCDId if it has a value
-    if (row.noiCapCCCDId !== null && row.noiCapCCCDId !== undefined && row.noiCapCCCDId !== 0) {
-      updateDto.noiCapCCCDId = row.noiCapCCCDId;
+    if (row.noiCapCCCD && row.noiCapCCCD.id) {
+      updateDto.noiCapCCCDId = row.noiCapCCCD.id;
     }
 
     // Call update API

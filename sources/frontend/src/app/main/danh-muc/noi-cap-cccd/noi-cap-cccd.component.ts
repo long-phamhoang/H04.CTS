@@ -28,91 +28,100 @@ export class NoiCapCCCDComponent implements OnInit {
 
 	pageSize = 10;
 
-  keyword: string = '';
+	keyword: string = '';
 
-  constructor(
-    public readonly list: ListService,
-    private noiCapCCCDService: NoiCapCCCDService,
-    private fb: FormBuilder,
-    private confirmation: ConfirmationService // inject the ConfirmationService
-  ) { }
+	// List filters
+	filterName?: string;
+	filterCode?: string;
+	filterAbbreviation?: string;
+	filterAddress?: string;
+	filterProvince?: string;
+	filterNote?: string;
+	filterIsActive?: boolean; // undefined: all
+	
+	constructor(
+		public readonly list: ListService,
+		private noiCapCCCDService: NoiCapCCCDService,
+		private fb: FormBuilder,
+		private confirmation: ConfirmationService // inject the ConfirmationService
+	) { }
 
-  ngOnInit() {
-    // initial load
-    // this.reload();
-    
-    // Initialize form first
-    this.buildForm();
-  }
+	ngOnInit() {
+		// initial load
+		// this.reload();
+		
+		// Initialize form first
+		this.buildForm();
+	}
 
-  createNoiCapCCCD() {
-    this.selectedNoiCapCCCD = {} as NoiCapCCCDDto; // reset the selected NoiCapCCCD
-    this.buildForm();
-    this.isModalOpen = true;
-  }
+	createNoiCapCCCD() {
+		this.selectedNoiCapCCCD = {} as NoiCapCCCDDto; // reset the selected NoiCapCCCD
+		this.buildForm();
+		this.isModalOpen = true;
+	}
 
-  editNoiCapCCCD(id: number) {
-    this.noiCapCCCDService.get(id).subscribe((noiCapCCCD) => {
-      this.selectedNoiCapCCCD = noiCapCCCD;
-      this.buildForm();
-      this.isModalOpen = true;
-    });
-  }
+	editNoiCapCCCD(id: number) {
+		this.noiCapCCCDService.get(id).subscribe((noiCapCCCD) => {
+			this.selectedNoiCapCCCD = noiCapCCCD;
+			this.buildForm();
+			this.isModalOpen = true;
+		});
+	}
 
-  delete(id: number) {
-    this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
-      if (status === Confirmation.Status.confirm) {
-        this.noiCapCCCDService.delete(id).subscribe(() => this.reload());
-      }
-    });
-  }
+	delete(id: number) {
+		this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
+			if (status === Confirmation.Status.confirm) {
+				this.noiCapCCCDService.delete(id).subscribe(() => this.reload());
+			}
+		});
+	}
 
-  buildForm() {
-    this.form = this.fb.group({
-      name: [this.selectedNoiCapCCCD.name || '', Validators.required],
-      code: [this.selectedNoiCapCCCD.code || null, Validators.required],
-      abbreviation: [this.selectedNoiCapCCCD.abbreviation || null, Validators.required],
-      address: [this.selectedNoiCapCCCD.address || null, Validators.required],
-      province: [this.selectedNoiCapCCCD.province || null, Validators.required],
-      note: [this.selectedNoiCapCCCD.note || null], // Remove required validator for note
-      isActive: [this.selectedNoiCapCCCD.isActive || true], // Default to true
-    });
-  }
+	buildForm() {
+		this.form = this.fb.group({
+			name: [this.selectedNoiCapCCCD.name || '', Validators.required],
+			code: [this.selectedNoiCapCCCD.code || null, Validators.required],
+			abbreviation: [this.selectedNoiCapCCCD.abbreviation || null, Validators.required],
+			address: [this.selectedNoiCapCCCD.address || null, Validators.required],
+			province: [this.selectedNoiCapCCCD.province || null, Validators.required],
+			note: [this.selectedNoiCapCCCD.note || null], // Remove required validator for note
+			isActive: [this.selectedNoiCapCCCD.isActive || true], // Default to true
+		});
+	}
 
-  // change the save method
-  save() {
-    if (this.form.invalid) {
-      this.logFormErrors();
-      return;
-    }
+	// change the save method
+	save() {
+		if (this.form.invalid) {
+			this.logFormErrors();
+			return;
+		}
 
-    const request = this.selectedNoiCapCCCD.id
-      ? this.noiCapCCCDService.update(this.selectedNoiCapCCCD.id, this.form.value)
-      : this.noiCapCCCDService.create(this.form.value);
+		const request = this.selectedNoiCapCCCD.id
+			? this.noiCapCCCDService.update(this.selectedNoiCapCCCD.id, this.form.value)
+			: this.noiCapCCCDService.create(this.form.value);
 
-    request.subscribe(() => {
-      this.isModalOpen = false;
-      this.form.reset();
-      this.reload();
-    });
-  }
+		request.subscribe(() => {
+			this.isModalOpen = false;
+			this.form.reset();
+			this.reload();
+		});
+	}
 
-  // Helper method to debug form validation
-  logFormErrors() {
-    console.log('Form is invalid. Current errors:');
-    Object.keys(this.form.controls).forEach(key => {
-      const control = this.form.get(key);
-      if (control?.invalid) {
-        console.log(`${key}:`, control.errors);
-      }
-    });
-  }
+	// Helper method to debug form validation
+	logFormErrors() {
+		console.log('Form is invalid. Current errors:');
+		Object.keys(this.form.controls).forEach(key => {
+			const control = this.form.get(key);
+			if (control?.invalid) {
+				console.log(`${key}:`, control.errors);
+			}
+		});
+	}
 
-  // Helper method to check if a specific field is invalid
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.form.get(fieldName);
-    return field ? field.invalid && field.touched : false;
-  }
+	// Helper method to check if a specific field is invalid
+	isFieldInvalid(fieldName: string): boolean {
+		const field = this.form.get(fieldName);
+		return field ? field.invalid && field.touched : false;
+	}
 
 	loadNoiCapCCCD(event: any) {
 		const rows = event?.rows || this.pageSize;
@@ -128,37 +137,64 @@ export class NoiCapCCCDComponent implements OnInit {
 		const rows = event?.rows ?? this.pageSize;
 		const sorting = event?.sorting;
 		this.noiCapCCCDService
-			.getList({ keyword: this.keyword, skipCount: first, maxResultCount: rows, sorting })
+			.getList({
+				keyword: this.keyword || undefined,
+				name: this.filterName || undefined,
+				code: this.filterCode || undefined,
+				abbreviation: this.filterAbbreviation || undefined,
+				address: this.filterAddress || undefined,
+				province: this.filterProvince || undefined,
+				note: this.filterNote || undefined,
+				isActive: this.filterIsActive,
+				skipCount: first,
+				maxResultCount: rows,
+				sorting,
+			})
 			.subscribe((response) => (this.noiCapCCCD = response));
 	}
 
-  onSearch() {
-    this.reload({ first: 0, rows: this.pageSize });
-  }
+	onSearch() {
+		this.reload({ first: 0, rows: this.pageSize });
+	}
 
-  closeModal() {
-    this.isModalOpen = false;
-  }
+	applyFilters() {
+		this.reload({ first: 0, rows: this.pageSize });
+	}
 
-  // Add new method for toggle functionality
-  toggleIsActive(row: NoiCapCCCDDto, checked: boolean) {
-    const updateDto: CreateUpdateNoiCapCCCDDto = {
-      name: row.name || '',
-      code: row.code,
-      abbreviation: row.abbreviation,
-      address: row.address,
-      province: row.province,
-      note: row.note,
-      isActive: checked
-    };
-    
-    this.noiCapCCCDService.update(row.id, updateDto).subscribe(() => {
-      // Cập nhật trực tiếp giá trị isActive thay vì reload toàn bộ danh sách
-      row.isActive = checked;
-    }, (error) => {
-      // Nếu update thất bại, revert lại giá trị cũ
-      console.error('Failed to update isActive:', error);
-      // Không cần làm gì vì PrimeNG sẽ tự động revert UI
-    });
-  }
+	clearFilters() {
+		this.filterName = undefined;
+		this.filterCode = undefined;
+		this.filterAbbreviation = undefined;
+		this.filterAddress = undefined;
+		this.filterProvince = undefined;
+		this.filterNote = undefined;
+		this.filterIsActive = undefined;
+		this.reload({ first: 0, rows: this.pageSize });
+	}
+
+	closeModal() {
+		this.isModalOpen = false;
+	}
+
+	// Add new method for toggle functionality
+	toggleIsActive(row: NoiCapCCCDDto, checked: boolean) {
+		const updateDto: CreateUpdateNoiCapCCCDDto = {
+			name: row.name || '',
+			code: row.code,
+			abbreviation: row.abbreviation,
+			address: row.address,
+			province: row.province,
+			note: row.note,
+			isActive: checked
+		};
+		
+		this.noiCapCCCDService.update(row.id, updateDto).subscribe(() => {
+			// Cập nhật trực tiếp giá trị isActive thay vì reload toàn bộ danh sách
+			row.isActive = checked;
+		}, (error) => {
+			// Nếu update thất bại, revert lại giá trị cũ
+			console.error('Failed to update isActive:', error);
+			// Không cần làm gì vì PrimeNG sẽ tự động revert UI
+		});
+	}
 }

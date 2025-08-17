@@ -14,4 +14,5 @@ public interface INguoiTiepNhanAppService :
         CreateUpdateNguoiTiepNhanDto> //Used to create/update a book
 {
     Task<bool> CheckExistAsync(CheckExistDto input);
+    Task DeleteManyAsync(long[] ids);
 }

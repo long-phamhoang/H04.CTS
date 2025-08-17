@@ -73,14 +73,17 @@ export interface GetNoiCapCCCDListDto extends PagedAndSortedResultRequestDto {
   isActive?: boolean;
 }
 
+export interface OrganizationSummaryDto {
+  id: number;
+  name: string;
+}
+
 export interface NguoiTiepNhanDto extends AuditedEntityDto<number> {
-  organizationIds?: number[];
-  organizationNames?: string[];
+  organizations?: OrganizationSummaryDto[];
   fullName?: string;
   cccd?: string;
   dateOfIssue?: string;
-  noiCapCCCDId: number;
-  noiCapCCCDName?: string;
+  noiCapCCCD?: NoiCapCCCDSummaryDto;
   position?: string;
   phone?: string;
   email?: string;
@@ -104,6 +107,11 @@ export interface NoiCapCCCDDto extends AuditedEntityDto<number> {
   isDeleted: boolean;
   deletedBy?: string;
   deletedAt?: string;
+}
+
+export interface NoiCapCCCDSummaryDto {
+  id: number;
+  name: string;
 }
 
 export interface ToChucDto extends AuditedEntityDto<number> {

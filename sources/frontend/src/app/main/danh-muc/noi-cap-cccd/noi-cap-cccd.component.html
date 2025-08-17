@@ -25,6 +25,51 @@
         <i class="fa fa-search"></i>
       </button>
     </div>
+    <!-- Advanced filters -->
+    <div class="mb-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <label class="form-label">Tên nơi cấp</label>
+          <input type="text" class="form-control" [(ngModel)]="filterName" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Mã nơi cấp</label>
+          <input type="text" class="form-control" [(ngModel)]="filterCode" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Viết tắt</label>
+          <input type="text" class="form-control" [(ngModel)]="filterAbbreviation" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Tỉnh</label>
+          <input type="text" class="form-control" [(ngModel)]="filterProvince" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Địa chỉ</label>
+          <input type="text" class="form-control" [(ngModel)]="filterAddress" />
+        </div>
+        <div class="col-md-5">
+          <label class="form-label">Ghi chú</label>
+          <input type="text" class="form-control" [(ngModel)]="filterNote" />
+        </div>
+        <div class="col-md-1">
+          <label class="form-label">Trạng thái</label>
+          <select class="form-select" [(ngModel)]="filterIsActive">
+            <option [ngValue]="undefined">Tất cả</option>
+            <option [ngValue]="true">Hoạt động</option>
+            <option [ngValue]="false">Không hoạt động</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <button type="button" class="btn btn-primary btn-sm" (click)="applyFilters()">
+          <i class="fa fa-filter me-1"></i> Lọc
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+          Xóa lọc
+        </button>
+      </div>
+    </div>
     <p-table [value]="noiCapCCCD.items" [rows]="pageSize" [lazy]="true" (onLazyLoad)="loadNoiCapCCCD($event)"
       [loading]="false" class="p-datatable-sm p-datatable-striped p-datatable-gridlines custom-header-table">
       <ng-template pTemplate="header">

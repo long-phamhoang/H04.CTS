@@ -27,6 +27,88 @@
         <i class="fa fa-search"></i>
       </button>
     </div>
+
+    <!-- Advanced filters -->
+    <div class="mb-3">
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label class="form-label">Cơ quan nộp hồ sơ</label>
+          <p-multiSelect
+            [options]="organizations"
+            defaultLabel="-- Chọn cơ quan --"
+            optionLabel="tenToChuc"
+            optionValue="id"
+            [filter]="true"
+            display="chip"
+            [(ngModel)]="filterOrganizationIds">
+          </p-multiSelect>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Nơi cấp CCCD</label>
+          <select class="form-select" [(ngModel)]="filterNoiCapCCCDId">
+            <option [ngValue]="undefined">-- Chọn nơi cấp --</option>
+            <option *ngFor="let item of noiCapCCCDs" [ngValue]="item.id">{{ item.name }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Ngày cấp</label>
+          <input type="date" class="form-control" [(ngModel)]="filterDateOfIssue" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Họ tên</label>
+          <input type="text" class="form-control" [(ngModel)]="filterFullName" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">CCCD</label>
+          <input type="text" class="form-control" [(ngModel)]="filterCccd" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Chức vụ</label>
+          <input type="text" class="form-control" [(ngModel)]="filterPosition" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Điện thoại</label>
+          <input type="text" class="form-control" [(ngModel)]="filterPhone" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Email</label>
+          <input type="text" class="form-control" [(ngModel)]="filterEmail" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Địa chỉ tiếp nhận</label>
+          <input type="text" class="form-control" [(ngModel)]="filterSubmissionAddress" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Tỉnh/Thành phố</label>
+          <input type="text" class="form-control" [(ngModel)]="filterProvince" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Phường/Xã</label>
+          <input type="text" class="form-control" [(ngModel)]="filterWard" />
+        </div>
+        <div class="col-md-1">
+          <label class="form-label">Mặc định</label>
+          <select class="form-select" [(ngModel)]="filterIsDefault">
+            <option [ngValue]="undefined">Tất cả</option>
+            <option [ngValue]="true">Có</option>
+            <option [ngValue]="false">Không</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <button type="button" class="btn btn-primary btn-sm" (click)="applyFilters()">
+          <i class="fa fa-filter me-1"></i> Lọc
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+          Xóa lọc
+        </button>
+      </div>
+    </div>
+
     <p-table [value]="nguoiTiepNhan.items" [rows]="pageSize" [lazy]="true" (onLazyLoad)="loadNguoiTiepNhan($event)"
       [loading]="false" class="p-datatable-sm p-datatable-striped p-datatable-gridlines custom-header-table">
       <ng-template pTemplate="header">
@@ -60,14 +142,6 @@
             {{ '::TenCoQuan' | abpLocalization }}
             <p-sortIcon field="OrganizationName"></p-sortIcon>
           </th>
-          <th class="col-large-only" pSortableColumn="DateOfIssue">
-            {{ '::NgayCapCCCD' | abpLocalization }}
-            <p-sortIcon field="DateOfIssue"></p-sortIcon>
-          </th>
-          <th class="col-large-only" pSortableColumn="NoiCapCCCDName">
-            {{ '::NoiCapCCCDName' | abpLocalization }}
-            <p-sortIcon field="NoiCapCCCDName"></p-sortIcon>
-          </th>
           <th class="col-large-only" pSortableColumn="Province">
             {{ '::Province' | abpLocalization }}
             <p-sortIcon field="Province"></p-sortIcon>
@@ -88,21 +162,22 @@
         <tr>
           <td>{{ rowIndex + 1 }}</td>
           <td>{{ row.fullName }}</td>
-          <td>{{ row.cccd }}</td>
+          <td>
+            <div>{{ row.cccd }}</div>
+            <div class="text-muted small">{{ row.dateOfIssue }} - {{ row.noiCapCCCD?.name }}</div>
+          </td>
           <td>{{ row.position }}</td>
           <td>{{ row.phone }}</td>
           <td>{{ row.email }}</td>
           <td>{{ row.submissionAddress }}</td>
           <td class="col-large-only">
-            <ng-container *ngIf="row.organizationNames?.length; else noOrg">
-              <span class="badge rounded-pill bg-light text-dark me-1" *ngFor="let name of row.organizationNames">{{ name }}</span>
+            <ng-container *ngIf="row.organizations?.length; else noOrg">
+              <span class="badge rounded-pill bg-light text-dark me-1" *ngFor="let org of row.organizations">{{ org.name }}</span>
             </ng-container>
             <ng-template #noOrg>
               <span class="text-muted">--</span>
             </ng-template>
           </td>
-          <td class="col-large-only">{{ row.dateOfIssue }}</td>
-          <td class="col-large-only">{{ row.noiCapCCCDName }}</td>
           <td class="col-large-only">{{ row.province }}</td>
           <td class="col-large-only">{{ row.ward }}</td>
           <td>
@@ -132,7 +207,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="14" class="text-center py-3">{{ '::NoDataFound' | abpLocalization }}</td>
+          <td colspan="12" class="text-center py-3">{{ '::NoDataFound' | abpLocalization }}</td>
         </tr>
       </ng-template>
     </p-table>

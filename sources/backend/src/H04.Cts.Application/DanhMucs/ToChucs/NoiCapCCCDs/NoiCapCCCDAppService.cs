@@ -57,6 +57,42 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
             );
         }
 
+        // Per-field filters
+        if (!string.IsNullOrWhiteSpace(input.Name))
+        {
+            var value = input.Name.Trim();
+            queryable = queryable.Where(x => x.Name != null && x.Name.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Code))
+        {
+            var value = input.Code.Trim();
+            queryable = queryable.Where(x => x.Code != null && x.Code.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Abbreviation))
+        {
+            var value = input.Abbreviation.Trim();
+            queryable = queryable.Where(x => x.Abbreviation != null && x.Abbreviation.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Address))
+        {
+            var value = input.Address.Trim();
+            queryable = queryable.Where(x => x.Address != null && x.Address.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Province))
+        {
+            var value = input.Province.Trim();
+            queryable = queryable.Where(x => x.Province != null && x.Province.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Note))
+        {
+            var value = input.Note.Trim();
+            queryable = queryable.Where(x => x.Note != null && x.Note.Contains(value));
+        }
+        if (input.IsActive.HasValue)
+        {
+            queryable = queryable.Where(x => x.IsActive == input.IsActive.Value);
+        }
+
         var query = queryable
             .OrderBy(input.Sorting.IsNullOrWhiteSpace() ? "Name" : input.Sorting)
             .Skip(input.SkipCount)
@@ -114,8 +150,18 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
 
     public async Task DeleteAsync(long id)
     {
-        var noiCapCCCD = await _repository.GetAsync(id);
-        noiCapCCCD.IsDeleted = true;
-        await _repository.UpdateAsync(noiCapCCCD);
+        await _repository.DeleteAsync(id);
+    }
+
+    public async Task DeleteManyAsync(long[] ids)
+    {
+        if (ids == null || ids.Length == 0)
+        {
+            return;
+        }
+        foreach (var id in ids.Distinct())
+        {
+            await _repository.DeleteAsync(id);
+        }
     }
 }

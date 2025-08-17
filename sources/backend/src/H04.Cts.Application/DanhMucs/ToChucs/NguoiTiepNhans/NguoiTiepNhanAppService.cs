@@ -74,6 +74,72 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             );
         }
 
+        // Per-field filters
+        if (!string.IsNullOrWhiteSpace(input.FullName))
+        {
+            var value = input.FullName.Trim();
+            queryable = queryable.Where(x => x.FullName != null && x.FullName.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.CCCD))
+        {
+            var value = input.CCCD.Trim();
+            queryable = queryable.Where(x => x.CCCD != null && x.CCCD.Contains(value));
+        }
+        if (input.DateOfIssue.HasValue)
+        {
+            var date = input.DateOfIssue.Value;
+            queryable = queryable.Where(x => x.DateOfIssue == date);
+        }
+        if (input.NoiCapCCCDId.HasValue)
+        {
+            var id = input.NoiCapCCCDId.Value;
+            queryable = queryable.Where(x => x.NoiCapCCCDId == id);
+        }
+        if (!string.IsNullOrWhiteSpace(input.Position))
+        {
+            var value = input.Position.Trim();
+            queryable = queryable.Where(x => x.Position != null && x.Position.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Phone))
+        {
+            var value = input.Phone.Trim();
+            queryable = queryable.Where(x => x.Phone != null && x.Phone.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Email))
+        {
+            var value = input.Email.Trim();
+            queryable = queryable.Where(x => x.Email != null && x.Email.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.SubmissionAddress))
+        {
+            var value = input.SubmissionAddress.Trim();
+            queryable = queryable.Where(x => x.SubmissionAddress != null && x.SubmissionAddress.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Province))
+        {
+            var value = input.Province.Trim();
+            queryable = queryable.Where(x => x.Province != null && x.Province.Contains(value));
+        }
+        if (!string.IsNullOrWhiteSpace(input.Ward))
+        {
+            var value = input.Ward.Trim();
+            queryable = queryable.Where(x => x.Ward != null && x.Ward.Contains(value));
+        }
+        if (input.IsDefault.HasValue)
+        {
+            queryable = queryable.Where(x => x.IsDefault == input.IsDefault.Value);
+        }
+        if (!string.IsNullOrWhiteSpace(input.DeletedBy))
+        {
+            var value = input.DeletedBy.Trim();
+            queryable = queryable.Where(x => x.DeletedBy != null && x.DeletedBy.Contains(value));
+        }
+        if (input.DeletedAt.HasValue)
+        {
+            var date = input.DeletedAt.Value;
+            queryable = queryable.Where(x => x.DeletedAt == date);
+        }
+
         // Filter by organization ids if provided
         if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
         {
@@ -223,14 +289,19 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
     public async Task DeleteAsync(long id)
     {
-        var nguoiTiepNhan = await _repository.GetAsync(id);
-        if (nguoiTiepNhan.IsDeleted)
+        await _repository.DeleteAsync(id);
+    }
+
+    public async Task DeleteManyAsync(long[] ids)
+    {
+        if (ids == null || ids.Length == 0)
         {
-            throw new UserFriendlyException("Bản ghi đã bị xóa trước đó.");
+            return;
         }
-        
-        nguoiTiepNhan.IsDeleted = true;
-        await _repository.UpdateAsync(nguoiTiepNhan);
+        foreach (var id in ids.Distinct())
+        {
+            await _repository.DeleteAsync(id);
+        }
     }
 
     public async Task<bool> CheckExistAsync(CheckExistDto input)

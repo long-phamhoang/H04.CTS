@@ -5,9 +5,7 @@ namespace H04.Cts.Dtos.DanhMucs;
 
 public class NguoiTiepNhanDto : AuditedEntityDto<long>
 {
-    public long[] OrganizationIds { get; set; }
-
-    public string[] OrganizationNames { get; set; }
+    public OrganizationSummaryDto[] Organizations { get; set; }
 
     public string FullName { get; set; }
 
@@ -15,9 +13,7 @@ public class NguoiTiepNhanDto : AuditedEntityDto<long>
 
     public DateTime DateOfIssue { get; set; }
 
-    public long NoiCapCCCDId { get; set; }
-
-    public string NoiCapCCCDName { get; set; }
+    public NoiCapCCCDSummaryDto? NoiCapCCCD { get; set; }
 
     public string Position { get; set; }
 
