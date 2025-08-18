@@ -1,12 +1,15 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ConfirmationService, Confirmation, ToasterService } from '@abp/ng.theme.shared';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, TrangThai, DieuKienCapCTSTheoLLDto } from '@app/proxy';
 import { DieuKienCapCTSTheoLLService } from '@app/proxy';
 import { debounceTime,distinctUntilChanged } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { MenuItem } from 'primeng/api';
+import { ImportExcelDialogComponent } from '@app/shared/components/import-excel-dialog/import-excel-dialog.component';
+import { Menu } from 'primeng/menu';
 
 @Component({
     standalone: false,
@@ -19,6 +22,13 @@ import { Subscription } from 'rxjs';
 	],
 })
 export class DKCtsLucLuongComponent implements OnInit {
+
+  @ViewChild('menu') menu: Menu;
+	@ViewChild('searchInput', { static: false }) searchInput: ElementRef;
+	@ViewChild('firstInput') firstInput: ElementRef;
+	  
+  @ViewChild(ImportExcelDialogComponent) importDialog: ImportExcelDialogComponent;
+  
     dkCtsLucLuong = { items: [], totalCount: 0 } as PagedResultDto<DieuKienCapCTSTheoLLDto>;
 
     selected = {} as DieuKienCapCTSTheoLLDto;
@@ -32,6 +42,12 @@ export class DKCtsLucLuongComponent implements OnInit {
 	isModalOpen = false;
 
 	private maChangeSub: Subscription | null = null;
+
+  	//Thêm options cho filter với tùy chọn "Tất cả"
+	filterTrangThaiOptions = [
+		{ value: null, key: 'Tất cả' },
+		...trangThaiOptions
+	];
 
 	// Add these properties to your component class
 	searchValue: string = '';
@@ -48,6 +64,8 @@ export class DKCtsLucLuongComponent implements OnInit {
 	exportColumns: any[] = [];
 	importColumns: any[] = [];
 	existingMaDieuKienValues: string[] = [];
+	formChanged: boolean = false;
+	originalFormData: any = null;
 
 	constructor(
         public readonly list: ListService,
@@ -112,9 +130,13 @@ export class DKCtsLucLuongComponent implements OnInit {
             ghiChu: [this.selected.ghiChu || ''],
         });
 
+        // Track form changes to enable "Lưu và tiếp tục"
+        this.originalFormData = this.form.value;
+        this.formChanged = false;
+        this.form.valueChanges.subscribe(() => {
+            this.checkFormChanges();
+        });
 
-
-        
 		//check debounce mã 
 		const maCtrl = this.form.get('maDieuKien');
 		if (this.maChangeSub) {
@@ -165,6 +187,47 @@ export class DKCtsLucLuongComponent implements OnInit {
 							this.toast.warn(message);
             }
         });
+    }
+
+    onFormSubmit() {
+      if (this.selected?.id) {
+        this.save();
+      } else {
+        this.saveAndContinue();
+      }
+    }
+
+    saveAndContinue() {
+      if (this.form?.invalid) return;
+
+      const config = { skipHandleError: true };
+      this.dkService.create(this.form.value, config).subscribe({
+        next: () => {
+          this.list.get();
+          this.toast.success('Lưu thành công, tiếp tục thêm mới');
+
+          // Preserve some fields to speed up subsequent entries
+          const currentTrangThai = this.form.get('trangThai')?.value;
+
+          this.selected = {} as DieuKienCapCTSTheoLLDto;
+          this.form.reset();
+          this.buildForm();
+          this.form.patchValue({ trangThai: currentTrangThai });
+        },
+        error: (err) => {
+          const message = err?.error?.error?.message || 'Có lỗi xảy ra';
+          this.toast.warn(message);
+        },
+      });
+    }
+
+    private checkFormChanges() {
+      if (!this.form || !this.originalFormData) {
+        this.formChanged = false;
+        return;
+      }
+      const currentValue = this.form.value;
+      this.formChanged = JSON.stringify(currentValue) !== JSON.stringify(this.originalFormData);
     }
 
     getLucLuongNameById(id?: number | null): string {
@@ -222,6 +285,40 @@ export class DKCtsLucLuongComponent implements OnInit {
       this.showImport = false;
       // Handle imported data
     }
+    downloadTemplate() {
+      if (this.importDialog) {
+        this.importDialog.downloadTemplate();
+      }
+    }
+
+    functionMenuItems: MenuItem[] = [
+      {
+        label: 'Xuất excel',
+        icon: 'pi pi-file-excel',
+        command: () => this.openExportDialog()
+      },
+      {
+        label: 'Nhập excel',
+        icon: 'pi pi-plus',
+        command: () => this.openImportDialog()
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Tải mẫu',
+        icon: 'pi pi-download',
+        command: () => this.downloadTemplate()
+    }
+    ];
+
+    filterNameChanged$ = new Subject<string>();
+
+	// Hàm này sẽ được gọi khi input thay đổi
+	onFilterNameChange(value: string) {
+		this.filterNameChanged$.next(value);
+	}
+
 }
 
 

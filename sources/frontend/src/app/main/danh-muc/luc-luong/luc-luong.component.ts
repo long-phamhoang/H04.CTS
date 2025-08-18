@@ -569,6 +569,7 @@ clearSearch() {
 		{
 			label: 'Tải mẫu',
 			icon: 'pi pi-download',
+			styleClass: 'green-italic-label',
 			command: () => this.downloadTemplate()
 	}
   ];
