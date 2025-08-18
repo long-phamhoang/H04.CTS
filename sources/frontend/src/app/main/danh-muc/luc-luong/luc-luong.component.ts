@@ -2,7 +2,7 @@ import { ListService, PagedResultDto } from '@abp/ng.core';
 import { ToasterService } from '@abp/ng.theme.shared';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { LucLuongDto, LucLuongService, trangThaiOptions, getTrangThaiLabel, TrangThai } from '@app/proxy';
@@ -13,6 +13,7 @@ import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ConfirmationService } from 'primeng/api';
 import { ImportExcelDialogComponent } from '@app/shared/components/import-excel-dialog/import-excel-dialog.component';
+import { LucLuongExcelService } from './luc-luong-excel.service';
 
 @Component({
 	standalone: false,
@@ -77,6 +78,10 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		{ field: 'ghiChu', header: 'Ghi chú' },
 	];
 	exportData: any[] = [];
+	// API export config
+	exportRequestParams: any = {};
+	// Export fetcher using proxy service
+	fetchExport = (params: any) => firstValueFrom(this.lucLuongService.getAllForExcel(params));
 
 	// Import
 	showImport = false;
@@ -108,7 +113,8 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		private lucLuongService: LucLuongService,
 		private fb: FormBuilder,
 		private confirmationService: ConfirmationService,
-		private toast: ToasterService
+		private toast: ToasterService,
+		public excelService: LucLuongExcelService
 	) { 
 		
 		}
@@ -410,11 +416,20 @@ clearSearch() {
 
 	// Export
 	openExportDialog() {
+		// Chuẩn bị dữ liệu hiển thị tức thời (không dùng nếu gọi API, nhưng giữ để fallback)
 		const mapTrangThai = (v: number | null | undefined) => this.getTrangThai(v);
 		this.exportData = (this.displayItems || []).map(x => ({
 			...x,
 			trangThaiText: mapTrangThai(x?.trangThai),
 		}));
+
+		// Thiết lập tham số gọi API export: filter hiện tại, sorting, và maxCount
+		this.exportRequestParams = this.excelService.buildRequestParams(
+			this.list.filter,
+			this.lucLuong?.totalCount,
+			'TenLucLuong'
+		);
+
 		this.exportVisible = true;
 	}
 
@@ -546,10 +561,28 @@ clearSearch() {
 
 
 	downloadTemplate() {
+		const fileName = 'import_luc_luong.xlsx';
+		this.lucLuongService.downloadTemplate(fileName).subscribe({
+			next: (response: any) => {
+				const url = response?.data?.downloadUrl;
+				if (url) {
+					window.open(url, '_blank'); 
+				} else {
+					this.toast.warn('Không tìm thấy URL tải file mẫu');
+				}
+			},
+			error: () => {
+				this.toast.warn('Không thể tải file mẫu');
+			}
+		});
+  }
+
+	
+	downloadTemplateMau() {
     if (this.importDialog) {
       this.importDialog.downloadTemplate();
     }
-  }
+	}
 
 
 	functionMenuItems: MenuItem[] = [
@@ -567,11 +600,17 @@ clearSearch() {
       separator: true
     },
 		{
-			label: 'Tải mẫu',
+			label: 'Tải mẫu ',
 			icon: 'pi pi-download',
 			styleClass: 'green-italic-label',
-			command: () => this.downloadTemplate()
-	}
+			command: () => this.downloadTemplateMau()
+	},
+	{
+		label: 'Tải mẫu Minio',
+		icon: 'pi pi-download',
+		styleClass: 'green-italic-label',
+		command: () => this.downloadTemplate()
+}
   ];
 
 	filterNameChanged$ = new Subject<string>();

@@ -1,6 +1,8 @@
 using H04.Cts.Dtos.DanhMucs;
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.Permissions;
+using H04.Cts.Blob;
+using Volo.Abp.BlobStoring;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using System;
 
 namespace H04.Cts.Application.DanhMucs;
 
@@ -147,6 +150,74 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
         await _repository.HardDeleteAsync(entity);
     }
 
+    
+    [Authorize(CtsPermissions.DanhMucs.LucLuong)]
+    public async Task<List<LucLuongDto>> GetAllForExcelAsync(GetLucLuongAllDto input)
+    {
+        var queryable = await _repository.GetQueryableAsync();
+        if (!string.IsNullOrWhiteSpace(input.Filter))
+        {
+            var raw = input.Filter.Trim();
+            try
+            {
+                using var doc = JsonDocument.Parse(raw);
+                var root = doc.RootElement;
+
+                if (root.ValueKind == JsonValueKind.Object)
+                {
+                    string ten = root.TryGetProperty("tenLucLuong", out var tenEl) ? (tenEl.GetString() ?? string.Empty).Trim() : string.Empty;
+                    string ma = root.TryGetProperty("maLucLuong", out var maEl) ? (maEl.GetString() ?? string.Empty).Trim() : string.Empty;
+                    string ttStr = root.TryGetProperty("trangThai", out var ttEl) ? (ttEl.ToString() ?? string.Empty).Trim() : string.Empty;
+
+                    if (!string.IsNullOrWhiteSpace(ten))
+                    {
+                        var tenLower = ten.ToLower();
+                        queryable = queryable.Where(x => ((x.TenLucLuong ?? string.Empty).ToLower()).Contains(tenLower));
+                    }
+                    if (!string.IsNullOrWhiteSpace(ma))
+                    {
+                        var maLower = ma.ToLower();
+                        queryable = queryable.Where(x => ((x.MaLucLuong ?? string.Empty).ToLower()).Contains(maLower));
+                    }
+                    if (!string.IsNullOrWhiteSpace(ttStr) && int.TryParse(ttStr, out var tt))
+                    {
+                        queryable = queryable.Where(x => ((int)x.TrangThai) == tt);
+                    }
+                }
+                else
+                {
+                    var f2 = (root.ValueKind == JsonValueKind.String || root.ValueKind == JsonValueKind.Number)
+                        ? (root.ToString() ?? string.Empty).Trim().ToLower()
+                        : raw.ToLower();
+
+                    if (!string.IsNullOrWhiteSpace(f2))
+                    {
+                        queryable = queryable.Where(x =>
+                            ((x.TenLucLuong ?? string.Empty).ToLower().Contains(f2)) ||
+                            ((x.MaLucLuong ?? string.Empty).ToLower().Contains(f2))
+                        );
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                var f = raw.ToLower();
+                queryable = queryable.Where(x =>
+                    ((x.TenLucLuong ?? string.Empty).ToLower().Contains(f)) ||
+                    ((x.MaLucLuong ?? string.Empty).ToLower().Contains(f))
+                );
+            }
+        }
 
 
+
+        // Giới hạn số lượng để tránh OOM khi export lớn
+        if (input.MaxCount.HasValue && input.MaxCount.Value > 0)
+        {
+            queryable = queryable.Take(input.MaxCount.Value);
+        }
+
+        var list = await AsyncExecuter.ToListAsync(queryable);
+        return ObjectMapper.Map<List<LucLuong>, List<LucLuongDto>>(list);
+    }
 }

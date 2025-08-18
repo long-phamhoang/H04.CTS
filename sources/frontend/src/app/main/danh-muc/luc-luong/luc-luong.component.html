@@ -291,6 +291,9 @@
     [columns]="exportColumns"
     [defaultFileName]="'LucLuong.xlsx'"
     [defaultSheetName]="'LucLuong'"
+    [requestParams]="exportRequestParams"
+    [mapResponse]="excelService.mapExportResponse"
+    [fetcher]="fetchExport"
     (exported)="onExported()"
   ></app-export-excel-dialog>
 

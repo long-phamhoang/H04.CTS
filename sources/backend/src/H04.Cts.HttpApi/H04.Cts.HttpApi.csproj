@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\H04.Cts.Application.Contracts\H04.Cts.Application.Contracts.csproj" />
+    <ProjectReference Include="..\H04.Cts.Application\H04.Cts.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ import { ThemeSharedModule } from '@abp/ng.theme.shared';
 //#region Angular Core Modules
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -60,6 +61,7 @@ const modules = [
 
   // Angular Core Modules
   CommonModule,
+  HttpClientModule,
   FormsModule,
   ReactiveFormsModule,
 

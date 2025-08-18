@@ -47,7 +47,32 @@ export class LucLuongService {
 		},
 		{ apiName: this.apiName,...config });
 
+	//  API/Export
+	getAllForExcel = (
+		input: { filter?: string; sorting?: string; maxCount?: number },
+		config?: Partial<Rest.Config>
+	) =>
+		this.restService.request<any, LucLuongDto[]>(
+			{
+				method: 'GET',
+				url: '/api/app/luc-luong/for-excel',
+				params: {
+					filter: input?.filter,
+					sorting: input?.sorting,
+					maxCount: input?.maxCount,
+				},
+			},
+			{ apiName: this.apiName, ...config }
+		);
+
+	downloadTemplate = (fileName: string, config?: Partial<Rest.Config>) =>
+
+		this.restService.request<any, Blob>({
+			method: 'GET',
+			url: `/api/app/luc-luong/template/${encodeURIComponent(fileName)}`,
+			
+		}, { apiName: this.apiName, ...config });		
+		
 	constructor(private restService: RestService) {}
-}
 
-
+	}
