@@ -10,6 +10,7 @@ using Volo.Abp.Domain.Repositories;
 using System.Linq.Dynamic.Core;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp;
+using Volo.Abp.Linq;
 using H04.Cts.Entities.DanhMucs;
 using H04.Cts.Dtos.DanhMucs;
 
@@ -56,96 +57,44 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
         // Only use keyword filter for all searchable fields
         if (!string.IsNullOrWhiteSpace(input.Keyword))
         {
-            var keyword = input.Keyword.Trim();
+            var keyword = input.Keyword.Trim().ToLower();
 
-            // Search in main fields and related entities using navigation properties
+            // Search in main fields and related entities using navigation properties (case-insensitive)
             queryable = queryable.Where(x =>
-                (x.FullName != null && x.FullName.Contains(keyword)) ||
-                (x.CCCD != null && x.CCCD.Contains(keyword)) ||
-                (x.Position != null && x.Position.Contains(keyword)) ||
-                (x.Phone != null && x.Phone.Contains(keyword)) ||
-                (x.Email != null && x.Email.Contains(keyword)) ||
-                (x.SubmissionAddress != null && x.SubmissionAddress.Contains(keyword)) ||
-                (x.Province != null && x.Province.Contains(keyword)) ||
-                (x.Ward != null && x.Ward.Contains(keyword)) ||
+                (x.FullName != null && x.FullName.ToLower().Contains(keyword)) ||
+                (x.CCCD != null && x.CCCD.ToLower().Contains(keyword)) ||
+                (x.Position != null && x.Position.ToLower().Contains(keyword)) ||
+                (x.Phone != null && x.Phone.ToLower().Contains(keyword)) ||
+                (x.Email != null && x.Email.ToLower().Contains(keyword)) ||
+                (x.SubmissionAddress != null && x.SubmissionAddress.ToLower().Contains(keyword)) ||
+                (x.Province != null && x.Province.ToLower().Contains(keyword)) ||
+                (x.Ward != null && x.Ward.ToLower().Contains(keyword)) ||
                 // Search in related entities using navigation properties
-                (x.Organizations.Any(o => !o.IsDeleted && o.TenToChuc != null && o.TenToChuc.Contains(keyword))) ||
-                (x.NoiCapCCCDFk != null && !x.NoiCapCCCDFk.IsDeleted && x.NoiCapCCCDFk.Name != null && x.NoiCapCCCDFk.Name.Contains(keyword))
+                (x.Organizations.Any(o => !o.IsDeleted && o.TenToChuc != null && o.TenToChuc.ToLower().Contains(keyword))) ||
+                (x.NoiCapCCCDFk != null && !x.NoiCapCCCDFk.IsDeleted && x.NoiCapCCCDFk.Name != null && x.NoiCapCCCDFk.Name.ToLower().Contains(keyword))
             );
         }
 
-        // Per-field filters
-        if (!string.IsNullOrWhiteSpace(input.FullName))
-        {
-            var value = input.FullName.Trim();
-            queryable = queryable.Where(x => x.FullName != null && x.FullName.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.CCCD))
-        {
-            var value = input.CCCD.Trim();
-            queryable = queryable.Where(x => x.CCCD != null && x.CCCD.Contains(value));
-        }
-        if (input.DateOfIssue.HasValue)
-        {
-            var date = input.DateOfIssue.Value;
-            queryable = queryable.Where(x => x.DateOfIssue == date);
-        }
-        if (input.NoiCapCCCDId.HasValue)
-        {
-            var id = input.NoiCapCCCDId.Value;
-            queryable = queryable.Where(x => x.NoiCapCCCDId == id);
-        }
-        if (!string.IsNullOrWhiteSpace(input.Position))
-        {
-            var value = input.Position.Trim();
-            queryable = queryable.Where(x => x.Position != null && x.Position.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.Phone))
-        {
-            var value = input.Phone.Trim();
-            queryable = queryable.Where(x => x.Phone != null && x.Phone.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.Email))
-        {
-            var value = input.Email.Trim();
-            queryable = queryable.Where(x => x.Email != null && x.Email.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.SubmissionAddress))
-        {
-            var value = input.SubmissionAddress.Trim();
-            queryable = queryable.Where(x => x.SubmissionAddress != null && x.SubmissionAddress.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.Province))
-        {
-            var value = input.Province.Trim();
-            queryable = queryable.Where(x => x.Province != null && x.Province.Contains(value));
-        }
-        if (!string.IsNullOrWhiteSpace(input.Ward))
-        {
-            var value = input.Ward.Trim();
-            queryable = queryable.Where(x => x.Ward != null && x.Ward.Contains(value));
-        }
-        if (input.IsDefault.HasValue)
-        {
-            queryable = queryable.Where(x => x.IsDefault == input.IsDefault.Value);
-        }
-        if (!string.IsNullOrWhiteSpace(input.DeletedBy))
-        {
-            var value = input.DeletedBy.Trim();
-            queryable = queryable.Where(x => x.DeletedBy != null && x.DeletedBy.Contains(value));
-        }
-        if (input.DeletedAt.HasValue)
-        {
-            var date = input.DeletedAt.Value;
-            queryable = queryable.Where(x => x.DeletedAt == date);
-        }
+        // Per-field filters (concise)
+        queryable = queryable
+            .WhereIf(!string.IsNullOrWhiteSpace(input.FullName), x => x.FullName != null && x.FullName.ToLower().Contains(input.FullName.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.CCCD), x => x.CCCD != null && x.CCCD.ToLower().Contains(input.CCCD.Trim().ToLower()))
+            .WhereIf(input.DateOfIssue.HasValue, x => x.DateOfIssue == input.DateOfIssue.Value)
+            .WhereIf(input.NoiCapCCCDId.HasValue, x => x.NoiCapCCCDId == input.NoiCapCCCDId.Value)
+            .WhereIf(!string.IsNullOrWhiteSpace(input.Position), x => x.Position != null && x.Position.ToLower().Contains(input.Position.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.Phone), x => x.Phone != null && x.Phone.ToLower().Contains(input.Phone.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.Email), x => x.Email != null && x.Email.ToLower().Contains(input.Email.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.SubmissionAddress), x => x.SubmissionAddress != null && x.SubmissionAddress.ToLower().Contains(input.SubmissionAddress.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.Province), x => x.Province != null && x.Province.ToLower().Contains(input.Province.Trim().ToLower()))
+            .WhereIf(!string.IsNullOrWhiteSpace(input.Ward), x => x.Ward != null && x.Ward.ToLower().Contains(input.Ward.Trim().ToLower()))
+            .WhereIf(input.IsDefault.HasValue, x => x.IsDefault == input.IsDefault.Value)
+            .WhereIf(!string.IsNullOrWhiteSpace(input.DeletedBy), x => x.DeletedBy != null && x.DeletedBy.ToLower().Contains(input.DeletedBy.Trim().ToLower()))
+            .WhereIf(input.DeletedAt.HasValue, x => x.DeletedAt == input.DeletedAt.Value);
 
-        // Filter by organization ids if provided
-        if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
-        {
-            var orgIdSet = input.OrganizationIds.Distinct().ToArray();
-            queryable = queryable.Where(x => x.Organizations.Any(o => orgIdSet.Contains(o.Id)));
-        }
+        // Filter by organization ids if provided (concise)
+        var orgIdSet = input.OrganizationIds?.Distinct().ToArray();
+        queryable = queryable.WhereIf(orgIdSet != null && orgIdSet.Length > 0,
+            x => x.Organizations.Any(o => orgIdSet.Contains(o.Id)));
 
         // Apply pagination
         var totalCount = await AsyncExecuter.CountAsync(queryable);
@@ -258,7 +207,8 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
             }
         }
 
-        var nguoiTiepNhan = await _repository.GetAsync(id);
+        var queryable = await _repository.WithDetailsAsync(x => x.Organizations);
+        var nguoiTiepNhan = await AsyncExecuter.FirstOrDefaultAsync(queryable, x => x.Id == id);
         var normalizedCccd = input.CCCD?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(normalizedCccd))
         {
@@ -273,8 +223,18 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
 
         ObjectMapper.Map(input, nguoiTiepNhan);
         nguoiTiepNhan.CCCD = normalizedCccd;
+        
         // Update many-to-many organizations
+        // Ensure Organizations collection is initialized
+        if (nguoiTiepNhan.Organizations == null)
+        {
+            nguoiTiepNhan.Organizations = new List<ToChuc>();
+        }
+        
+        // Clear all existing relationships first
         nguoiTiepNhan.Organizations.Clear();
+        
+        // Add new relationships
         if (input.OrganizationIds != null && input.OrganizationIds.Length > 0)
         {
             var organizations = await _organizationRepository.GetListAsync(x => input.OrganizationIds.Contains(x.Id) && !x.IsDeleted);
@@ -283,7 +243,12 @@ public class NguoiTiepNhanAppService : ApplicationService, INguoiTiepNhanAppServ
                 nguoiTiepNhan.Organizations.Add(org);
             }
         }
+        
+        // Save changes to update the many-to-many relationships
         await _repository.UpdateAsync(nguoiTiepNhan);
+        
+        // Force Entity Framework to track changes properly
+        await CurrentUnitOfWork.SaveChangesAsync();
         return ObjectMapper.Map<NguoiTiepNhan, NguoiTiepNhanDto>(nguoiTiepNhan);
     }
 

@@ -46,47 +46,47 @@ public class NoiCapCCCDAppService : ApplicationService, INoiCapCCCDAppService
         // Only use keyword filter for all searchable fields
         if (!string.IsNullOrWhiteSpace(input.Keyword))
         {
-            var keyword = input.Keyword.Trim();
+            var keyword = input.Keyword.Trim().ToLower();
             queryable = queryable.Where(x =>
-                (x.Name != null && x.Name.Contains(keyword)) ||
-                (x.Code != null && x.Code.Contains(keyword)) ||
-                (x.Abbreviation != null && x.Abbreviation.Contains(keyword)) ||
-                (x.Address != null && x.Address.Contains(keyword)) ||
-                (x.Province != null && x.Province.Contains(keyword)) ||
-                (x.Note != null && x.Note.Contains(keyword))
+                (x.Name != null && x.Name.ToLower().Contains(keyword)) ||
+                (x.Code != null && x.Code.ToLower().Contains(keyword)) ||
+                (x.Abbreviation != null && x.Abbreviation.ToLower().Contains(keyword)) ||
+                (x.Address != null && x.Address.ToLower().Contains(keyword)) ||
+                (x.Province != null && x.Province.ToLower().Contains(keyword)) ||
+                (x.Note != null && x.Note.ToLower().Contains(keyword))
             );
         }
 
         // Per-field filters
         if (!string.IsNullOrWhiteSpace(input.Name))
         {
-            var value = input.Name.Trim();
-            queryable = queryable.Where(x => x.Name != null && x.Name.Contains(value));
+            var value = input.Name.Trim().ToLower();
+            queryable = queryable.Where(x => x.Name != null && x.Name.ToLower().Contains(value));
         }
         if (!string.IsNullOrWhiteSpace(input.Code))
         {
-            var value = input.Code.Trim();
-            queryable = queryable.Where(x => x.Code != null && x.Code.Contains(value));
+            var value = input.Code.Trim().ToLower();
+            queryable = queryable.Where(x => x.Code != null && x.Code.ToLower().Contains(value));
         }
         if (!string.IsNullOrWhiteSpace(input.Abbreviation))
         {
-            var value = input.Abbreviation.Trim();
-            queryable = queryable.Where(x => x.Abbreviation != null && x.Abbreviation.Contains(value));
+            var value = input.Abbreviation.Trim().ToLower();
+            queryable = queryable.Where(x => x.Abbreviation != null && x.Abbreviation.ToLower().Contains(value));
         }
         if (!string.IsNullOrWhiteSpace(input.Address))
         {
-            var value = input.Address.Trim();
-            queryable = queryable.Where(x => x.Address != null && x.Address.Contains(value));
+            var value = input.Address.Trim().ToLower();
+            queryable = queryable.Where(x => x.Address != null && x.Address.ToLower().Contains(value));
         }
         if (!string.IsNullOrWhiteSpace(input.Province))
         {
-            var value = input.Province.Trim();
-            queryable = queryable.Where(x => x.Province != null && x.Province.Contains(value));
+            var value = input.Province.Trim().ToLower();
+            queryable = queryable.Where(x => x.Province != null && x.Province.ToLower().Contains(value));
         }
         if (!string.IsNullOrWhiteSpace(input.Note))
         {
-            var value = input.Note.Trim();
-            queryable = queryable.Where(x => x.Note != null && x.Note.Contains(value));
+            var value = input.Note.Trim().ToLower();
+            queryable = queryable.Where(x => x.Note != null && x.Note.ToLower().Contains(value));
         }
         if (input.IsActive.HasValue)
         {
