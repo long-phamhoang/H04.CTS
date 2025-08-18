@@ -12,7 +12,11 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.BackgroundJobs;
+using H04.Cts.Application.DanhMucs.LucLuongs.Jobs;
+using H04.Cts.Dtos.DanhMucs;
 using System;
+using Volo.Abp.Caching;
 
 namespace H04.Cts.Application.DanhMucs;
 
@@ -20,10 +24,14 @@ namespace H04.Cts.Application.DanhMucs;
 public class LucLuongAppService : ApplicationService, ILucLuongAppService
 {
     private readonly IRepository<LucLuong, long> _repository;
+    private readonly IBackgroundJobManager _backgroundJobManager;
+    private readonly IDistributedCache<ImportProgressDto> _progressCache;
 
-    public LucLuongAppService(IRepository<LucLuong, long> repository)
+    public LucLuongAppService(IRepository<LucLuong, long> repository, IBackgroundJobManager backgroundJobManager, IDistributedCache<ImportProgressDto> progressCache)
     {
         _repository = repository;
+        _backgroundJobManager = backgroundJobManager;
+        _progressCache = progressCache;
     }
 
     public async Task<LucLuongDto> GetAsync(long id)
@@ -152,6 +160,33 @@ public class LucLuongAppService : ApplicationService, ILucLuongAppService
 
     
     [Authorize(CtsPermissions.DanhMucs.LucLuong)]
+    public async Task<string> EnqueueImportAsync(ImportLucLuongRequestDto input)
+    {
+        if (input == null || string.IsNullOrWhiteSpace(input.ObjectName))
+        {
+            throw new Volo.Abp.UserFriendlyException("Thiếu thông tin objectName từ MinIO");
+        }
+        var batchId = Guid.NewGuid().ToString("N");
+        await _backgroundJobManager.EnqueueAsync(new ImportLucLuongJobArgs
+        {
+            ObjectName = input.ObjectName,
+            OriginalFileName = input.OriginalFileName,
+            BatchId = batchId
+        });
+        return batchId;
+    }
+
+    public async Task<ImportProgressDto> GetImportProgressAsync(string batchId)
+    {
+        if (string.IsNullOrWhiteSpace(batchId))
+        {
+            throw new Volo.Abp.UserFriendlyException("Thiếu BatchId");
+        }
+        var key = $"import:luc-luong:{batchId}";
+        var progress = await _progressCache.GetAsync(key);
+        return progress ?? new ImportProgressDto { BatchId = batchId, Status = "Pending" };
+    }
+
     public async Task<List<LucLuongDto>> GetAllForExcelAsync(GetLucLuongAllDto input)
     {
         var queryable = await _repository.GetQueryableAsync();

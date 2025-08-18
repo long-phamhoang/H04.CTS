@@ -14,7 +14,6 @@ import { Menu } from 'primeng/menu';
 import { ConfirmationService } from 'primeng/api';
 import { ImportExcelDialogComponent } from '@app/shared/components/import-excel-dialog/import-excel-dialog.component';
 import { LucLuongExcelService } from './luc-luong-excel.service';
-
 @Component({
 	standalone: false,
 	selector: 'app-luc-luong',
@@ -85,6 +84,9 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 
 	// Import
 	showImport = false;
+	importModalVisible = false;
+	selectedFile: File | null = null;
+	isImporting = false;
 	importColumns: ImportColumn[] = [
 		{ field: 'maLucLuong', header: 'Mã' },
 		{ field: 'tenLucLuong', header: 'Tên lực lượng' },
@@ -114,7 +116,7 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		private fb: FormBuilder,
 		private confirmationService: ConfirmationService,
 		private toast: ToasterService,
-		public excelService: LucLuongExcelService
+		public excelService: LucLuongExcelService,
 	) { 
 		
 		}
@@ -325,6 +327,10 @@ export class LucLuongComponent implements OnInit, OnDestroy {
 		if (this.filterCodeSub) {
 			this.filterCodeSub.unsubscribe();
 		}
+		if (this.progressTimer) {
+			clearInterval(this.progressTimer);
+			this.progressTimer = null;
+		}
 	}
 
 	// AutoComplete handlers
@@ -437,49 +443,120 @@ clearSearch() {
 		this.toast.success('Xuất Excel thành công');
 	}
 
-	// Import
+	// Import 
 	openImportDialog() {
-		this.showImport = true;
+	this.showImport = true;
 	}
 
-	onImported(rows: any[]) {
-		if (!rows?.length) return;
-		let ok = 0, fail = 0;
+	openImportMinio() {
+		this.importModalVisible = true;
+	}
+	
+	// Import nền qua MinIO + Background Job
+	progressStatus: 'Pending' | 'Running' | 'Completed' | 'Failed' = 'Pending';
+	progressTimer: any = null;
+	currentBatchId: string | null = null;
+	showFloatingProgress = false;
+	
+	async doImportBackground() {
+	if (!this.selectedFile) { return; }
+	try {
+	this.isImporting = true;
 
-		const existingCodes = new Set<string>((this.allItems || []).map(x => (x?.maLucLuong || '').toString().trim().toLowerCase()));
-		const seenInImport = new Set<string>();
-
-		const doNext = (i: number) => {
-			if (i >= rows.length) {
-				this.list.get();
-				this.toast.success(`Import xong. Thành công: ${ok}, Lỗi: ${fail}`);
-				return;
-			}
-			const r = rows[i] || {};
-			const dto = {
-				maLucLuong: (r.maLucLuong || '').toString().trim(),
-				tenLucLuong: (r.tenLucLuong || '').toString().trim(),
-				trangThai: r.trangThai ?? null,
-				ghiChu: r.ghiChu || '',
-			};
-
-			const code = dto.maLucLuong.toLowerCase();
-			if (!code || existingCodes.has(code) || seenInImport.has(code)) {
-				fail++;
-				doNext(i + 1);
-				return;
-			}
-
-			seenInImport.add(code);
-
-			this.lucLuongService.create(dto as any, { skipHandleError: true }).subscribe({
-				next: () => { ok++; existingCodes.add(code); doNext(i + 1); },
-				error: () => { fail++; doNext(i + 1); },
-			});
-		};
-		doNext(0);
+	this.progressStatus = 'Pending';
+	
+	const resp = await firstValueFrom(this.lucLuongService.importExcel(this.selectedFile, { skipHandleError: true }));
+	const batchId = resp?.data?.batchId || resp?.batchId;
+	this.currentBatchId = batchId;
+	
+	if (batchId) {
+	this.progressStatus = 'Running';
+	this.showFloatingProgress = true;
+	this.importModalVisible = false; 
+	this.startPollingProgress(batchId);
+	}
+	
+	this.selectedFile = null;
+	} catch (err: any) {
+	const message = err?.error?.error?.message || 'Tải lên hoặc enqueue thất bại';
+	this.toast.warn(message);
+	} finally {	
+	this.isImporting = false;
+	}
+	}
+	
+	private startPollingProgress(batchId: string) {
+	if (this.progressTimer) { clearInterval(this.progressTimer); }
+	this.progressTimer = setInterval(async () => {
+	try {
+	const resp = await firstValueFrom(this.lucLuongService.getImportProgress(batchId, { skipHandleError: true }));
+	const data = resp?.data || resp;
+	const status = (data?.status as any) || 'Running';
+	this.progressStatus = status;
+	this.showFloatingProgress = status === 'Running';
+	if (status === 'Completed') {
+	clearInterval(this.progressTimer);
+	this.progressTimer = null;
+	this.showFloatingProgress = false;
+	this.toast.success('Nhập dữ liệu hoàn tất');
+	this.list.get();
+	} else if (status === 'Failed') {
+	clearInterval(this.progressTimer);
+	this.progressTimer = null;
+	this.showFloatingProgress = false;
+	this.toast.warn('Nhập dữ liệu thất bại');
+	}
+	} catch (e) {
+	// bỏ qua lỗi polling
+	}
+	}, 5000);
 	}
 
+
+
+
+
+
+
+	// onImported(rows: any[]) {
+	// 	if (!rows?.length) return;
+	// 	let ok = 0, fail = 0;
+
+	// 	const existingCodes = new Set<string>((this.allItems || []).map(x => (x?.maLucLuong || '').toString().trim().toLowerCase()));
+	// 	const seenInImport = new Set<string>();
+
+	// 	const doNext = (i: number) => {
+	// 		if (i >= rows.length) {
+	// 			this.list.get();
+	// 			this.toast.success(`Import xong. Thành công: ${ok}, Lỗi: ${fail}`);
+	// 			return;
+	// 		}
+	// 		const r = rows[i] || {};
+	// 		const dto = {
+	// 			maLucLuong: (r.maLucLuong || '').toString().trim(),
+	// 			tenLucLuong: (r.tenLucLuong || '').toString().trim(),
+	// 			trangThai: r.trangThai ?? null,
+	// 			ghiChu: r.ghiChu || '',
+	// 		};
+
+	// 		const code = dto.maLucLuong.toLowerCase();
+	// 		if (!code || existingCodes.has(code) || seenInImport.has(code)) {
+	// 			fail++;
+	// 			doNext(i + 1);
+	// 			return;
+	// 		}
+
+	// 		seenInImport.add(code);
+
+	// 		this.lucLuongService.create(dto as any, { skipHandleError: true }).subscribe({
+	// 			next: () => { ok++; existingCodes.add(code); doNext(i + 1); },
+	// 			error: () => { fail++; doNext(i + 1); },
+	// 		});
+	// 	};
+	// 	doNext(0);
+	// }
+
+	
 	// Filter functionality
 	filterName: string = '';
 	filterCode: string = '';
@@ -594,10 +671,7 @@ clearSearch() {
     {
       label: 'Nhập excel',
       icon: 'pi pi-plus',
-      command: () => this.openImportDialog()
-    },
-    {
-      separator: true
+      command: () => this.openImportMinio()
     },
 		{
 			label: 'Tải mẫu ',

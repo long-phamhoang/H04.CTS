@@ -14,4 +14,14 @@ public interface ILucLuongAppService : ICrudAppService<LucLuongDto, long, GetLuc
     /// Lấy toàn bộ dữ liệu (không phân trang) phục vụ import/export theo filter và sorting.
     /// </summary>
     Task<List<LucLuongDto>> GetAllForExcelAsync(GetLucLuongAllDto input);
+
+    /// <summary>
+    /// Enqueue job import LucLuong từ MinIO object
+    /// </summary>
+    Task<string> EnqueueImportAsync(ImportLucLuongRequestDto input);
+
+    /// <summary>
+    /// Lấy tiến độ import theo BatchId
+    /// </summary>
+    Task<ImportProgressDto> GetImportProgressAsync(string batchId);
 }

@@ -297,16 +297,47 @@
     (exported)="onExported()"
   ></app-export-excel-dialog>
 
-  <app-import-excel-dialog
-    [(visible)]="showImport"
-    [columns]="importColumns"
-    [templateFileName]="'import_luc_luong.xlsx'"
-    [templateSheetName]="'Sheet1'"
-    [requiredFields]="['maLucLuong', 'tenLucLuong']"
-    [uniqueByField]="'maLucLuong'"
-    [existingValues]="existingMaLucLuongValues"
-    (imported)="onImported($event)"
-  ></app-import-excel-dialog>
+  <p-dialog
+    [(visible)]="importModalVisible"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '520px' }"
+    [baseZIndex]="1055"
+    [dismissableMask]="true"
+    (onHide)="showFloatingProgress = !!currentBatchId && progressStatus === 'Running'"
+  >
+    <ng-template pTemplate="header">
+      <span class="fw-bold">Nhập Excel</span>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <div class="mb-3">
+        <label class="form-label">Chọn file Excel (.xlsx)</label>
+        <input
+          type="file"
+          accept=".xlsx"
+          (change)="selectedFile = $any($event.target).files?.[0] || null"
+        />
+      </div>
+      <div class="text-muted" *ngIf="selectedFile">File: {{ selectedFile?.name }}</div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        type="button"
+        label="Đóng"
+        class="p-button-outlined"
+        (click)="importModalVisible = false; selectedFile = null"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="Tải lên & Nhập"
+        [disabled]="!selectedFile || isImporting"
+        (click)="doImportBackground()"
+      ></button>
+    </ng-template>
+  </p-dialog>
 
   <p-confirmDialog
     acceptLabel="Đồng ý"
@@ -315,4 +346,33 @@
     rejectIcon="pi pi-times"
   >
   </p-confirmDialog>
+
+  <!--
+    - [(visible)]="showImport"
+    - [columns]="importColumns"
+    - [templateFileName]="'import_luc_luong.xlsx'"
+    - [templateSheetName]="'Sheet1'"
+    - [requiredFields]="['maLucLuong', 'tenLucLuong']"
+    - [existingValues]="existingMaLucLuongValues"
+    - (imported)="onImported($event)"
+  -->
+
+  <div
+    *ngIf="showFloatingProgress && currentBatchId"
+    style="position: fixed; right: 16px; bottom: 16px; z-index: 2000"
+  >
+    <div class="card shadow" style="padding: 12px; display: flex; align-items: center; gap: 12px">
+      <div class="import-progress-container">
+        <p-progressSpinner
+          styleClass="w-2rem h-2rem"
+          strokeWidth="6"
+          fill="var(--surface-ground)"
+          animationDuration=".7s"
+        ></p-progressSpinner>
+        <div class="import-progress-info">
+          <strong>Đang nhập dữ liệu...</strong>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

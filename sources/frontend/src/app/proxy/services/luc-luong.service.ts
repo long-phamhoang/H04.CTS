@@ -67,11 +67,30 @@ export class LucLuongService {
 
 	downloadTemplate = (fileName: string, config?: Partial<Rest.Config>) =>
 
-		this.restService.request<any, Blob>({
+		this.restService.request<any, any>({
 			method: 'GET',
 			url: `/api/app/luc-luong/template/${encodeURIComponent(fileName)}`,
 			
-		}, { apiName: this.apiName, ...config });		
+		}, { apiName: this.apiName, ...config });
+
+	// Import Excel via MinIO + Background Job
+	importExcel = (file: File, config?: Partial<Rest.Config>) => {
+		const form = new FormData();
+		form.append('file', file, file.name);
+		return this.restService.request<any, any>({
+			method: 'POST',
+			url: '/api/app/luc-luong/import',
+			body: form,
+		}, { apiName: this.apiName, ...config });
+	}
+
+	// Get import progress
+	getImportProgress = (batchId: string, config?: Partial<Rest.Config>) =>
+		this.restService.request<any, any>({
+			method: 'GET',
+			url: '/api/app/luc-luong/import-progress',
+			params: { batchId },
+		}, { apiName: this.apiName, ...config });
 		
 	constructor(private restService: RestService) {}
 

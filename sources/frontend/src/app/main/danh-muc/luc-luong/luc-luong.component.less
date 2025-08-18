@@ -154,3 +154,46 @@
   color: green !important;
   font-style: italic !important;
 }
+
+
+.import-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface-ground);
+  border-radius: 0.3rem;
+
+  .p-progress-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    
+    circle {
+      stroke-width:4;
+      animation: p-progress-spinner-rotate 0.7s linear infinite;
+    }
+  }
+
+  .import-progress-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    strong {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .import-progress-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+
+      small {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
